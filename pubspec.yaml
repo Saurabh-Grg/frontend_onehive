@@ -38,6 +38,8 @@ dependencies:
   http: ^1.2.2
   shared_preferences: ^2.3.3
   provider: ^6.1.2
+  file_picker: ^8.1.4
+  gestures: ^1.0.0
 
 dev_dependencies:
   flutter_test:

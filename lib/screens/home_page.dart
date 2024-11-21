@@ -1,6 +1,8 @@
 
 import 'package:flutter/material.dart';
 
+import 'client_dashboard.dart';
+
 class HomePage extends StatelessWidget {
   final String username;
   final String email;
@@ -66,7 +68,7 @@ class HomePage extends StatelessWidget {
 
               SizedBox(height: 20),
 
-// Profile creation option for client
+              // Profile creation option for client
               Card(
                 color: Colors.white,
                 child: Column(
@@ -123,10 +125,10 @@ class HomePage extends StatelessWidget {
                       //   MaterialPageRoute(builder: (context) => FreelancerDashboard()), // Navigate to Freelancer Dashboard
                       // );
                     } else {
-                      // Navigator.push(
-                      //   context,
-                      //   MaterialPageRoute(builder: (context) => ClientDashboard()), // Navigate to Client Dashboard
-                      // );
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => ClientDashboard()), // Navigate to Client Dashboard
+                      );
                     }
                   },
                   child: Text(

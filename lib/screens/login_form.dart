@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:onehive_frontend/screens/registration_form.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
@@ -241,7 +242,7 @@ class _LoginFormState extends State<LoginForm> {
                 ),
                 TextButton(
                   onPressed: () {
-                    // Navigator.push(context, MaterialPageRoute(builder: (context) => RegistrationForm()));
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => RegistrationForm()));
                   },
                   child: Text(
                     "Don't have an account? Register here",
