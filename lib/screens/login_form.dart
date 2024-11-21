@@ -151,9 +151,6 @@ class _LoginFormState extends State<LoginForm> {
                   ],
                 ),
                 SizedBox(height: 60), // Space between logo and welcome text
-
-
-
                 Text(
                   'Welcome Back!',
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black),
