@@ -68,6 +68,7 @@ flutter:
     - assets/images/freelancer.png
     - assets/images/OneHive.png
     - assets/images/welcome_image.jpg
+    - assets/images/passwordReset.png
 
   # To add assets to your application, add an assets section, like this:
   # assets:

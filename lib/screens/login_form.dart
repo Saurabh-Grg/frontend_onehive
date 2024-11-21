@@ -8,6 +8,7 @@ import 'package:http/http.dart' as http;
 
 import '../models/user.dart';
 import '../providers/user_provider.dart';
+import 'forgot_password_screen.dart';
 import 'home_page.dart';
 
 class LoginForm extends StatefulWidget {
@@ -165,6 +166,7 @@ class _LoginFormState extends State<LoginForm> {
                       TextFormField(
                         controller: _emailController,
                         decoration: InputDecoration(
+                          prefixIcon: Icon(Icons.email),
                           labelText: 'Email',
                           hintText: 'Enter your email',
                           border: OutlineInputBorder(
@@ -186,6 +188,7 @@ class _LoginFormState extends State<LoginForm> {
                         controller: _passwordController,
                         obscureText: !_isPasswordVisible, // Toggle password visibility
                         decoration: InputDecoration(
+                          prefixIcon: Icon(Icons.lock),
                           labelText: 'Password',
                           hintText: 'Enter your password',
                           border: OutlineInputBorder(
@@ -233,7 +236,7 @@ class _LoginFormState extends State<LoginForm> {
                 SizedBox(height: 20),
                 TextButton(
                   onPressed: () {
-                    // Navigator.push(context, MaterialPageRoute(builder: (context) => ForgotPasswordScreen()));
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => ForgotPasswordScreen()));
                   },
                   child: Text(
                     'Forgot Password?',
