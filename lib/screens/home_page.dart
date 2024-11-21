@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 
 import 'client_dashboard.dart';
+import 'client_profile_creation.dart';
 
 class HomePage extends StatelessWidget {
   final String username;
@@ -87,10 +88,10 @@ class HomePage extends StatelessWidget {
                         ),
                         onPressed: !isFreelancer
                             ? () {
-                          // Navigator.push(
-                          //   context,
-                          //   MaterialPageRoute(builder: (context) => ClientProfileCreation()),
-                          // );
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => ClientProfileCreation()),
+                          );
                         }
                             : null, // Disabled if a freelancer
                         child: Text(

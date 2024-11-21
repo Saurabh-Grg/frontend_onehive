@@ -4,9 +4,6 @@ import 'package:onehive_frontend/screens/login_form.dart';
 import 'package:onehive_frontend/screens/welcome_screen.dart';
 import 'package:provider/provider.dart';
 
-
-
-
 class OneHive extends StatelessWidget {
   OneHive({super.key});
 

@@ -144,7 +144,7 @@ class _ClientDashboardState extends State<ClientDashboard> {
                 backgroundImage: profileImageUrl != null && profileImageUrl!.isNotEmpty
                     ? NetworkImage(profileImageUrl!) // Display profile image
                     : null,
-                backgroundColor: profileImageUrl == null ? Colors.orange[300] : null,
+                backgroundColor: profileImageUrl == null ? Colors.deepOrange : null,
                 child: profileImageUrl == null || profileImageUrl!.isEmpty
                     ? Text(
                   username.isNotEmpty
@@ -412,44 +412,78 @@ class _ClientDashboardState extends State<ClientDashboard> {
   }
 
   Widget _buildSummaryCards(double screenWidth) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        Expanded(child: _buildSummaryCard('Total Job Postings', totalJobPostings.toString(), screenWidth)),
-        Expanded(child: _buildSummaryCard('Active Proposals', activeProposals.toString(), screenWidth)),
-        Expanded(child: _buildSummaryCard('Ongoing Projects', ongoingProjects.toString(), screenWidth)),
-      ],
+    return Padding(
+      padding: EdgeInsets.all(screenWidth * 0.02),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          // Pass a different image for each card
+          Expanded(child: _buildSummaryCard('Total Job Postings', totalJobPostings.toString(), screenWidth, 'assets/images/bg1.png')),
+          Expanded(child: _buildSummaryCard('Active Proposals', activeProposals.toString(), screenWidth, 'assets/images/bg2.png')),
+          Expanded(child: _buildSummaryCard('Ongoing Projects', ongoingProjects.toString(), screenWidth, 'assets/images/bg3.png')),
+        ],
+      ),
     );
   }
 
-  Widget _buildSummaryCard(String title, String value, double screenWidth) {
+  Widget _buildSummaryCard(String title, String value, double screenWidth, String bgImagePath) {
     return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15.0),
       ),
       elevation: 5,
-      shadowColor: Colors.grey.withOpacity(0.5),
+      shadowColor: Colors.grey.withOpacity(0.8),
       color: Colors.white,
-      child: Padding(
-        padding: EdgeInsets.all(screenWidth * 0.03), // Responsive padding
-        child: Column(
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(15),
+        child: Stack(
           children: [
-            Text(
-              title,
-              textAlign: TextAlign.center, // Center the text
-              style: TextStyle(fontSize: screenWidth * 0.04, fontWeight: FontWeight.bold, color: primaryColor), // Responsive font size
+            // Background Image: Make it fill the whole card
+            Positioned.fill(
+              child: Opacity(
+                opacity: 0.2, // Adjust opacity for a subtle background effect
+                child: Image.asset(
+                  bgImagePath, // Use the passed image path
+                  fit: BoxFit.cover, // Ensure the image covers the entire card
+                ),
+              ),
             ),
-            SizedBox(height: screenWidth * 0.02), // Responsive spacing
-            Text(
-              value,
-              textAlign: TextAlign.center, // Center the text
-              style: TextStyle(fontSize: screenWidth * 0.05, fontWeight: FontWeight.bold, color: primaryColor), // Responsive font size
+
+            // Foreground content (text)
+            Padding(
+              padding: EdgeInsets.all(screenWidth * 0.03), // Responsive padding
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    title,
+                    textAlign: TextAlign.center, // Center the text
+                    style: TextStyle(
+                      fontSize: screenWidth * 0.04,
+                      fontWeight: FontWeight.bold,
+                      color: primaryColor,
+                    ), // Responsive font size
+                  ),
+                  SizedBox(height: screenWidth * 0.02), // Responsive spacing
+                  Text(
+                    value,
+                    textAlign: TextAlign.center, // Center the text
+                    style: TextStyle(
+                      fontSize: screenWidth * 0.05,
+                      fontWeight: FontWeight.bold,
+                      color: primaryColor,
+                    ), // Responsive font size
+                  ),
+                ],
+              ),
             ),
           ],
         ),
       ),
     );
   }
+
+
 
   Widget _buildJobPostingsSection(BuildContext context, double screenWidth) {
     return Padding(

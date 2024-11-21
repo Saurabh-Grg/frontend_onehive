@@ -40,6 +40,7 @@ dependencies:
   provider: ^6.1.2
   file_picker: ^8.1.4
   gestures: ^1.0.0
+  image_picker: ^1.1.2
 
 dev_dependencies:
   flutter_test:
@@ -69,6 +70,10 @@ flutter:
     - assets/images/OneHive.png
     - assets/images/welcome_image.jpg
     - assets/images/passwordReset.png
+    - assets/images/bg1.png
+    - assets/images/bg2.png
+    - assets/images/bg3.png
+    - assets/images/default_profile.png
 
   # To add assets to your application, add an assets section, like this:
   # assets:
