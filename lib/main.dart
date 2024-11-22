@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:onehive_frontend/providers/user_provider.dart';
+import 'package:onehive_frontend/screens/client_dashboard.dart';
 import 'package:onehive_frontend/screens/login_form.dart';
 import 'package:onehive_frontend/screens/welcome_screen.dart';
 import 'package:provider/provider.dart';
@@ -18,6 +19,7 @@ class OneHive extends StatelessWidget {
       home: WelcomeScreen(),
       routes: {
         '/login': (context) => LoginForm(),
+        '/dashboard': (context) => ClientDashboard()
       },
     );
   }

@@ -18,6 +18,7 @@ import '../models/proposal_model.dart';
 import '../providers/user_provider.dart';
 import '../services/job_posting_service.dart';
 import 'agreement_screen.dart';
+import 'client_profile_update.dart';
 import 'login_form.dart';
 
 class ClientDashboard extends StatefulWidget {
@@ -28,6 +29,7 @@ class ClientDashboard extends StatefulWidget {
 
 class _ClientDashboardState extends State<ClientDashboard> {
   String? contactPerson;
+  int? profileID;
   String? profileImageUrl;
 
   // Example token (you might fetch this from shared preferences or some other state management solution)
@@ -79,6 +81,7 @@ class _ClientDashboardState extends State<ClientDashboard> {
 
       setState(() {
         contactPerson = profileData['contactPerson'];
+        profileID = profileData['id'];
         // Check if profileImageUrl is not null
         if (data['profileImageUrl'] != null) {
           profileImageUrl = data['profileImageUrl'].replaceFirst('localhost', localIp); // Update the image URL
@@ -89,6 +92,7 @@ class _ClientDashboardState extends State<ClientDashboard> {
         profileImageUrl = profileData['profileImageUrl'];
         print('profile loaded successfully');
         print('Contact Person: $contactPerson');
+        print('ProfileID: $profileID');
         print('Profile Image URL: $profileImageUrl');
       });
     } else {
@@ -299,7 +303,7 @@ class _ClientDashboardState extends State<ClientDashboard> {
 
     if (profileExists) {
       // Navigate to the profile update page
-      // Navigator.push(context, MaterialPageRoute(builder: (context) => ClientProfileUpdate(profileId: '')));
+      Navigator.push(context, MaterialPageRoute(builder: (context) => ClientProfileUpdate(profileID: profileID.toString())));
     } else {
       // Suggest completing the profile creation process
       showDialog(
