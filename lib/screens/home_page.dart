@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 
 import 'client_dashboard.dart';
 import 'client_profile_creation.dart';
+import 'freelancer_dashboard.dart';
+import 'freelancer_profile_creation.dart';
 
 class HomePage extends StatelessWidget {
   final String username;
@@ -51,10 +53,10 @@ class HomePage extends StatelessWidget {
                         ),
                         onPressed: isFreelancer
                             ? () {
-                          // Navigator.push(
-                          //   context,
-                          //   MaterialPageRoute(builder: (context) => FreelancerProfileCreation()),
-                          // );
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => FreelancerProfileCreation()),
+                          );
                         }
                             : null, // Disabled if not a freelancer
                         child: Text(
@@ -121,10 +123,10 @@ class HomePage extends StatelessWidget {
                   onPressed: () {
                     // Navigate to the appropriate dashboard based on the user's role
                     if (isFreelancer) {
-                      // Navigator.push(
-                      //   context,
-                      //   MaterialPageRoute(builder: (context) => FreelancerDashboard()), // Navigate to Freelancer Dashboard
-                      // );
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => FreelancerDashboard()), // Navigate to Freelancer Dashboard
+                      );
                     } else {
                       Navigator.push(
                         context,

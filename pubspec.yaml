@@ -41,6 +41,8 @@ dependencies:
   file_picker: ^8.1.4
   gestures: ^1.0.0
   image_picker: ^1.1.2
+  table_calendar: ^3.1.2
+  intl: ^0.19.0
 
 dev_dependencies:
   flutter_test:
