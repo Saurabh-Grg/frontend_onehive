@@ -82,7 +82,7 @@ class _FreelancerDashboardState extends State<FreelancerDashboard> {
         // Update the image URL
         profileImageUrl = profileData['profileImageUrl'];
         print('profile loaded successfully');
-        print('ProfileID: $profileID');
+
         print('Profile Image URL: $profileImageUrl');
       });
     } else {
@@ -714,9 +714,13 @@ class _FreelancerDashboardState extends State<FreelancerDashboard> {
   void _navigateToProfileSettings(BuildContext context) async {
     bool profileExists = await _checkIfProfileExists(context);
 
-    if (profileExists) {
-      // Navigate to the profile update page
-      Navigator.push(context, MaterialPageRoute(builder: (context) => FreelancerProfileUpdate(profileID: profileID.toString())));
+    if (profileExists && profileID != null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => FreelancerProfileUpdate(profileID: profileID!),
+        ),
+      );
     } else {
       // Suggest completing the profile creation process
       showDialog(

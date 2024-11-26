@@ -26,45 +26,96 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
   // Submit the Forgot Password request
   Future<void> _submitForgotPassword() async {
-    if (!_validateEmail(_emailController.text)!.isEmpty) {
+    // Ensure the email is valid before proceeding
+    String? emailValidationError = _validateEmail(_emailController.text);
+    if (emailValidationError != null) {
+      // Show validation error if email is invalid
       setState(() {
-        _isLoading = true; // Show loading indicator
+        _message = emailValidationError;
+      });
+      return; // Don't proceed further if email is invalid
+    }
+
+    setState(() {
+      _isLoading = true; // Show loading indicator
+    });
+
+    final response = await http.post(
+      Uri.parse('http://localhost:3000/api/auth/request-password-reset'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'email': _emailController.text}),
+    );
+
+    setState(() {
+      _isLoading = false; // Hide loading indicator after request completes
+    });
+
+    if (response.statusCode == 200) {
+      // Show success message in SnackBar
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Password reset link sent to your email.')),
+      );
+
+      // Clear the email field
+      _emailController.clear();
+
+      setState(() {
+        _message = '';
       });
 
-      final response = await http.post(
-        Uri.parse('http://localhost:3000/api/auth/request-password-reset'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'email': _emailController.text}),
+
+    } else {
+      // Show error message in SnackBar
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: ${jsonDecode(response.body)['message']}')),
       );
 
       setState(() {
-        _isLoading = false; // Hide loading indicator after request completes
+        _message = 'Error: ${jsonDecode(response.body)['message']}';
       });
-
-      if (response.statusCode == 200) {
-        // Show success message in SnackBar
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Password reset link sent to your email.')),
-        );
-
-        // Clear the email field
-        _emailController.clear();
-
-        setState(() {
-          _message = '';
-        });
-      } else {
-        // Show error message in SnackBar
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: ${jsonDecode(response.body)['message']}')),
-        );
-
-        setState(() {
-          _message = 'Error: ${jsonDecode(response.body)['message']}';
-        });
-      }
     }
   }
+
+  // Future<void> _submitForgotPassword() async {
+  //   if (!_validateEmail(_emailController.text)!.isEmpty) {
+  //     setState(() {
+  //       _isLoading = true; // Show loading indicator
+  //     });
+  //
+  //     final response = await http.post(
+  //       Uri.parse('http://localhost:3000/api/auth/request-password-reset'),
+  //       headers: {'Content-Type': 'application/json'},
+  //       body: jsonEncode({'email': _emailController.text}),
+  //     );
+  //
+  //     setState(() {
+  //       _isLoading = false; // Hide loading indicator after request completes
+  //     });
+  //
+  //     if (response.statusCode == 200) {
+  //       // Show success message in SnackBar
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         SnackBar(content: Text('Password reset link sent to your email.')),
+  //       );
+  //
+  //       // Clear the email field
+  //       _emailController.clear();
+  //
+  //       setState(() {
+  //         _message = '';
+  //       });
+  //     } else {
+  //       // Show error message in SnackBar
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         SnackBar(content: Text('Error: ${jsonDecode(response.body)['message']}')),
+  //       );
+  //
+  //       setState(() {
+  //         _message = 'Error: ${jsonDecode(response.body)['message']}';
+  //       });
+  //     }
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {

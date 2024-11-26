@@ -166,6 +166,8 @@ class _LoginFormState extends State<LoginForm> {
                           prefixIcon: Icon(Icons.email),
                           labelText: 'Email',
                           hintText: 'Enter your email',
+                          filled: true,
+                          fillColor: Colors.white,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
@@ -188,6 +190,8 @@ class _LoginFormState extends State<LoginForm> {
                           prefixIcon: Icon(Icons.lock),
                           labelText: 'Password',
                           hintText: 'Enter your password',
+                          filled: true,
+                          fillColor: Colors.white,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),

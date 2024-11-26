@@ -18,11 +18,11 @@ import '../models/proposal_model.dart';
 import '../providers/user_provider.dart';
 import '../services/job_posting_service.dart';
 import 'agreement_screen.dart';
+import 'client_profile_creation.dart';
 import 'client_profile_update.dart';
 import 'login_form.dart';
 
 class ClientDashboard extends StatefulWidget {
-
   @override
   _ClientDashboardState createState() => _ClientDashboardState();
 }
@@ -44,7 +44,7 @@ class _ClientDashboardState extends State<ClientDashboard> {
   void initState() {
     super.initState();
     _getToken();
-    _getUserId();// Fetch the token when dashboard initializes
+    _getUserId(); // Fetch the token when dashboard initializes
     _loadUserFullName(); // Load the username from preferences when the screen is initialized
     _fetchTotalJobPostings(); // Fetch the data when the widget is created
     fetchJobs(); // Fetch jobs when the widget is initialized
@@ -84,7 +84,8 @@ class _ClientDashboardState extends State<ClientDashboard> {
         profileID = profileData['id'];
         // Check if profileImageUrl is not null
         if (data['profileImageUrl'] != null) {
-          profileImageUrl = data['profileImageUrl'].replaceFirst('localhost', localIp); // Update the image URL
+          profileImageUrl = data['profileImageUrl']
+              .replaceFirst('localhost', localIp); // Update the image URL
         } else {
           profileImageUrl = ''; // or set to a default image URL
         }
@@ -105,7 +106,8 @@ class _ClientDashboardState extends State<ClientDashboard> {
   Future<void> _loadUserFullName() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      username = prefs.getString('username') ?? 'User'; // Default to 'User' if null
+      username =
+          prefs.getString('username') ?? 'User'; // Default to 'User' if null
     });
   }
 
@@ -145,17 +147,20 @@ class _ClientDashboardState extends State<ClientDashboard> {
               },
               child: CircleAvatar(
                 radius: 20,
-                backgroundImage: profileImageUrl != null && profileImageUrl!.isNotEmpty
+                backgroundImage: profileImageUrl != null &&
+                        profileImageUrl!.isNotEmpty
                     ? NetworkImage(profileImageUrl!) // Display profile image
                     : null,
-                backgroundColor: profileImageUrl == null ? Colors.deepOrange : null,
+                backgroundColor:
+                    profileImageUrl == null ? Colors.deepOrange : null,
                 child: profileImageUrl == null || profileImageUrl!.isEmpty
                     ? Text(
-                  username.isNotEmpty
-                      ? username[0].toUpperCase() // First letter of username
-                      : 'C', // Default character if username is empty
-                  style: TextStyle(fontSize: 24, color: Colors.white),
-                )
+                        username.isNotEmpty
+                            ? username[0]
+                                .toUpperCase() // First letter of username
+                            : 'C', // Default character if username is empty
+                        style: TextStyle(fontSize: 24, color: Colors.white),
+                      )
                     : null,
               ),
             ),
@@ -167,7 +172,8 @@ class _ClientDashboardState extends State<ClientDashboard> {
       body: RefreshIndicator(
         onRefresh: _refreshDashboard, // The method to refresh the page
         child: SingleChildScrollView(
-          physics: AlwaysScrollableScrollPhysics(), // Ensure the widget is scrollable to trigger refresh
+          physics: AlwaysScrollableScrollPhysics(),
+          // Ensure the widget is scrollable to trigger refresh
           child: Column(
             children: [
               _buildSummaryCards(screenWidth),
@@ -180,7 +186,6 @@ class _ClientDashboardState extends State<ClientDashboard> {
       ),
     );
   }
-
 
   void _showNotifications(BuildContext context) {
     // This method will show the notifications in a dialog
@@ -267,7 +272,8 @@ class _ClientDashboardState extends State<ClientDashboard> {
 
   Future<String?> _getUserId() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString('user_id'); // Retrieve user ID from Shared Preferences
+    return prefs
+        .getString('user_id'); // Retrieve user ID from Shared Preferences
   }
 
   Future<bool> _checkIfProfileExists(BuildContext context) async {
@@ -281,16 +287,20 @@ class _ClientDashboardState extends State<ClientDashboard> {
 
     // Make an API call to check if the profile exists for the current user
     final response = await http.get(
-      Uri.parse('http://localhost:3000/api/clientProfile/check-profile/$user_id'), // Check your API endpoint
+      Uri.parse(
+          'http://localhost:3000/api/clientProfile/check-profile/$user_id'),
+      // Check your API endpoint
       headers: {
-        'Authorization': 'Bearer $token', // Ensure the token is included if necessary
+        'Authorization': 'Bearer $token',
+        // Ensure the token is included if necessary
         'Content-Type': 'application/json',
       },
     );
 
     if (response.statusCode == 200) {
       var responseBody = jsonDecode(response.body);
-      return responseBody['profileExists'] == true; // Return true if profile exists
+      return responseBody['profileExists'] ==
+          true; // Return true if profile exists
     } else {
       // Handle errors appropriately
       print("Error checking profile existence: ${response.statusCode}");
@@ -303,7 +313,11 @@ class _ClientDashboardState extends State<ClientDashboard> {
 
     if (profileExists) {
       // Navigate to the profile update page
-      Navigator.push(context, MaterialPageRoute(builder: (context) => ClientProfileUpdate(profileID: profileID.toString())));
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) =>
+                  ClientProfileUpdate(profileID: profileID.toString())));
     } else {
       // Suggest completing the profile creation process
       showDialog(
@@ -311,15 +325,17 @@ class _ClientDashboardState extends State<ClientDashboard> {
         builder: (BuildContext context) {
           return AlertDialog(
             title: Text('Profile Incomplete'),
-            content: Text('You need to complete your profile creation before updating it.'),
+            content: Text(
+                'You need to complete your profile creation before updating it.'),
             actions: <Widget>[
               TextButton(
                 child: Text('Create Profile'),
                 onPressed: () {
                   Navigator.pop(context); // Close the dialog
-                  // Navigator.push(
-                  //     context,
-                  //     MaterialPageRoute(builder: (context) => ClientProfileCreation()));
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ClientProfileCreation()));
                 },
               ),
               TextButton(
@@ -378,8 +394,9 @@ class _ClientDashboardState extends State<ClientDashboard> {
       // Navigate to the login screen
       Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(builder: (context) => LoginForm()), // Replace with your login screen widget
-            (Route<dynamic> route) => false, // Remove all routes
+        MaterialPageRoute(builder: (context) => LoginForm()),
+        // Replace with your login screen widget
+        (Route<dynamic> route) => false, // Remove all routes
       );
     }
   }
@@ -397,17 +414,20 @@ class _ClientDashboardState extends State<ClientDashboard> {
     String? user_id = await _getUserId();
     try {
       final response = await http.get(
-        Uri.parse('http://localhost:3000/api/jobPosting/totalJobPostings/$user_id'),
+        Uri.parse(
+            'http://localhost:3000/api/jobPosting/totalJobPostings/$user_id'),
       );
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         setState(() {
           totalJobPostings = data['totalJobPostings'];
-          print('Total Job Postings: $totalJobPostings'); // Print the total job postings for debugging
+          print(
+              'Total Job Postings: $totalJobPostings'); // Print the total job postings for debugging
         });
       } else {
-        print('Failed with status code: ${response.statusCode}'); // Log status code
+        print(
+            'Failed with status code: ${response.statusCode}'); // Log status code
         throw Exception('Failed to load job postings');
       }
     } catch (e) {
@@ -422,15 +442,31 @@ class _ClientDashboardState extends State<ClientDashboard> {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           // Pass a different image for each card
-          Expanded(child: _buildSummaryCard('Total Job Postings', totalJobPostings.toString(), screenWidth, 'assets/images/bg1.png')),
-          Expanded(child: _buildSummaryCard('Active Proposals', activeProposals.toString(), screenWidth, 'assets/images/bg2.png')),
-          Expanded(child: _buildSummaryCard('Ongoing Projects', ongoingProjects.toString(), screenWidth, 'assets/images/bg3.png')),
+          Expanded(
+              child: _buildSummaryCard(
+                  'Total Job Postings',
+                  totalJobPostings.toString(),
+                  screenWidth,
+                  'assets/images/bg1.png')),
+          Expanded(
+              child: _buildSummaryCard(
+                  'Active Proposals',
+                  activeProposals.toString(),
+                  screenWidth,
+                  'assets/images/bg2.png')),
+          Expanded(
+              child: _buildSummaryCard(
+                  'Ongoing Projects',
+                  ongoingProjects.toString(),
+                  screenWidth,
+                  'assets/images/bg3.png')),
         ],
       ),
     );
   }
 
-  Widget _buildSummaryCard(String title, String value, double screenWidth, String bgImagePath) {
+  Widget _buildSummaryCard(
+      String title, String value, double screenWidth, String bgImagePath) {
     return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15.0),
@@ -487,8 +523,6 @@ class _ClientDashboardState extends State<ClientDashboard> {
     );
   }
 
-
-
   Widget _buildJobPostingsSection(BuildContext context, double screenWidth) {
     return Padding(
       padding: EdgeInsets.all(screenWidth * 0.05), // Responsive padding
@@ -506,7 +540,8 @@ class _ClientDashboardState extends State<ClientDashboard> {
           SizedBox(height: screenWidth * 0.03),
           ElevatedButton(
             onPressed: () {
-              _showJobTypeSelectionDialog(context); // Show the job type selection dialog
+              _showJobTypeSelectionDialog(
+                  context); // Show the job type selection dialog
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.white, // Button background color
@@ -525,7 +560,6 @@ class _ClientDashboardState extends State<ClientDashboard> {
     );
   }
 
-
   void _showJobTypeSelectionDialog(BuildContext context) {
     final _titleController = TextEditingController();
     final _descriptionController = TextEditingController();
@@ -535,7 +569,9 @@ class _ClientDashboardState extends State<ClientDashboard> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('+ Create New Job Posting', style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold)),
+          title: Text('+ Create New Job Posting',
+              style:
+                  TextStyle(color: primaryColor, fontWeight: FontWeight.bold)),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -551,10 +587,12 @@ class _ClientDashboardState extends State<ClientDashboard> {
                       borderRadius: BorderRadius.circular(8.0),
                     ),
                     focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.blueAccent, width: 2.0),
+                      borderSide:
+                          BorderSide(color: Colors.blueAccent, width: 2.0),
                       borderRadius: BorderRadius.circular(8.0),
                     ),
-                    contentPadding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 10.0),
+                    contentPadding:
+                        EdgeInsets.symmetric(vertical: 15.0, horizontal: 10.0),
                   ),
                 ),
                 SizedBox(height: 16),
@@ -570,10 +608,12 @@ class _ClientDashboardState extends State<ClientDashboard> {
                       borderRadius: BorderRadius.circular(8.0),
                     ),
                     focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.blueAccent, width: 2.0),
+                      borderSide:
+                          BorderSide(color: Colors.blueAccent, width: 2.0),
                       borderRadius: BorderRadius.circular(8.0),
                     ),
-                    contentPadding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 10.0),
+                    contentPadding:
+                        EdgeInsets.symmetric(vertical: 15.0, horizontal: 10.0),
                   ),
                 ),
                 SizedBox(height: 16),
@@ -610,11 +650,14 @@ class _ClientDashboardState extends State<ClientDashboard> {
             TextButton(
               child: Text('Proceed', style: TextStyle(color: Colors.green)),
               onPressed: () async {
-                if (_titleController.text.isNotEmpty && _descriptionController.text.isNotEmpty && selectedCategory != null) {
-
+                if (_titleController.text.isNotEmpty &&
+                    _descriptionController.text.isNotEmpty &&
+                    selectedCategory != null) {
                   // Retrieve the current user from the UserProvider
-                  final userProvider = Provider.of<UserProvider>(context, listen: false);
-                  String? currentUserIdStr = userProvider.currentUser?.userId?.toString();
+                  final userProvider =
+                      Provider.of<UserProvider>(context, listen: false);
+                  String? currentUserIdStr =
+                      userProvider.currentUser?.userId?.toString();
 
                   if (currentUserIdStr == null) {
                     print("User ID is not available.");
@@ -622,10 +665,12 @@ class _ClientDashboardState extends State<ClientDashboard> {
                   }
 
                   // Convert currentUserId from String to int
-                  int currentUserId = int.tryParse(currentUserIdStr) ?? 0; // Use a default value if parsing fails
+                  int currentUserId = int.tryParse(currentUserIdStr) ??
+                      0; // Use a default value if parsing fails
 
                   // Retrieve the job posting service
-                  final jobPostingService = Provider.of<JobPostingService>(context, listen: false);
+                  final jobPostingService =
+                      Provider.of<JobPostingService>(context, listen: false);
                   // First, initialize job posting with user ID
                   jobPostingService.initializeJobPosting(currentUserId);
                   // Set the job posting data temporarily
@@ -644,7 +689,8 @@ class _ClientDashboardState extends State<ClientDashboard> {
                     await jobPostingService.storeTempJob();
 
                     // Optionally, check the stored data after submission
-                    jobPostingService.printCurrentJobPostingDetails(); // For debugging
+                    jobPostingService
+                        .printCurrentJobPostingDetails(); // For debugging
 
                     // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                     //   content: Text('Job posting stored successfully!'),
@@ -670,7 +716,8 @@ class _ClientDashboardState extends State<ClientDashboard> {
                         targetPage = MobileAppDevelopmentJobPostingForm();
                         break;
                       case 'Database Design & Management':
-                        targetPage = DatabaseDesignAndManagementJobPostingForm();
+                        targetPage =
+                            DatabaseDesignAndManagementJobPostingForm();
                         break;
                       case 'UI/UX Design':
                         targetPage = UIUXDesignJobPostingForm();
@@ -691,7 +738,8 @@ class _ClientDashboardState extends State<ClientDashboard> {
                         builder: (context) => targetPage,
                       ),
                     ).then((_) {
-                      Navigator.of(context).pop(); // Close the dialog after navigating
+                      Navigator.of(context)
+                          .pop(); // Close the dialog after navigating
                     });
                   } catch (e) {
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -700,7 +748,8 @@ class _ClientDashboardState extends State<ClientDashboard> {
                   }
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text('Please fill out all fields and select a category.'),
+                    content: Text(
+                        'Please fill out all fields and select a category.'),
                   ));
                 }
               },
@@ -712,12 +761,13 @@ class _ClientDashboardState extends State<ClientDashboard> {
               },
             ),
           ],
-          );
-        },
+        );
+      },
     );
   }
 
-  Widget _buildJobTypeListTile(BuildContext context, String title, Widget page, Color color) {
+  Widget _buildJobTypeListTile(
+      BuildContext context, String title, Widget page, Color color) {
     return ListTile(
       title: Text(title, style: TextStyle(color: color)),
       onTap: () {
@@ -739,12 +789,14 @@ class _ClientDashboardState extends State<ClientDashboard> {
         final data = json.decode(response.body);
         setState(() {
           jobs = List<Map<String, String>>.from(data['jobs'].map((job) => {
-            'job_id': job['job_id'].toString(),  // Include jobId here
-            'title': job['title'].toString(),
-            'description': job['description'].toString(), // Add description here
-            'category': job['category'].toString(),
-            // 'status': job['status']
-          }));
+                'job_id': job['job_id'].toString(),
+                // Include jobId here
+                'title': job['title'].toString(),
+                'description': job['description'].toString(),
+                // Add description here
+                'category': job['category'].toString(),
+                // 'status': job['status']
+              }));
         });
       } else {
         print('Failed to load jobs');
@@ -754,77 +806,144 @@ class _ClientDashboardState extends State<ClientDashboard> {
     }
   }
 
-  // Function to delete a job
-  void _deleteJob(int index) {
-    setState(() {
-      jobs.removeAt(index); // Remove job from list
-    });
-    // You can also send a delete request to your backend here
+  Future<void> _deleteJob(int job_id) async {
+    final url = 'http://localhost:3000/api/jobPosting/$job_id';
+    print("Request URL: $url");
+
+    try {
+      final response = await http.delete(
+        Uri.parse(url),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+      if (response.statusCode == 200) {
+        // Update the local list immediately
+        // setState(() {
+        //   jobs.removeAt(job_id); // Remove the job from the list using the index
+        // });
+        print("Job deleted successfully on the server.");
+        _fetchTotalJobPostings(); // Update the UI after deletion
+        await fetchJobs();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Job deleted successfully!")),
+        );
+      } else if (response.statusCode == 404) {
+        print("Job not found.");
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Job not found.")),
+        );
+      } else if (response.statusCode == 403) {
+        print("Unauthorized: You don't have permission to delete this job.");
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Unauthorized action.")),
+        );
+      } else {
+        print("Failed to delete job. Status code: ${response.statusCode}");
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Failed to delete job. Please try again.")),
+        );
+      }
+    } catch (e) {
+      print("Exception occurred during job deletion: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error deleting job.")),
+      );
+    }
   }
 
-  // Job postings widget
+
   Widget _buildActiveJobPostingsList(double screenWidth) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Job postings (show all jobs fetched from API)
-        ListView.builder(
-          shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
-          itemCount: jobs.length > 2 ? 2 : jobs.length, // Show only 2 jobs or fewer if not available
-          itemBuilder: (context, index) {
-            final job = jobs.reversed.toList()[index]; // Reverse the order of jobs
-            return Card(
-              color: Colors.white,
-              margin: EdgeInsets.symmetric(vertical: screenWidth * 0.02), // Responsive margin
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15.0),
-              ),
-              elevation: 4,
-              child: ListTile(
-                title: Text(
-                  job['title']!,
-                  style: TextStyle(fontSize: screenWidth * 0.04, color: Colors.deepOrange, fontWeight: FontWeight.bold),
-                ),
-                subtitle: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Description: ${job['description']}'), // Display job description
-                    Text('Category: ${job['category']}'),
-                  ],
-                ),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    IconButton(
-                      icon: Icon(Icons.edit, color: Colors.orange),
-                      onPressed: () {
-                        // Implement edit functionality
-                      },
+        jobs.isEmpty
+            ? Center(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(vertical: screenWidth * 0.05),
+                  child: Text(
+                    "You haven't posted a job yet",
+                    style: TextStyle(
+                      fontSize: screenWidth * 0.045,
+                      fontWeight: FontWeight.w400,
+                      color: Colors.grey,
                     ),
-                    IconButton(
-                      icon: Icon(Icons.delete, color: Colors.redAccent),
-                      onPressed: () {
-                        // Remove job from the list when delete is pressed
-                        _deleteJob(index);
-                      },
-                    ),
-                  ],
+                  ),
                 ),
-                onTap: () {
-                  // Navigate to JobDetailsPage when tapped
-                  // Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(
-                  //     builder: (context) => JobDetailsPage(jobId: int.parse(job['job_id']!)),
-                  //   ),
-                  // );
-                },
               )
-            );
-          },
-        ),
-        // Add "View All" button aligned to the right
+            : ListView.builder(
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                itemCount: jobs.length > 2 ? 2 : jobs.length,
+                // Show only 2 jobs or fewer if not available
+                itemBuilder: (context, index) {
+                  final job = jobs.reversed
+                      .toList()[index]; // Reverse the order of jobs
+                  return Card(
+                    color: Colors.white,
+                    margin: EdgeInsets.symmetric(vertical: screenWidth * 0.02),
+                    // Responsive margin
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15.0),
+                    ),
+                    elevation: 4,
+                    child: ListTile(
+                      title: Text(
+                        job['title']!,
+                        style: TextStyle(
+                          fontSize: screenWidth * 0.04,
+                          color: Colors.deepOrange,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Description: ${job['description']}'),
+                          // Display job description
+                          Text('Category: ${job['category']}'),
+                        ],
+                      ),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            icon: Icon(Icons.edit, color: Colors.orange),
+                            onPressed: () {
+                              // Implement edit functionality
+                            },
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.delete, color: Colors.redAccent),
+                            onPressed: () {
+                              final jobId = int.tryParse(job['job_id'] ?? '0') ?? 0;
+                              print("Attempting to delete job ID: $jobId");
+                              if (jobId > 0) {
+                                _deleteJob(jobId); // Call the delete function with job ID
+                              } else {
+                                print("Invalid job ID");
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text("Invalid job ID")),
+                                );
+                              }
+                            },
+                          ),
+                        ],
+                      ),
+                      onTap: () {
+                        // Navigate to JobDetailsPage when tapped
+                        // Navigator.push(
+                        //   context,
+                        //   MaterialPageRoute(
+                        //     builder: (context) => JobDetailsPage(jobId: int.parse(job['job_id']!)),
+                        //   ),
+                        // );
+                      },
+                    ),
+                  );
+                },
+              ),
         Row(
           mainAxisAlignment: MainAxisAlignment.end, // Align button to the right
           children: [
@@ -843,7 +962,8 @@ class _ClientDashboardState extends State<ClientDashboard> {
                 style: TextStyle(
                   fontSize: screenWidth * 0.035,
                   color: Colors.deepOrange,
-                  decoration: TextDecoration.underline, // Adds underline to the text
+                  decoration:
+                      TextDecoration.underline, // Adds underline to the text
                 ),
               ),
             ),
@@ -866,15 +986,20 @@ class _ClientDashboardState extends State<ClientDashboard> {
     final response = await http.get(
       Uri.parse('http://localhost:3000/api/proposals/client'),
       headers: {
-        'Authorization': 'Bearer $token', // Add the token in the header// Include the token in the request headers
+        'Authorization': 'Bearer $token',
+        // Add the token in the header// Include the token in the request headers
       },
     );
     if (response.statusCode == 200) {
       Map<String, dynamic> jsonResponse = json.decode(response.body);
-      List<dynamic> proposalsList = jsonResponse['proposals']; // Extracting the list from the response
-      return proposalsList.map((proposal) => Proposal.fromJson(proposal)).toList();
+      List<dynamic> proposalsList =
+          jsonResponse['proposals']; // Extracting the list from the response
+      return proposalsList
+          .map((proposal) => Proposal.fromJson(proposal))
+          .toList();
     } else {
-      print('Error: ${response.statusCode} - ${response.body}'); // Log the error response
+      print(
+          'Error: ${response.statusCode} - ${response.body}'); // Log the error response
       throw Exception('Failed to load proposals');
     }
   }
@@ -928,7 +1053,8 @@ class _ClientDashboardState extends State<ClientDashboard> {
     if (result == 'agreement_confirmed') {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('You have accepted the proposal for: ${proposal.title}'),
+          content:
+              Text('You have accepted the proposal for: ${proposal.title}'),
           duration: Duration(seconds: 3),
         ),
       );
@@ -950,7 +1076,6 @@ class _ClientDashboardState extends State<ClientDashboard> {
     // _notifyFreelancer(proposal.freelancerId, 'Your proposal has been declined.');
   }
 
-
   Widget _buildProposalsSection(double screenWidth) {
     return Padding(
       padding: EdgeInsets.all(screenWidth * 0.05),
@@ -968,8 +1093,7 @@ class _ClientDashboardState extends State<ClientDashboard> {
           SizedBox(height: screenWidth * 0.03),
 
           // Loading Indicator
-          if (isLoading)
-            Center(child: CircularProgressIndicator()),
+          if (isLoading) Center(child: CircularProgressIndicator()),
 
           // Check if there are any proposals
           if (!isLoading && proposals.isEmpty)
@@ -1015,7 +1139,8 @@ class _ClientDashboardState extends State<ClientDashboard> {
                                 text: proposal.name,
                                 style: TextStyle(
                                   fontSize: screenWidth * 0.045,
-                                  color: Colors.deepOrange, // Set the name color to black
+                                  color: Colors.deepOrange,
+                                  // Set the name color to black
                                   fontWeight: FontWeight.bold,
                                   // decoration: TextDecoration.underline, // Optional: underline to indicate clickability
                                 ),
@@ -1046,9 +1171,13 @@ class _ClientDashboardState extends State<ClientDashboard> {
                         Text('Proposed Budget: Rs. ${proposal.budget}'),
                         SizedBox(height: screenWidth * 0.01),
                         Text(
-                          proposal.useEscrow ? 'Payment will be held in Escrow' : 'Payment after job completion',
+                          proposal.useEscrow
+                              ? 'Payment will be held in Escrow'
+                              : 'Payment after job completion',
                           style: TextStyle(
-                            color: proposal.useEscrow ? Colors.deepOrange : Colors.orange,
+                            color: proposal.useEscrow
+                                ? Colors.deepOrange
+                                : Colors.orange,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -1062,11 +1191,12 @@ class _ClientDashboardState extends State<ClientDashboard> {
                               width: screenWidth * 0.35,
                               child: ElevatedButton(
                                 onPressed: () {
-                                  _handleAcceptProposal(context, proposal); // Pass context and useEscrow argument
+                                  _handleAcceptProposal(context,
+                                      proposal); // Pass context and useEscrow argument
                                 },
                                 style: ElevatedButton.styleFrom(
-                                  // backgroundColor: Colors.white, // Button background color
-                                ),
+                                    // backgroundColor: Colors.white, // Button background color
+                                    ),
                                 child: Text('Accept'),
                               ),
                             ),
@@ -1077,8 +1207,8 @@ class _ClientDashboardState extends State<ClientDashboard> {
                                   _handleDeclineProposal(proposal);
                                 },
                                 style: ElevatedButton.styleFrom(
-                                  // backgroundColor: Colors.white, // Button background color
-                                ),
+                                    // backgroundColor: Colors.white, // Button background color
+                                    ),
                                 child: Text('Decline'),
                               ),
                             ),
@@ -1094,8 +1224,6 @@ class _ClientDashboardState extends State<ClientDashboard> {
       ),
     );
   }
-
-
 
   Widget _buildOngoingProjectsSection(double screenWidth) {
     return Padding(
@@ -1118,9 +1246,12 @@ class _ClientDashboardState extends State<ClientDashboard> {
             itemCount: 2, // Replace with actual project count
             itemBuilder: (context, index) {
               return Card(
-                margin: EdgeInsets.symmetric(vertical: screenWidth * 0.02), // Responsive margin
+                margin: EdgeInsets.symmetric(vertical: screenWidth * 0.02),
+                // Responsive margin
                 child: ListTile(
-                  title: Text('Project Title $index', style: TextStyle(fontSize: screenWidth * 0.04)), // Responsive font size
+                  title: Text('Project Title $index',
+                      style: TextStyle(fontSize: screenWidth * 0.04)),
+                  // Responsive font size
                   subtitle: Text('Status: In Progress\nDeadline: 2023-12-01'),
                   trailing: IconButton(
                     icon: Icon(Icons.message),
@@ -1137,4 +1268,3 @@ class _ClientDashboardState extends State<ClientDashboard> {
     );
   }
 }
-

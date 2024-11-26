@@ -121,6 +121,8 @@ class _FreelancerProfileCreationState extends State<FreelancerProfileCreation> {
               controller: _nameController,
               decoration: InputDecoration(
                 labelText: 'Full Name',
+                filled: true,
+                fillColor: Colors.white,
                 border: OutlineInputBorder(),
               ),
             ),
@@ -128,7 +130,10 @@ class _FreelancerProfileCreationState extends State<FreelancerProfileCreation> {
             TextField(
               controller: _bioController,
               decoration: InputDecoration(
-                  labelText: 'Bio', border: OutlineInputBorder()),
+                  filled: true,
+                  fillColor: Colors.white,
+                  labelText: 'Bio',
+                  border: OutlineInputBorder()),
               maxLines: 3,
             ),
           ],
@@ -140,6 +145,8 @@ class _FreelancerProfileCreationState extends State<FreelancerProfileCreation> {
         content: TextField(
           controller: _skillsController,
           decoration: InputDecoration(
+            filled: true,
+            fillColor: Colors.white,
             labelText: 'Skills (comma separated)',
             border: OutlineInputBorder(),
           ),
@@ -152,6 +159,8 @@ class _FreelancerProfileCreationState extends State<FreelancerProfileCreation> {
           controller: _experienceController,
           decoration: InputDecoration(
             labelText: 'Work Experience',
+            filled: true,
+            fillColor: Colors.white,
             border: OutlineInputBorder(),
           ),
           maxLines: 3,
@@ -234,6 +243,8 @@ class _FreelancerProfileCreationState extends State<FreelancerProfileCreation> {
           controller: _educationController,
           decoration: InputDecoration(
             labelText: 'Education',
+            filled: true,
+            fillColor: Colors.white,
             border: OutlineInputBorder(),
           ),
         ),
