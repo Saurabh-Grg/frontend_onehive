@@ -222,30 +222,37 @@ class _ClientDashboardState extends State<ClientDashboard> {
       child: ListView(
         padding: EdgeInsets.zero,
         children: <Widget>[
-          DrawerHeader(
-            child: Text('Navigation'),
-            decoration: BoxDecoration(
-              color: Colors.orange,
+          Container(
+            height: 150.0,
+            child: DrawerHeader(
+              child: Text(
+                'Navigation',
+                style: TextStyle(color: Colors.deepOrange, fontSize: 24, fontWeight: FontWeight.bold),
+              ),
+              decoration: BoxDecoration(
+                color: Colors.transparent,
+              ),
             ),
           ),
           ListTile(
+            leading: Icon(Icons.settings), // Icon for Account Settings
             title: Text('Account Settings'),
             onTap: () {
               // Implement navigation to account settings
             },
           ),
-
           ListTile(
+            leading: Icon(Icons.attach_money),
             title: Text('Payment Information'),
             onTap: () {
               // Implement navigation to payment information
               // Navigator.push(context, MaterialPageRoute(builder: (context) => PaymentInformation()));
             },
           ),
-
           //dark mode to-do
           Container(
             child: ListTile(
+              leading: Icon(Icons.dark_mode), // Icon for Dark Mode
               title: Text('Dark Mode'),
               trailing: Switch(
                 value: isDarkMode,
@@ -258,8 +265,8 @@ class _ClientDashboardState extends State<ClientDashboard> {
               ),
             ),
           ),
-
           ListTile(
+            leading: Icon(Icons.logout), // Icon for Log Out
             title: Text('Log Out'),
             onTap: () {
               _logout(context);
@@ -920,7 +927,31 @@ class _ClientDashboardState extends State<ClientDashboard> {
                               final jobId = int.tryParse(job['job_id'] ?? '0') ?? 0;
                               print("Attempting to delete job ID: $jobId");
                               if (jobId > 0) {
-                                _deleteJob(jobId); // Call the delete function with job ID
+                                // Show confirmation dialog
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: Text("Confirm Deletion"),
+                                      content: Text("Are you sure you want to delete this job?"),
+                                      actions: [
+                                        TextButton(
+                                          child: Text("Cancel"),
+                                          onPressed: () {
+                                            Navigator.of(context).pop(); // Close the dialog
+                                          },
+                                        ),
+                                        TextButton(
+                                          child: Text("Delete", style: TextStyle(color: Colors.red)),
+                                          onPressed: () {
+                                            Navigator.of(context).pop(); // Close the dialog
+                                            _deleteJob(jobId); // Call the delete function
+                                          },
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
                               } else {
                                 print("Invalid job ID");
                                 ScaffoldMessenger.of(context).showSnackBar(
@@ -929,6 +960,7 @@ class _ClientDashboardState extends State<ClientDashboard> {
                               }
                             },
                           ),
+
                         ],
                       ),
                       onTap: () {

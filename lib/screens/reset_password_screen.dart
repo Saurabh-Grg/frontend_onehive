@@ -2,66 +2,83 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-class ResetPasswordScreen extends StatefulWidget {
-  final String resetToken;
+class ResetPasswordPage extends StatefulWidget {
+  final String email;
 
-  ResetPasswordScreen({required this.resetToken});
+  ResetPasswordPage({required this.email});
 
   @override
-  _ResetPasswordScreenState createState() => _ResetPasswordScreenState();
+  _ResetPasswordPageState createState() => _ResetPasswordPageState();
 }
 
-class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
-  final _passwordController = TextEditingController();
+class _ResetPasswordPageState extends State<ResetPasswordPage> {
+  final _newPasswordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
   bool _isLoading = false;
+  String? _newPasswordError;
+  String? _confirmPasswordError;
+  bool _obscureNewPassword = true;
+  bool _obscureConfirmPassword = true;
 
   Future<void> _resetPassword() async {
-    final password = _passwordController.text.trim();
-    final confirmPassword = _confirmPasswordController.text.trim();
-
-    if (password.isEmpty || confirmPassword.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please fill in both password fields')),
-      );
-      return;
-    }
-
-    if (password != confirmPassword) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Passwords do not match')),
-      );
-      return;
-    }
-
     setState(() {
       _isLoading = true;
+      _newPasswordError = null;
+      _confirmPasswordError = null;
     });
 
+    final newPassword = _newPasswordController.text.trim();
+    final confirmPassword = _confirmPasswordController.text.trim();
+
+    if (newPassword.isEmpty || confirmPassword.isEmpty) {
+      setState(() {
+        _newPasswordError = newPassword.isEmpty ? 'Enter a new password' : null;
+        _confirmPasswordError = confirmPassword.isEmpty ? 'Confirm your password' : null;
+        _isLoading = false;
+      });
+      return;
+    }
+
+    if (newPassword != confirmPassword) {
+      setState(() {
+        _confirmPasswordError = 'Passwords do not match';
+        _isLoading = false;
+      });
+      return;
+    }
+
     try {
+      print('Sending reset password request...');
       final response = await http.post(
-        Uri.parse('http://localhost:3000/api/auth/reset-password'),
+        Uri.parse('http://127.0.0.1:3000/api/auth/reset-password'),
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'reset_token': widget.resetToken,
-          'new_password': password,
+        body: json.encode({
+          'email': widget.email,
+          'newPassword': newPassword,
+          'confirmPassword': confirmPassword, // Make sure you're sending both
         }),
       );
 
+      print('Response status code: ${response.statusCode}');
+      print('Response body: ${response.body}');
+
+      final responseData = json.decode(response.body);
+
       if (response.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Password reset successful')),
+          SnackBar(content: Text(responseData['message'])),
         );
-        Navigator.pop(context); // Go back to login screen
+        Navigator.pushReplacementNamed(context, '/login');
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to reset password')),
-        );
+        setState(() {
+          _newPasswordError = responseData['message'] ?? 'Error resetting password';
+        });
       }
     } catch (error) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('An error occurred: $error')),
-      );
+      print('Error: $error');
+      setState(() {
+        _newPasswordError = 'Failed to reset password. Please try again.';
+      });
     } finally {
       setState(() {
         _isLoading = false;
@@ -69,34 +86,64 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
     }
   }
 
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Reset Password'),
-      ),
+      appBar: AppBar(title: Text('Reset Password')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             TextField(
-              controller: _passwordController,
-              obscureText: true,
-              decoration: InputDecoration(labelText: 'New Password'),
-            ),
-            SizedBox(height: 10),
-            TextField(
-              controller: _confirmPasswordController,
-              obscureText: true,
-              decoration: InputDecoration(labelText: 'Confirm Password'),
+              controller: _newPasswordController,
+              obscureText: _obscureNewPassword,
+              decoration: InputDecoration(
+                labelText: 'New Password',
+                errorText: _newPasswordError,
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    _obscureNewPassword
+                        ? Icons.visibility
+                        : Icons.visibility_off,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _obscureNewPassword = !_obscureNewPassword;
+                    });
+                  },
+                ),
+              ),
             ),
             SizedBox(height: 20),
-            _isLoading
-                ? Center(child: CircularProgressIndicator())
-                : ElevatedButton(
-              onPressed: _resetPassword,
-              child: Text('Reset Password'),
+            TextField(
+              controller: _confirmPasswordController,
+              obscureText: _obscureConfirmPassword,
+              decoration: InputDecoration(
+                labelText: 'Confirm Password',
+                errorText: _confirmPasswordError,
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    _obscureConfirmPassword
+                        ? Icons.visibility
+                        : Icons.visibility_off,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _obscureConfirmPassword = !_obscureConfirmPassword;
+                    });
+                  },
+                ),
+              ),
+            ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: _isLoading ? null : _resetPassword,
+              child: _isLoading
+                  ? CircularProgressIndicator()
+                  : Text('Reset Password'),
             ),
           ],
         ),

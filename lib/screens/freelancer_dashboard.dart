@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:onehive_frontend/screens/proposal_form.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'freelancer_profile_creation.dart';
@@ -451,13 +452,13 @@ class _FreelancerDashboardState extends State<FreelancerDashboard> {
                         style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.white),
                         onPressed: () {
-                          // showModalBottomSheet(
-                          //   context: context,
-                          //   isScrollControlled: true,
-                          //   builder: (context) => ProposalForm(
-                          //     jobId: job['job_id'],
-                          //   ),
-                          // );
+                          showModalBottomSheet(
+                            context: context,
+                            isScrollControlled: true,
+                            builder: (context) => ProposalForm(
+                              jobId: job['job_id'],
+                            ),
+                          );
                         },
                         child: Text(
                           'Send Proposal',

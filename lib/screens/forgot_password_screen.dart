@@ -2,133 +2,92 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
+import 'enter_otp_page.dart';
+
 class ForgotPasswordScreen extends StatefulWidget {
   @override
   _ForgotPasswordScreenState createState() => _ForgotPasswordScreenState();
 }
 
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
-  final TextEditingController _emailController = TextEditingController();
-  String _message = '';
-  bool _isLoading = false;  // Track loading state
-
-  // Validation function for email input
-  String? _validateEmail(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Please enter your email';
-    }
-    final emailRegex = RegExp(r'\S+@\S+\.\S+');
-    if (!emailRegex.hasMatch(value)) {
-      return 'Enter a valid email address';
-    }
-    return null;
-  }
+  final _emailController = TextEditingController();
+  String? _errorMessage;
+  bool _isLoading = false; // Track loading state
 
   // Submit the Forgot Password request
   Future<void> _submitForgotPassword() async {
-    // Ensure the email is valid before proceeding
-    String? emailValidationError = _validateEmail(_emailController.text);
-    if (emailValidationError != null) {
-      // Show validation error if email is invalid
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    final email = _emailController.text.trim();
+
+    if (email.isEmpty) {
       setState(() {
-        _message = emailValidationError;
+        _errorMessage = 'Please enter your email address';
+        _isLoading = false;
       });
-      return; // Don't proceed further if email is invalid
+      return;
     }
-
-    setState(() {
-      _isLoading = true; // Show loading indicator
-    });
-
-    final response = await http.post(
-      Uri.parse('http://localhost:3000/api/auth/request-password-reset'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'email': _emailController.text}),
-    );
-
-    setState(() {
-      _isLoading = false; // Hide loading indicator after request completes
-    });
-
-    if (response.statusCode == 200) {
-      // Show success message in SnackBar
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Password reset link sent to your email.')),
+    try {
+      final response = await http.post(
+        Uri.parse('http://localhost:3000/api/auth/forgot-password'),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: json.encode({'email': email}),
       );
 
-      // Clear the email field
-      _emailController.clear();
+      print('Response body: ${response.body}'); // Log response body
 
+      final responseData = json.decode(response.body);
+
+      if (response.statusCode == 200) {
+        // OTP sent successfully
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(responseData['message']),
+        ));
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => EnterOTPPage(email: email),
+          ),
+        );
+      } else {
+        // Error response
+        setState(() {
+          _errorMessage = responseData['message'] ?? 'An error occurred';
+        });
+      }
+    } catch (error) {
+      print('Error: $error'); // Log the error for debugging
       setState(() {
-        _message = '';
+        _errorMessage = 'Failed to send OTP. Please try again later.';
       });
-
-
-    } else {
-      // Show error message in SnackBar
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: ${jsonDecode(response.body)['message']}')),
-      );
-
+    } finally {
       setState(() {
-        _message = 'Error: ${jsonDecode(response.body)['message']}';
+        _isLoading = false;
       });
     }
   }
-
-  // Future<void> _submitForgotPassword() async {
-  //   if (!_validateEmail(_emailController.text)!.isEmpty) {
-  //     setState(() {
-  //       _isLoading = true; // Show loading indicator
-  //     });
-  //
-  //     final response = await http.post(
-  //       Uri.parse('http://localhost:3000/api/auth/request-password-reset'),
-  //       headers: {'Content-Type': 'application/json'},
-  //       body: jsonEncode({'email': _emailController.text}),
-  //     );
-  //
-  //     setState(() {
-  //       _isLoading = false; // Hide loading indicator after request completes
-  //     });
-  //
-  //     if (response.statusCode == 200) {
-  //       // Show success message in SnackBar
-  //       ScaffoldMessenger.of(context).showSnackBar(
-  //         SnackBar(content: Text('Password reset link sent to your email.')),
-  //       );
-  //
-  //       // Clear the email field
-  //       _emailController.clear();
-  //
-  //       setState(() {
-  //         _message = '';
-  //       });
-  //     } else {
-  //       // Show error message in SnackBar
-  //       ScaffoldMessenger.of(context).showSnackBar(
-  //         SnackBar(content: Text('Error: ${jsonDecode(response.body)['message']}')),
-  //       );
-  //
-  //       setState(() {
-  //         _message = 'Error: ${jsonDecode(response.body)['message']}';
-  //       });
-  //     }
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(
-        'Forgot Your Password?',
-        style: TextStyle(
-          fontSize: 24,
-          fontWeight: FontWeight.bold,
-          color: Colors.black,
+      appBar: AppBar(
+        title: Text(
+          'Forgot Your Password?',
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
         ),
-      ),),
-      body: Stack(  // Use Stack to overlay the loading indicator
+        centerTitle: true,
+      ),
+      body: Stack(
+        // Use Stack to overlay the loading indicator
         children: [
           Padding(
             padding: const EdgeInsets.all(20.0),
@@ -136,7 +95,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Image.asset(
-                  'assets/images/passwordReset.png', // Ensure the image is added to assets folder
+                  'assets/images/passwordReset.png',
+                  // Ensure the image is added to assets folder
                   width: 200, // Adjust the width as needed
                   height: 200, // Adjust the height as needed
                 ),
@@ -145,7 +105,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 // Email Input Field
                 TextFormField(
                   controller: _emailController,
-                  validator: _validateEmail,
+                  // validator: _validateEmail,
                   keyboardType: TextInputType.emailAddress,
                   decoration: InputDecoration(
                     labelText: 'Enter your email',
@@ -154,7 +114,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     border: OutlineInputBorder(),
                     filled: true,
                     fillColor: Colors.white,
-                    contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+                    contentPadding:
+                        EdgeInsets.symmetric(vertical: 15, horizontal: 20),
                   ),
                 ),
                 SizedBox(height: 20),
@@ -190,16 +151,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   ),
                 ),
                 SizedBox(height: 20),
-
-                // Error Message
-                if (_message.isNotEmpty)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    child: Text(
-                      _message,
-                      style: TextStyle(color: Colors.red, fontSize: 16),
-                    ),
-                  ),
               ],
             ),
           ),
