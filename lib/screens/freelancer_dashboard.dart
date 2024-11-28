@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:onehive_frontend/screens/proposal_form.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'client_profile_page.dart';
 import 'freelancer_profile_creation.dart';
 import 'freelancer_profile_update.dart';
 import 'login_form.dart';
@@ -508,13 +509,13 @@ class _FreelancerDashboardState extends State<FreelancerDashboard> {
 
   // Method to navigate to the ClientProfilePage
   void _viewClientDetails(int clientId, BuildContext context) {
-    // Navigator.push(
-    //   context,
-    //   MaterialPageRoute(
-    //     builder: (context) => ClientProfilePage(
-    //         clientId: clientId), // Pass the clientId to the profile page
-    //   ),
-    // );
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ClientProfilePage(
+            clientId: clientId), // Pass the clientId to the profile page
+      ),
+    );
   }
 
   void _viewJobDetails(int jobId) {

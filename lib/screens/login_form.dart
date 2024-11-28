@@ -163,7 +163,7 @@ class _LoginFormState extends State<LoginForm> {
                       TextFormField(
                         controller: _emailController,
                         decoration: InputDecoration(
-                          prefixIcon: Icon(Icons.email),
+                          prefixIcon: Icon(Icons.email, color: Colors.deepOrange,),
                           labelText: 'Email',
                           hintText: 'Enter your email',
                           filled: true,
@@ -187,7 +187,7 @@ class _LoginFormState extends State<LoginForm> {
                         controller: _passwordController,
                         obscureText: !_isPasswordVisible, // Toggle password visibility
                         decoration: InputDecoration(
-                          prefixIcon: Icon(Icons.lock),
+                          prefixIcon: Icon(Icons.lock, color: Colors.deepOrange,),
                           labelText: 'Password',
                           hintText: 'Enter your password',
                           filled: true,

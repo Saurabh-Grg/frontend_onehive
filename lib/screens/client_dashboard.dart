@@ -20,6 +20,8 @@ import '../services/job_posting_service.dart';
 import 'agreement_screen.dart';
 import 'client_profile_creation.dart';
 import 'client_profile_update.dart';
+import 'escrow_payment_page.dart';
+import 'freelancer_profile_page.dart';
 import 'login_form.dart';
 
 class ClientDashboard extends StatefulWidget {
@@ -1054,12 +1056,12 @@ class _ClientDashboardState extends State<ClientDashboard> {
 
   void _handleAcceptProposal(BuildContext context, Proposal proposal) {
     if (proposal.useEscrow) {
-      // Navigator.push(
-      //   context,
-      //   MaterialPageRoute(
-      //     builder: (context) => EscrowPaymentPage(proposal: proposal),
-      //   ),
-      // );
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => EscrowPaymentPage(proposal: proposal),
+        ),
+      );
     } else {
       _acceptProposal(proposal);
     }
@@ -1179,14 +1181,14 @@ class _ClientDashboardState extends State<ClientDashboard> {
                                 recognizer: TapGestureRecognizer()
                                   ..onTap = () {
                                     // Define your click action here
-                                    // Navigator.push(
-                                    //   context,
-                                    //   MaterialPageRoute(
-                                    //     builder: (context) => FreelancerProfilePage(
-                                    //       freelancerId: proposal.freelancerId.toString(), // Convert freelancerId to a String // Pass freelancerId to the profile page
-                                    //     ),
-                                    //   ),
-                                    // );
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => FreelancerProfilePage(
+                                          freelancerId: proposal.freelancerId.toString(), // Convert freelancerId to a String // Pass freelancerId to the profile page
+                                        ),
+                                      ),
+                                    );
                                     // _handleNameClick(proposal.freelancerId);
                                   },
                               ),

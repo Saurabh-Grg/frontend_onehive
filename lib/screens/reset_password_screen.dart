@@ -48,19 +48,15 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
     }
 
     try {
-      print('Sending reset password request...');
       final response = await http.post(
         Uri.parse('http://127.0.0.1:3000/api/auth/reset-password'),
         headers: {'Content-Type': 'application/json'},
         body: json.encode({
           'email': widget.email,
           'newPassword': newPassword,
-          'confirmPassword': confirmPassword, // Make sure you're sending both
+          'confirmPassword': confirmPassword,
         }),
       );
-
-      print('Response status code: ${response.statusCode}');
-      print('Response body: ${response.body}');
 
       final responseData = json.decode(response.body);
 
@@ -75,7 +71,6 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
         });
       }
     } catch (error) {
-      print('Error: $error');
       setState(() {
         _newPasswordError = 'Failed to reset password. Please try again.';
       });
@@ -86,66 +81,122 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
     }
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Reset Password')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            TextField(
-              controller: _newPasswordController,
-              obscureText: _obscureNewPassword,
-              decoration: InputDecoration(
-                labelText: 'New Password',
-                errorText: _newPasswordError,
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    _obscureNewPassword
-                        ? Icons.visibility
-                        : Icons.visibility_off,
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      _obscureNewPassword = !_obscureNewPassword;
-                    });
-                  },
+      // backgroundColor: Colors.deepOrange[50],
+      appBar: AppBar(
+        title: Text(
+          'Reset Password',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+      ),
+      body: Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(15.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Center(
+                child: Icon(Icons.lock_reset, size: 100, color: Colors.deepOrange),
+              ),
+              SizedBox(height: 20),
+              Center(
+                child: Text(
+                  'Secure Your Account',
+                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black87),
                 ),
               ),
-            ),
-            SizedBox(height: 20),
-            TextField(
-              controller: _confirmPasswordController,
-              obscureText: _obscureConfirmPassword,
-              decoration: InputDecoration(
-                labelText: 'Confirm Password',
-                errorText: _confirmPasswordError,
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    _obscureConfirmPassword
-                        ? Icons.visibility
-                        : Icons.visibility_off,
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      _obscureConfirmPassword = !_obscureConfirmPassword;
-                    });
-                  },
+              SizedBox(height: 10),
+              Center(
+                child: Text(
+                  'Please create a strong new password.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 16, color: Colors.black54),
                 ),
               ),
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _isLoading ? null : _resetPassword,
-              child: _isLoading
-                  ? CircularProgressIndicator()
-                  : Text('Reset Password'),
-            ),
-          ],
+              SizedBox(height: 30),
+              TextField(
+                controller: _newPasswordController,
+                obscureText: _obscureNewPassword,
+                decoration: InputDecoration(
+                  labelText: 'New Password',
+                  hintText: 'Enter your new password',
+                  errorText: _newPasswordError,
+                  prefixIcon: Icon(Icons.lock, color: Colors.deepOrange),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _obscureNewPassword ? Icons.visibility : Icons.visibility_off,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _obscureNewPassword = !_obscureNewPassword;
+                      });
+                    },
+                  ),
+                  filled: true,
+                  fillColor: Colors.white,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+              ),
+              SizedBox(height: 20),
+              TextField(
+                controller: _confirmPasswordController,
+                obscureText: _obscureConfirmPassword,
+                decoration: InputDecoration(
+                  labelText: 'Confirm Password',
+                  hintText: 'Re-enter your new password',
+                  errorText: _confirmPasswordError,
+                  prefixIcon: Icon(Icons.lock_outline, color: Colors.deepOrange),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _obscureConfirmPassword ? Icons.visibility : Icons.visibility_off,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _obscureConfirmPassword = !_obscureConfirmPassword;
+                      });
+                    },
+                  ),
+                  filled: true,
+                  fillColor: Colors.white,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+              ),
+              SizedBox(height: 30),
+              SizedBox(
+                height: 50,
+                child: ElevatedButton(
+                  onPressed: _isLoading ? null : _resetPassword,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.deepOrange,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: _isLoading
+                      ? CircularProgressIndicator(color: Colors.white)
+                      : Text(
+                    'Reset Password',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                  ),
+                ),
+              ),
+              SizedBox(height: 20),
+              Center(
+                child: Text(
+                  'Make sure your password is at least 8 characters long and includes a mix of letters, numbers, and special characters.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 14, color: Colors.black54),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
