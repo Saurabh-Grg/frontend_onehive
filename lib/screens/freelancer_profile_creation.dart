@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
-
+import 'package:http/http.dart' as http;
 import 'package:onehive_frontend/screens/freelancer_dashboard.dart';
+import 'package:provider/provider.dart';
+
+import '../providers/user_provider.dart';
 
 class FreelancerProfileCreation extends StatefulWidget {
   @override
@@ -78,6 +81,76 @@ class _FreelancerProfileCreationState extends State<FreelancerProfileCreation> {
   void _showSnackBar(String message) {
     ScaffoldMessenger.of(context)
         .showSnackBar(SnackBar(content: Text(message)));
+  }
+
+  // Function to create freelancer profile
+  Future<void> _createFreelancerProfile() async {
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    final token = userProvider.token;
+
+    if (token == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Unable to save profile: Missing token')),
+      );
+      return;
+    }
+
+    final uri = Uri.parse('http://localhost:3000/api/freelancerProfile/create');
+    final request = http.MultipartRequest('POST', uri);
+    request.headers['Authorization'] = 'Bearer $token';
+
+    // Attach the profile image if available
+    if (_profileImage != null) {
+      request.files.add(await http.MultipartFile.fromPath('profileImage', _profileImage!.path));
+    }
+
+    // Attach other form data
+    request.fields['name'] = _nameController.text;
+    request.fields['bio'] = _bioController.text;
+    request.fields['skills'] = _skillsController.text;
+    request.fields['experience'] = _experienceController.text;
+    request.fields['education'] = _educationController.text;
+
+    // Make the request
+    try {
+      final response = await request.send();
+      if (response.statusCode == 201) {
+        // Display a SnackBar message indicating profile is saved
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Profile Saved!'),
+            duration: Duration(seconds: 2),
+          ),
+        );
+
+        // Optionally, you can reset the form or navigate to another screen
+        setState(() {
+          _currentStep = 0; // Reset to the first step
+          _nameController.clear();
+          _bioController.clear();
+          _skillsController.clear();
+          _experienceController.clear();
+          _educationController.clear();
+          _profileImage = null;
+          _portfolioImages.clear();
+          _certificateImages.clear(); // Clear certificate images
+        });
+
+        // Navigate to the Dashboard screen
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => FreelancerDashboard()),
+        );
+        print("Profile created successfully");
+        // Optionally handle success (navigate or show a success message)
+      } else {
+        print("Failed to create profile: ${response.statusCode}");
+        // Handle error
+      }
+    } catch (e) {
+      print("Error creating profile: $e");
+      // Handle error
+    }
   }
 
   // Function to build the steps
@@ -323,35 +396,35 @@ class _FreelancerProfileCreationState extends State<FreelancerProfileCreation> {
     ];
   }
 
-  // Method to handle form submission
-  void _submitProfile() {
-    // Display a SnackBar message indicating profile is saved
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Profile Saved!'),
-        duration: Duration(seconds: 2),
-      ),
-    );
-
-    // Optionally, you can reset the form or navigate to another screen
-    setState(() {
-      _currentStep = 0; // Reset to the first step
-      _nameController.clear();
-      _bioController.clear();
-      _skillsController.clear();
-      _experienceController.clear();
-      _educationController.clear();
-      _profileImage = null;
-      _portfolioImages.clear();
-      _certificateImages.clear(); // Clear certificate images
-    });
-
-    // Navigate to the Dashboard screen
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => FreelancerDashboard()),
-    );
-  }
+  // // Method to handle form submission
+  // void _submitProfile() {
+  //   // Display a SnackBar message indicating profile is saved
+  //   ScaffoldMessenger.of(context).showSnackBar(
+  //     SnackBar(
+  //       content: Text('Profile Saved!'),
+  //       duration: Duration(seconds: 2),
+  //     ),
+  //   );
+  //
+  //   // Optionally, you can reset the form or navigate to another screen
+  //   setState(() {
+  //     _currentStep = 0; // Reset to the first step
+  //     _nameController.clear();
+  //     _bioController.clear();
+  //     _skillsController.clear();
+  //     _experienceController.clear();
+  //     _educationController.clear();
+  //     _profileImage = null;
+  //     _portfolioImages.clear();
+  //     _certificateImages.clear(); // Clear certificate images
+  //   });
+  //
+  //   // Navigate to the Dashboard screen
+  //   Navigator.pushReplacement(
+  //     context,
+  //     MaterialPageRoute(builder: (context) => FreelancerDashboard()),
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -371,7 +444,7 @@ class _FreelancerProfileCreationState extends State<FreelancerProfileCreation> {
               _currentStep += 1;
             });
           } else {
-            _submitProfile(); // Final submit when the user completes all steps
+            _createFreelancerProfile(); // Final submit when the user completes all steps
           }
         },
         onStepCancel: () {

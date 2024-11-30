@@ -94,7 +94,7 @@ class _LoginFormState extends State<LoginForm> {
           email: user.email,
           role: user.role,
           city: user.city,
-        ));
+        ), token);
 
         bool isFreelancer = role.trim().toLowerCase() == 'freelancer';
 
@@ -163,7 +163,7 @@ class _LoginFormState extends State<LoginForm> {
                       TextFormField(
                         controller: _emailController,
                         decoration: InputDecoration(
-                          prefixIcon: Icon(Icons.email, color: Colors.deepOrange,),
+                          prefixIcon: Icon(Icons.email,),
                           labelText: 'Email',
                           hintText: 'Enter your email',
                           filled: true,
@@ -187,7 +187,7 @@ class _LoginFormState extends State<LoginForm> {
                         controller: _passwordController,
                         obscureText: !_isPasswordVisible, // Toggle password visibility
                         decoration: InputDecoration(
-                          prefixIcon: Icon(Icons.lock, color: Colors.deepOrange,),
+                          prefixIcon: Icon(Icons.lock,),
                           labelText: 'Password',
                           hintText: 'Enter your password',
                           filled: true,

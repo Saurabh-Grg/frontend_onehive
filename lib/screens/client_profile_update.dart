@@ -3,7 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../providers/user_provider.dart';
 
 class ClientProfileUpdate extends StatefulWidget {
   final String profileID; // Required parameter for profile ID
@@ -42,8 +45,15 @@ class _ClientProfileUpdateState extends State<ClientProfileUpdate> {
   }
 
   Future<void> _fetchProfileData(String profileId) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('token');
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    final token = userProvider.token;
+
+    if (token == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Unable to save profile: Missing token')),
+      );
+      return;
+    }
 
     var response = await http.get(
       Uri.parse('http://localhost:3000/api/clientProfile/client-profile'),
