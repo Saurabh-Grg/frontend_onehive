@@ -354,9 +354,9 @@ class _ClientProfileUpdateState extends State<ClientProfileUpdate> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Update Client Profile'),
+        title: Text('Update Client Profile', style: TextStyle(fontWeight: FontWeight.bold),),
         centerTitle: true,
-        backgroundColor: Colors.orangeAccent,
+        // backgroundColor: Colors.deepOrange,
       ),
       body: Form(
         key: _formKey,
@@ -387,7 +387,7 @@ class _ClientProfileUpdateState extends State<ClientProfileUpdate> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    backgroundColor: Colors.orangeAccent,
+                    backgroundColor: Colors.deepOrange,
                   ),
                   onPressed: controls.onStepContinue,
                   child: Text(_currentStep < _buildSteps().length - 1 ? 'Next' : 'Submit'),
@@ -401,7 +401,7 @@ class _ClientProfileUpdateState extends State<ClientProfileUpdate> {
                 IconButton(
                   icon: Icon(
                     _isEditing ? Icons.edit_off : Icons.edit,
-                    color: Colors.orangeAccent,
+                    color: Colors.deepOrange,
                   ),
                   onPressed: _toggleEditMode,
                 ),

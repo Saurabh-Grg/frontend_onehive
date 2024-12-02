@@ -25,6 +25,7 @@ class _ProposalFormState extends State<ProposalForm> {
     super.initState();
     _getToken();
   }
+
   // Example token (you might fetch this from shared preferences or some other state management solution)
   String? token;
 
@@ -37,7 +38,7 @@ class _ProposalFormState extends State<ProposalForm> {
     String name = _nameController.text.trim();
     double? budget = double.tryParse(_budgetController.text.trim());
 
-    if (name.isNotEmpty  && budget != null) {
+    if (name.isNotEmpty && budget != null) {
       // Calculate escrow charge if selected
       double escrowCharge = _useEscrow ? budget * 0.05 : 0.0;
       double finalBudget = budget - escrowCharge;
@@ -53,7 +54,8 @@ class _ProposalFormState extends State<ProposalForm> {
       // Send proposal data to the backend
       try {
         final response = await http.post(
-          Uri.parse('http://localhost:3000/api/proposals/submit'), // Replace with your API endpoint
+          Uri.parse('http://localhost:3000/api/proposals/submit'),
+          // Replace with your API endpoint
           headers: {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer $token',
@@ -152,9 +154,16 @@ class _ProposalFormState extends State<ProposalForm> {
           // Confirm Button
           Align(
             alignment: Alignment.centerRight,
-            child: TextButton(
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.white),
               onPressed: _submitProposal,
-              child: Text('Confirm', style: TextStyle(fontSize: 15,color: Colors.black, fontWeight: FontWeight.bold),),
+              child: Text(
+                'Confirm',
+                style: TextStyle(
+                    fontSize: 15,
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold),
+              ),
             ),
           ),
         ],

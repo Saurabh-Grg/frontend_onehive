@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
@@ -132,7 +133,7 @@ class _ClientDashboardState extends State<ClientDashboard> {
       appBar: AppBar(
         title: Text(
           'Hi! $username',
-          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.deepOrange),
         ),
         actions: [
           IconButton(
@@ -253,18 +254,23 @@ class _ClientDashboardState extends State<ClientDashboard> {
           ),
           //dark mode to-do
           Container(
-            child: ListTile(
-              leading: Icon(Icons.dark_mode), // Icon for Dark Mode
-              title: Text('Dark Mode'),
-              trailing: Switch(
-                value: isDarkMode,
-                onChanged: (value) {
-                  setState(() {
-                    isDarkMode = value;
-                    // _saveTheme(value);  // Save the theme preference
-                  });
-                },
-              ),
+            child: Column(
+              children: [
+                ListTile(
+                  leading: Icon(Icons.light_mode),
+                  title: Text('light theme'),
+                  onTap: (){
+                    Get.changeTheme(ThemeData.light());
+                  },
+                ),
+                ListTile(
+                  leading: Icon(Icons.dark_mode),
+                  title: Text('Dark theme'),
+                  onTap: (){
+                    Get.changeTheme(ThemeData.dark());
+                  },
+                ),
+              ],
             ),
           ),
           ListTile(
@@ -553,7 +559,7 @@ class _ClientDashboardState extends State<ClientDashboard> {
                   context); // Show the job type selection dialog
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.white, // Button background color
+              // backgroundColor: Colors.white, // Button background color
               foregroundColor: primaryColor, // Button text color
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
@@ -890,7 +896,7 @@ class _ClientDashboardState extends State<ClientDashboard> {
                   final job = jobs.reversed
                       .toList()[index]; // Reverse the order of jobs
                   return Card(
-                    color: Colors.white,
+                    // color: Colors.white,
                     margin: EdgeInsets.symmetric(vertical: screenWidth * 0.02),
                     // Responsive margin
                     shape: RoundedRectangleBorder(
@@ -1151,7 +1157,7 @@ class _ClientDashboardState extends State<ClientDashboard> {
                 final proposal = proposals[index];
 
                 return Card(
-                  color: Colors.white,
+                  // color: Colors.white,
                   margin: EdgeInsets.symmetric(vertical: screenWidth * 0.02),
                   elevation: 4,
                   child: Padding(

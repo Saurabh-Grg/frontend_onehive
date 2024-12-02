@@ -1,12 +1,15 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:onehive_frontend/constants/apis_endpoints.dart';
 import 'package:onehive_frontend/screens/proposal_form.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'client_profile_page.dart';
 import 'freelancer_profile_creation.dart';
 import 'freelancer_profile_update.dart';
+import 'job_details_page.dart';
 import 'login_form.dart';
 
 class FreelancerDashboard extends StatefulWidget {
@@ -106,7 +109,7 @@ class _FreelancerDashboardState extends State<FreelancerDashboard> {
     try {
       // Make a GET request to fetch the jobs
       final response = await http
-          .get(Uri.parse('http://localhost:3000/api/jobPosting/jobs'));
+          .get(Uri.parse(ApiEndpoints.getJobs));
 
       // Check if the response is successful
       if (response.statusCode == 200) {
@@ -283,7 +286,7 @@ class _FreelancerDashboardState extends State<FreelancerDashboard> {
 
   Widget _buildJobCards() {
     // Reverse the filteredJobs list once instead of in every build call
-    // final reversedJobs = filteredJobs.reversed.toList();
+    final reversedJobs = filteredJobs.reversed.toList();
     // Check if there are any jobs to display
     if (filteredJobs.isEmpty) {
       return Center(
@@ -303,16 +306,13 @@ class _FreelancerDashboardState extends State<FreelancerDashboard> {
     return ListView.builder(
       shrinkWrap: true,
       physics: NeverScrollableScrollPhysics(),
-      itemCount: filteredJobs.length, // Use the reversed list for displaying
+      itemCount: reversedJobs.length, // Use the reversed list for displaying
       itemBuilder: (context, index) {
-        var job = filteredJobs[index]; // Get the job directly from the reversed list
-
-
+        var job = reversedJobs[index]; // Get the job directly from the reversed list
         // Skip jobs not matching the selected category
         if (selectedCategory != 'All' && job['category'] != selectedCategory) {
           return SizedBox.shrink(); // Return an empty widget if not matched
         }
-
         return Card(
           margin: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
           child: InkWell(
@@ -444,10 +444,8 @@ class _FreelancerDashboardState extends State<FreelancerDashboard> {
                           ),
                         ],
                       ),
-
                       // Spacer to push the Send Proposal button to the right
                       Spacer(),
-
                       // Send Proposal Button on the right side
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
@@ -520,13 +518,13 @@ class _FreelancerDashboardState extends State<FreelancerDashboard> {
 
   void _viewJobDetails(int jobId) {
     // Implement navigation or modal to show job details
-    // Navigator.push(
-    //   context,
-    //   MaterialPageRoute(
-    //     builder: (context) =>
-    //         JobDetailsPage(jobId: jobId), // Navigate to a job details page
-    //   ),
-    // );
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) =>
+            JobDetailsPage(jobId: jobId), // Navigate to a job details page
+      ),
+    );
   }
 
   void _submitComment(int jobId, String comment) {
@@ -560,7 +558,7 @@ class _FreelancerDashboardState extends State<FreelancerDashboard> {
   */
 
     // For now, you can use this to simulate comment submission:
-    print('Comment submitted for job ID $jobId: $comment');
+    // print('Comment submitted for job ID $jobId: $comment');
   }
 
 
@@ -649,18 +647,23 @@ class _FreelancerDashboardState extends State<FreelancerDashboard> {
           ),
           // Dark mode toggle
           Container(
-            child: ListTile(
-              leading: Icon(Icons.dark_mode), // Icon for Dark Mode
-              title: Text('Dark Mode'),
-              trailing: Switch(
-                value: isDarkMode,
-                onChanged: (value) {
-                  setState(() {
-                    isDarkMode = value;
-                    // _saveTheme(value);  // Save the theme preference
-                  });
-                },
-              ),
+            child: Column(
+              children: [
+                ListTile(
+                  leading: Icon(Icons.light_mode),
+                  title: Text('Light theme'),
+                  onTap: (){
+                    Get.changeTheme(ThemeData.light());
+                  },
+                ),
+                ListTile(
+                  leading: Icon(Icons.dark_mode),
+                  title: Text('Dark theme'),
+                  onTap: (){
+                    Get.changeTheme(ThemeData.dark());
+                  },
+                ),
+              ],
             ),
           ),
           ListTile(

@@ -1,9 +1,11 @@
 
 import 'package:flutter/material.dart';
+import 'package:onehive_frontend/screens/freelancerDashboard.dart';
+import 'package:onehive_frontend/screens/freelancer_dashboard.dart';
 
 import 'client_dashboard.dart';
 import 'client_profile_creation.dart';
-import 'freelancer_dashboard.dart';
+// import 'freelancer_dashboard.dart';
 import 'freelancer_profile_creation.dart';
 
 class HomePage extends StatelessWidget {

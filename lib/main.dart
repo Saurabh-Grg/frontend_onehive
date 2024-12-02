@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:onehive_frontend/providers/client_profile_provider.dart';
 import 'package:onehive_frontend/providers/jobProvider.dart';
 import 'package:onehive_frontend/providers/user_provider.dart';
 import 'package:onehive_frontend/screens/client_dashboard.dart';
+import 'package:onehive_frontend/screens/client_profile_creation.dart';
 import 'package:onehive_frontend/screens/login_form.dart';
 import 'package:onehive_frontend/screens/welcome_screen.dart';
 import 'package:onehive_frontend/services/job_posting_service.dart';
@@ -12,17 +15,22 @@ class OneHive extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'OneHive',
       theme: ThemeData(
           primarySwatch: Colors.orange
       ),
-      home: WelcomeScreen(),
-      routes: {
-        '/login': (context) => LoginForm(),
-        '/dashboard': (context) => ClientDashboard()
-      },
+      // home: WelcomeScreen(),
+      getPages: [
+        GetPage(name: '/', page: () => WelcomeScreen()),
+        GetPage(name: '/login', page: () => LoginForm()),
+        GetPage(name: '/dashboard', page: () => ClientDashboard()),
+      ],
+      // routes: {
+      //   '/login': (context) => LoginForm(),
+      //   '/dashboard': (context) => ClientDashboard()
+      // },
     );
   }
 }
@@ -34,6 +42,7 @@ void main() {
         ChangeNotifierProvider(create: (context) => UserProvider()), // Initialize UserProvider
         ChangeNotifierProvider(create: (context) => JobProvider()),
         ChangeNotifierProvider(create: (context) => JobPostingService()), // Use ChangeNotifierProvider for JobPostingService
+        ChangeNotifierProvider(create: (context) => ClientProfileProvider()),
       ],
       child: OneHive(),
     ),

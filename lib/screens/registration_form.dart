@@ -24,7 +24,22 @@ class _RegistrationFormState extends State<RegistrationForm> {
   bool _confirmPasswordVisible = false;
 
   final List<String> _cities = [
-    'Kathmandu', 'Pokhara', 'Lalitpur', 'Bhaktapur', 'Biratnagar', 'Chitwan', 'Birgunj', 'Lumbini', 'Dharan', 'Bhairahawa', 'Butwal', 'Janakpur', 'Itahari', 'Hetauda', 'Dang', 'Nepalgunj', 'Dhangadhi', 'Rajbiraj', 'Mechinagar', 'Tulsipur'
+    // Province No. 1
+    'Biratnagar', 'Dharan', 'Itahari', 'Damak', 'Birtamod', 'Mechinagar', 'Ilam', 'Dhankuta',
+    // Madhesh Province
+    'Janakpur', 'Birgunj', 'Rajbiraj', 'Gaur', 'Kalaiya', 'Malangwa', 'Siraha',
+    // Bagmati Province
+    'Kathmandu', 'Lalitpur', 'Bhaktapur', 'Hetauda', 'Bidur', 'Banepa', 'Dhulikhel',
+    // Gandaki Province
+    'Pokhara', 'Baglung', 'Beni', 'Tansen', 'Waling', 'Putalibazar', 'Gorkha',
+    // Lumbini Province
+    'Lumbini', 'Butwal', 'Bhairahawa', 'Dang', 'Tulsipur', 'Kapilvastu', 'Nepalgunj',
+    // Karnali Province
+    'Birendranagar', 'Jumla', 'Dailekh', 'Manma', 'Rukumkot', 'Chaurjahari',
+    // Sudurpashchim Province
+    'Dhangadhi', 'Amargadhi', 'Tikapur', 'Dadeldhura', 'Baitadi', 'Dipayal', 'Mahendranagar',
+    // Miscellaneous
+    'Chitwan' // Can also be split into Bharatpur and surrounding areas
   ];
 
   void _submitForm() async {

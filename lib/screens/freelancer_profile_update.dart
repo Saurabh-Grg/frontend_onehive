@@ -323,13 +323,13 @@ class _FreelancerProfileUpdateState extends State<FreelancerProfileUpdate> {
 
   // Method to handle form submission
   void _submitProfile() {
-    // Display a SnackBar message indicating profile is saved
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Profile Saved!'),
-        duration: Duration(seconds: 2),
-      ),
-    );
+    // // Display a SnackBar message indicating profile is saved
+    // ScaffoldMessenger.of(context).showSnackBar(
+    //   SnackBar(
+    //     content: Text('Profile Saved!'),
+    //     duration: Duration(seconds: 2),
+    //   ),
+    // );
 
     // Optionally, you can reset the form or navigate to another screen
     setState(() {
