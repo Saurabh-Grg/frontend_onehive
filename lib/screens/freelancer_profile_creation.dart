@@ -26,7 +26,7 @@ class _FreelancerProfileCreationState extends State<FreelancerProfileCreation> {
   // Profile Image, Portfolio Images, and Certificate Images
   XFile? _profileImage;
   List<XFile> _portfolioImages = [];
-  List<XFile> _certificateImages = []; // Added for certificates
+  List<XFile> _certificates = []; // Added for certificates
 
   // Function to pick profile image
   Future<void> _pickProfileImage() async {
@@ -64,7 +64,7 @@ class _FreelancerProfileCreationState extends State<FreelancerProfileCreation> {
         await ImagePicker().pickMultiImage(); // Allow multiple images
     if (pickedImages != null && pickedImages.isNotEmpty) {
       setState(() {
-        _certificateImages.addAll(pickedImages);
+        _certificates.addAll(pickedImages);
       });
     } else {
       _showSnackBar('No images selected');
@@ -104,6 +104,16 @@ class _FreelancerProfileCreationState extends State<FreelancerProfileCreation> {
       request.files.add(await http.MultipartFile.fromPath('profileImage', _profileImage!.path));
     }
 
+    // Attach certificates
+    for (var file in _certificates!) {
+      request.files.add(await http.MultipartFile.fromPath('certificates', file.path));
+    }
+    // Attach portfolio images
+    for (var file in _portfolioImages!) {
+      request.files.add(await http.MultipartFile.fromPath('portfolioImages', file.path));
+    }
+
+
     // Attach other form data
     request.fields['name'] = _nameController.text;
     request.fields['bio'] = _bioController.text;
@@ -133,7 +143,7 @@ class _FreelancerProfileCreationState extends State<FreelancerProfileCreation> {
           _educationController.clear();
           _profileImage = null;
           _portfolioImages.clear();
-          _certificateImages.clear(); // Clear certificate images
+          _certificates.clear(); // Clear certificate images
         });
 
         // Navigate to the Dashboard screen
@@ -327,12 +337,12 @@ class _FreelancerProfileCreationState extends State<FreelancerProfileCreation> {
         title: Text('Certificates'),
         content: Column(
           children: [
-            _certificateImages.isNotEmpty
+            _certificates.isNotEmpty
                 ? GridView.builder(
                     shrinkWrap: true,
                     physics: NeverScrollableScrollPhysics(),
                     // Disable scrolling for GridView
-                    itemCount: _certificateImages.length,
+                    itemCount: _certificates.length,
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 3, // 3 images per row
                       mainAxisSpacing: 10,
@@ -347,7 +357,7 @@ class _FreelancerProfileCreationState extends State<FreelancerProfileCreation> {
                               borderRadius: BorderRadius.circular(8),
                               image: DecorationImage(
                                 image: FileImage(
-                                    File(_certificateImages[index].path)),
+                                    File(_certificates[index].path)),
                                 fit: BoxFit.cover,
                               ),
                             ),
@@ -360,7 +370,7 @@ class _FreelancerProfileCreationState extends State<FreelancerProfileCreation> {
                             child: GestureDetector(
                               onTap: () {
                                 setState(() {
-                                  _certificateImages.removeAt(index);
+                                  _certificates.removeAt(index);
                                 });
                               },
                               child: Container(
