@@ -634,7 +634,7 @@ class _FreelancerDashboardState extends State<FreelancerDashboard> {
             leading: Icon(Icons.star), // Icon for Ratings
             title: Text('Ratings'),
             onTap: () {
-              // Implement navigation to Ratings
+              Get.toNamed('/rating');
             },
           ),
 
@@ -643,6 +643,7 @@ class _FreelancerDashboardState extends State<FreelancerDashboard> {
             title: Text('Leaderboard'),
             onTap: () {
               // Implement navigation to Leaderboard
+              Get.toNamed('/leaderboard');
             },
           ),
           // Dark mode toggle

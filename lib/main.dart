@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import 'package:onehive_frontend/providers/client_profile_provider.dart';
 import 'package:onehive_frontend/providers/jobProvider.dart';
 import 'package:onehive_frontend/providers/user_provider.dart';
+import 'package:onehive_frontend/screens/LeaderboardScreen.dart';
+import 'package:onehive_frontend/screens/RatingScreen.dart';
 import 'package:onehive_frontend/screens/client_dashboard.dart';
 import 'package:onehive_frontend/screens/client_profile_creation.dart';
 import 'package:onehive_frontend/screens/login_form.dart';
@@ -26,6 +28,8 @@ class OneHive extends StatelessWidget {
         GetPage(name: '/', page: () => WelcomeScreen()),
         GetPage(name: '/login', page: () => LoginForm()),
         GetPage(name: '/dashboard', page: () => ClientDashboard()),
+        GetPage(name: '/rating', page: () => RatingsScreen()),
+        GetPage(name: '/leaderboard', page: () => LeaderboardScreen()),
       ],
       // routes: {
       //   '/login': (context) => LoginForm(),
