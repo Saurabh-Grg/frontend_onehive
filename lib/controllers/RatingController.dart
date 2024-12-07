@@ -8,8 +8,8 @@ class RatingsController extends GetxController {
   var selectedFilter = 'All'.obs;
   var reviews = [
     // Dummy reviews
-    Review('John Doe', 5, 'Great work!', '2024-12-01', 'https://...'),
-    Review('Jane Smith', 4, 'Good job!', '2024-11-30', 'https://...'),
+    Review('John Doe', 5, 'Great work!', '2024-12-01', 'https://cdn.pixabay.com/photo/2024/06/29/20/51/ai-generated-8862067_640.jpg'),
+    Review('Jane Smith', 4, 'Good job!', '2024-11-30', 'https://cdn.pixabay.com/photo/2024/06/29/20/51/ai-generated-8862067_640.jpg'),
   ].obs;
 
   List<Review> get filteredReviews {
