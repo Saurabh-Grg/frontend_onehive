@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
+import '../controllers/UserController.dart';
 import '../job_forms/API_development_integration.dart';
 import '../job_forms/UI_UX_design.dart';
 import '../job_forms/backend_development.dart';
@@ -31,6 +32,7 @@ class ClientDashboard extends StatefulWidget {
 }
 
 class _ClientDashboardState extends State<ClientDashboard> {
+  // final UserController userController = Get.find();
   String? contactPerson;
   int? profileID;
   String? profileImageUrl;
@@ -67,12 +69,16 @@ class _ClientDashboardState extends State<ClientDashboard> {
     }
   }
 
+  final UserController userController = Get.find();
+
   Future<void> _loadUserProfile() async {
     final response = await http.get(
       Uri.parse('http://localhost:3000/api/clientProfile/client-profile'),
       headers: {
-        'Authorization': 'Bearer $token', // Add the token in the header
-        'Content-Type': 'application/json', // Optional, depending on your API
+        'Authorization': 'Bearer ${userController.token.value}',
+        // Add the token in the header
+        'Content-Type': 'application/json',
+        // Optional, depending on your API
       },
     );
 
@@ -133,7 +139,8 @@ class _ClientDashboardState extends State<ClientDashboard> {
       appBar: AppBar(
         title: Text(
           'Hi! $username',
-          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.deepOrange),
+          style:
+              TextStyle(fontWeight: FontWeight.bold, color: Colors.deepOrange),
         ),
         actions: [
           IconButton(
@@ -230,7 +237,10 @@ class _ClientDashboardState extends State<ClientDashboard> {
             child: DrawerHeader(
               child: Text(
                 'Navigation',
-                style: TextStyle(color: Colors.deepOrange, fontSize: 24, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                    color: Colors.deepOrange,
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold),
               ),
               decoration: BoxDecoration(
                 color: Colors.transparent,
@@ -259,14 +269,14 @@ class _ClientDashboardState extends State<ClientDashboard> {
                 ListTile(
                   leading: Icon(Icons.light_mode),
                   title: Text('light theme'),
-                  onTap: (){
+                  onTap: () {
                     Get.changeTheme(ThemeData.light());
                   },
                 ),
                 ListTile(
                   leading: Icon(Icons.dark_mode),
                   title: Text('Dark theme'),
-                  onTap: (){
+                  onTap: () {
                     Get.changeTheme(ThemeData.dark());
                   },
                 ),
@@ -868,7 +878,6 @@ class _ClientDashboardState extends State<ClientDashboard> {
     }
   }
 
-
   Widget _buildActiveJobPostingsList(double screenWidth) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -932,7 +941,8 @@ class _ClientDashboardState extends State<ClientDashboard> {
                           IconButton(
                             icon: Icon(Icons.delete, color: Colors.redAccent),
                             onPressed: () {
-                              final jobId = int.tryParse(job['job_id'] ?? '0') ?? 0;
+                              final jobId =
+                                  int.tryParse(job['job_id'] ?? '0') ?? 0;
                               print("Attempting to delete job ID: $jobId");
                               if (jobId > 0) {
                                 // Show confirmation dialog
@@ -941,19 +951,25 @@ class _ClientDashboardState extends State<ClientDashboard> {
                                   builder: (BuildContext context) {
                                     return AlertDialog(
                                       title: Text("Confirm Deletion"),
-                                      content: Text("Are you sure you want to delete this job?"),
+                                      content: Text(
+                                          "Are you sure you want to delete this job?"),
                                       actions: [
                                         TextButton(
                                           child: Text("Cancel"),
                                           onPressed: () {
-                                            Navigator.of(context).pop(); // Close the dialog
+                                            Navigator.of(context)
+                                                .pop(); // Close the dialog
                                           },
                                         ),
                                         TextButton(
-                                          child: Text("Delete", style: TextStyle(color: Colors.red)),
+                                          child: Text("Delete",
+                                              style:
+                                                  TextStyle(color: Colors.red)),
                                           onPressed: () {
-                                            Navigator.of(context).pop(); // Close the dialog
-                                            _deleteJob(jobId); // Call the delete function
+                                            Navigator.of(context)
+                                                .pop(); // Close the dialog
+                                            _deleteJob(
+                                                jobId); // Call the delete function
                                           },
                                         ),
                                       ],
@@ -968,7 +984,6 @@ class _ClientDashboardState extends State<ClientDashboard> {
                               }
                             },
                           ),
-
                         ],
                       ),
                       onTap: () {
@@ -1186,16 +1201,32 @@ class _ClientDashboardState extends State<ClientDashboard> {
                                 ),
                                 recognizer: TapGestureRecognizer()
                                   ..onTap = () {
-                                    // Define your click action here
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => FreelancerProfilePage(
-                                          freelancerId: proposal.freelancerId.toString(), // Convert freelancerId to a String // Pass freelancerId to the profile page
+                                    // Debug: Ensure non-null IDs
+                                    if (proposal.freelancerId != null &&
+                                        proposal.jobId != null) {
+                                      print(
+                                          "Navigating to FreelancerProfilePage with jobId: ${proposal.jobId} and freelancerId: ${proposal.freelancerId}");
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              FreelancerProfilePage(
+                                            freelancerId:
+                                                proposal.freelancerId!,
+                                            jobId: proposal.jobId!,
+                                          ),
                                         ),
-                                      ),
-                                    );
-                                    // _handleNameClick(proposal.freelancerId);
+                                      );
+                                    } else {
+                                      print(
+                                          "Error: Missing jobId or freelancerId in proposal.");
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                            content: Text(
+                                                "Error: Missing job or freelancer details.")),
+                                      );
+                                    }
                                   },
                               ),
                               TextSpan(

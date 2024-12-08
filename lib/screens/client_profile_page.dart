@@ -12,7 +12,8 @@ class ClientProfilePage extends StatelessWidget {
         title: Text('Client Profile'),
       ),
       body: FutureBuilder<Map<String, dynamic>>(
-        future: _fetchClientData(clientId), // Fetch client data from the backend
+        future: _fetchClientData(clientId),
+        // Fetch client data from the backend
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
@@ -35,27 +36,27 @@ class ClientProfilePage extends StatelessWidget {
                     // Display client profile picture or placeholder
                     ClipOval(
                       child: clientData['profile_picture'] != null &&
-                          clientData['profile_picture'].isNotEmpty
+                              clientData['profile_picture'].isNotEmpty
                           ? Image.network(
-                        clientData['profile_picture'],
-                        width: 80.0,
-                        height: 80.0,
-                        fit: BoxFit.cover,
-                      )
+                              clientData['profile_picture'],
+                              width: 80.0,
+                              height: 80.0,
+                              fit: BoxFit.cover,
+                            )
                           : Container(
-                        width: 80.0,
-                        height: 80.0,
-                        alignment: Alignment.center,
-                        color: Colors.grey[300],
-                        child: Text(
-                          clientData['name'][0].toUpperCase(),
-                          style: TextStyle(
-                            fontSize: 40.0,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                          ),
-                        ),
-                      ),
+                              width: 80.0,
+                              height: 80.0,
+                              alignment: Alignment.center,
+                              color: Colors.grey[300],
+                              child: Text(
+                                clientData['name'][0].toUpperCase(),
+                                style: TextStyle(
+                                  fontSize: 40.0,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ),
                     ),
                     SizedBox(width: 16.0),
                     // Client Name and Basic Info
@@ -90,11 +91,16 @@ class ClientProfilePage extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 16.0),
-                _buildStatsRow('Jobs Posted', clientData['jobs_posted'].toString()),
-                _buildStatsRow('Successful Payments', clientData['successful_payments'].toString()),
-                _buildStatsRow('Average Rating', clientData['average_rating'].toString()),
-                _buildStatsRow('Total Paid Amount', '\$${clientData['total_paid']}'),
-                _buildStatsRow('Jobs Completed', clientData['jobs_completed'].toString()),
+                _buildStatsRow(
+                    'Jobs Posted', clientData['jobs_posted'].toString()),
+                _buildStatsRow('Successful Payments',
+                    clientData['successful_payments'].toString()),
+                _buildStatsRow(
+                    'Average Rating', clientData['average_rating'].toString()),
+                _buildStatsRow(
+                    'Total Paid Amount', '\$${clientData['total_paid']}'),
+                _buildStatsRow(
+                    'Jobs Completed', clientData['jobs_completed'].toString()),
                 SizedBox(height: 16.0),
                 Divider(),
 
@@ -143,8 +149,16 @@ class ClientProfilePage extends StatelessWidget {
       'total_paid': 2500.00,
       'jobs_completed': 9,
       'job_history': [
-        {'title': 'Backend Developer', 'amount_paid': 500, 'status': 'Completed'},
-        {'title': 'Frontend Developer', 'amount_paid': 300, 'status': 'In Progress'},
+        {
+          'title': 'Backend Developer',
+          'amount_paid': 500,
+          'status': 'Completed'
+        },
+        {
+          'title': 'Frontend Developer',
+          'amount_paid': 300,
+          'status': 'In Progress'
+        },
         // More jobs...
       ]
     };

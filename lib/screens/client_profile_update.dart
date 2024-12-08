@@ -1,11 +1,13 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../controllers/UserController.dart';
 import '../providers/user_provider.dart';
 
 class ClientProfileUpdate extends StatefulWidget {
@@ -44,21 +46,23 @@ class _ClientProfileUpdateState extends State<ClientProfileUpdate> {
     _fetchProfileData(widget.profileID);
   }
 
-  Future<void> _fetchProfileData(String profileId) async {
-    final userProvider = Provider.of<UserProvider>(context, listen: false);
-    final token = userProvider.token;
+  final UserController userController = Get.find();
 
-    if (token == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Unable to save profile: Missing token')),
-      );
-      return;
-    }
+  Future<void> _fetchProfileData(String profileId) async {
+    // final userProvider = Provider.of<UserProvider>(context, listen: false);
+    // final token = userProvider.token;
+    //
+    // if (token == null) {
+    //   ScaffoldMessenger.of(context).showSnackBar(
+    //     SnackBar(content: Text('Unable to save profile: Missing token')),
+    //   );
+    //   return;
+    // }
 
     var response = await http.get(
       Uri.parse('http://localhost:3000/api/clientProfile/client-profile'),
       headers: {
-        'Authorization': 'Bearer $token',
+        'Authorization': 'Bearer ${userController.token.value}',
         'Content-Type': 'application/json',},
 
     );
