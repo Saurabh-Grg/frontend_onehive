@@ -1,6 +1,5 @@
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
-import 'package:onehive_frontend/constants/apis_endpoints.dart';
 import 'dart:convert';
 
 import '../models/FreelancerProfile.dart';
@@ -66,9 +65,15 @@ class FreelancerProfileController extends GetxController {
           print("Profile details response body: ${profileResponse.body}");
 
           if (profileResponse.statusCode == 200) {
-            final profileData = json.decode(profileResponse.body)['data'];
-            profile.value = FreelancerProfile.fromJson(profileData);
-            print("Freelancer profile fetched successfully.");
+            final profileData = json.decode(profileResponse.body);
+            if (profileData != null && profileData['profile'] != null) {
+              profile.value = FreelancerProfile.fromJson(profileData['profile']);
+              print("Parsed Freelancer Profile: ${profile.value?.toJson()}");
+              print("Freelancer profile fetched successfully.");
+            } else {
+              print("Profile data is null or missing in the response.");
+              Get.snackbar("Error", "Profile data not found.");
+            }
           } else {
             print("Failed to fetch profile details. Status: ${profileResponse.statusCode}");
             Get.snackbar("Error", "Failed to fetch profile details. Status: ${profileResponse.statusCode}");

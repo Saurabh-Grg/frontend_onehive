@@ -139,23 +139,33 @@ class _LoginFormState extends State<LoginForm> {
                     ),
                     backgroundColor: Colors.deepOrangeAccent,
                   ),
+                  // onPressed: () async {
+                  //   if (_formKey.currentState!.validate()) {
+                  //     // Call login method
+                  //     await _userController.login(
+                  //       _emailController.text.trim(),
+                  //       _passwordController.text.trim(),
+                  //     );
+                  //
+                  //     // Navigate only if login is successful
+                  //     if (_userController.isLoggedIn.value) {
+                  //       bool isFreelancer =
+                  //           _userController.role.value.toLowerCase() == 'freelancer'; // Check role correctly
+                  //
+                  //       Get.off(() => HomePage(
+                  //         username: _userController.username.value,
+                  //         email: _emailController.text, // Fetch from the controller
+                  //         isFreelancer: isFreelancer,
+                  //       ));
+                  //     }
+                  //   }
+                  // },
                   onPressed: () async {
                     if (_formKey.currentState!.validate()) {
                       await _userController.login(
                         _emailController.text.trim(),
                         _passwordController.text.trim(),
                       );
-
-                      if (_userController.isLoggedIn.value) {
-                        bool isFreelancer =
-                            _userController.token.value.toLowerCase() == 'freelancer';
-
-                        Get.off(() => HomePage(
-                          username: _userController.username.value, // Correctly pass the username
-                          email: _emailController.text.trim(),
-                          isFreelancer: isFreelancer,
-                        ));
-                      }
                     }
                   },
                   child: _userController.isLoading.value
