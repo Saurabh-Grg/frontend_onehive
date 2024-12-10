@@ -1,18 +1,20 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../controllers/FreelancerProfileController.dart';
 import 'freelancer_dashboard.dart';
 
 class FreelancerProfileUpdate extends StatefulWidget {
   final int profileID; // Required parameter for profile ID
+  final FreelancerProfileController controller = Get.put(FreelancerProfileController());
 
   FreelancerProfileUpdate({required this.profileID}); // Proper constructor
 
   @override
-  _FreelancerProfileUpdateState createState() =>
-      _FreelancerProfileUpdateState();
+  _FreelancerProfileUpdateState createState() => _FreelancerProfileUpdateState();
 }
 
 class _FreelancerProfileUpdateState extends State<FreelancerProfileUpdate> {

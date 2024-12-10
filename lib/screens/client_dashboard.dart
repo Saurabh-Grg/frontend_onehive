@@ -20,10 +20,12 @@ import '../models/proposal_model.dart';
 import '../providers/user_provider.dart';
 import '../services/job_posting_service.dart';
 import 'agreement_screen.dart';
+import 'all_jobPostings.dart';
 import 'client_profile_creation.dart';
 import 'client_profile_update.dart';
 import 'escrow_payment_page.dart';
 import 'freelancer_profile_page.dart';
+import 'job_details_page.dart';
 import 'login_form.dart';
 
 class ClientDashboard extends StatefulWidget {
@@ -140,7 +142,7 @@ class _ClientDashboardState extends State<ClientDashboard> {
         title: Text(
           'Hi! $username',
           style:
-              TextStyle(fontWeight: FontWeight.bold, color: Colors.deepOrange),
+              TextStyle(fontWeight: FontWeight.bold),
         ),
         actions: [
           IconButton(
@@ -238,7 +240,6 @@ class _ClientDashboardState extends State<ClientDashboard> {
               child: Text(
                 'Navigation',
                 style: TextStyle(
-                    color: Colors.deepOrange,
                     fontSize: 24,
                     fontWeight: FontWeight.bold),
               ),
@@ -316,7 +317,7 @@ class _ClientDashboardState extends State<ClientDashboard> {
           'http://localhost:3000/api/clientProfile/check-profile/$user_id'),
       // Check your API endpoint
       headers: {
-        'Authorization': 'Bearer $token',
+        'Authorization': 'Bearer ${userController.token.value}',
         // Ensure the token is included if necessary
         'Content-Type': 'application/json',
       },
@@ -988,12 +989,12 @@ class _ClientDashboardState extends State<ClientDashboard> {
                       ),
                       onTap: () {
                         // Navigate to JobDetailsPage when tapped
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //     builder: (context) => JobDetailsPage(jobId: int.parse(job['job_id']!)),
-                        //   ),
-                        // );
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => JobDetailsPage(jobId: int.parse(job['job_id']!)),
+                          ),
+                        );
                       },
                     ),
                   );
@@ -1005,12 +1006,12 @@ class _ClientDashboardState extends State<ClientDashboard> {
             TextButton(
               onPressed: () {
                 // Navigate to AllJobPostingsPage when "View All" is clicked
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(
-                //     builder: (context) => AllJobPostingsPage(), // Navigate to All Jobs Page
-                //   ),
-                // );
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AllJobPostingsPage(), // Navigate to All Jobs Page
+                  ),
+                );
               },
               child: Text(
                 'View All',

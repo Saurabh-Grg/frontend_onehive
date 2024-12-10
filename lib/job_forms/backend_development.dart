@@ -164,6 +164,7 @@ class _BackendJobPostingFormState extends State<BackendJobPostingForm> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Job posting submitted successfully!')),
         );
+
         // Optionally clear the form or navigate to another page
       } else {
         throw Exception('Failed to submit job posting: ${response.body}');

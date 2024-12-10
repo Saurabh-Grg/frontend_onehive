@@ -394,7 +394,7 @@ class _ClientProfileUpdateState extends State<ClientProfileUpdate> {
                     backgroundColor: Colors.deepOrange,
                   ),
                   onPressed: controls.onStepContinue,
-                  child: Text(_currentStep < _buildSteps().length - 1 ? 'Next' : 'Submit'),
+                  child: Text(_currentStep < _buildSteps().length - 1 ? 'Next' : 'Submit', style: TextStyle(color: Colors.white),),
                 ),
                 if (_currentStep > 0)
                   TextButton(

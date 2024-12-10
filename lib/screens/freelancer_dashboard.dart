@@ -6,6 +6,7 @@ import 'package:onehive_frontend/constants/apis_endpoints.dart';
 import 'package:onehive_frontend/screens/proposal_form.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import '../controllers/UserController.dart';
 import 'client_profile_page.dart';
 import 'freelancer_profile_creation.dart';
 import 'freelancer_profile_update.dart';
@@ -36,7 +37,8 @@ class _FreelancerDashboardState extends State<FreelancerDashboard> {
   List<dynamic> likedJobs = []; // List to store liked jobs
 
   String selectedCategory = 'All'; // Default category selection
-  final TextEditingController _searchController = TextEditingController(); // Controller for search bar
+  final TextEditingController _searchController =
+      TextEditingController(); // Controller for search bar
 
   @override
   void initState() {
@@ -60,11 +62,13 @@ class _FreelancerDashboardState extends State<FreelancerDashboard> {
     }
   }
 
+  final UserController userController = Get.find();
+
   Future<void> _loadUserProfile() async {
     final response = await http.get(
       Uri.parse('http://localhost:3000/api/freelancerProfile'),
       headers: {
-        'Authorization': 'Bearer $token', // Add the token in the header
+        'Authorization': 'Bearer ${userController.token.value}',
         'Content-Type': 'application/json', // Optional, depending on your API
       },
     );
@@ -108,8 +112,7 @@ class _FreelancerDashboardState extends State<FreelancerDashboard> {
   Future<void> _fetchAllJobs() async {
     try {
       // Make a GET request to fetch the jobs
-      final response = await http
-          .get(Uri.parse(ApiEndpoints.getJobs));
+      final response = await http.get(Uri.parse(ApiEndpoints.getJobs));
 
       // Check if the response is successful
       if (response.statusCode == 200) {
@@ -281,7 +284,8 @@ class _FreelancerDashboardState extends State<FreelancerDashboard> {
     });
   }
 
-  Set<int> visibleCommentFields = {}; // Keeps track of job IDs with visible comment fields
+  Set<int> visibleCommentFields =
+      {}; // Keeps track of job IDs with visible comment fields
   final TextEditingController _commentController = TextEditingController();
 
   Widget _buildJobCards() {
@@ -308,7 +312,8 @@ class _FreelancerDashboardState extends State<FreelancerDashboard> {
       physics: NeverScrollableScrollPhysics(),
       itemCount: reversedJobs.length, // Use the reversed list for displaying
       itemBuilder: (context, index) {
-        var job = reversedJobs[index]; // Get the job directly from the reversed list
+        var job =
+            reversedJobs[index]; // Get the job directly from the reversed list
         // Skip jobs not matching the selected category
         if (selectedCategory != 'All' && job['category'] != selectedCategory) {
           return SizedBox.shrink(); // Return an empty widget if not matched
@@ -434,10 +439,13 @@ class _FreelancerDashboardState extends State<FreelancerDashboard> {
                             color: Colors.grey,
                             onPressed: () {
                               setState(() {
-                                if (visibleCommentFields.contains(job['job_id'])) {
-                                  visibleCommentFields.remove(job['job_id']); // Hide the comment field if already visible
+                                if (visibleCommentFields
+                                    .contains(job['job_id'])) {
+                                  visibleCommentFields.remove(job[
+                                      'job_id']); // Hide the comment field if already visible
                                 } else {
-                                  visibleCommentFields.add(job['job_id']); // Show the comment field if hidden
+                                  visibleCommentFields.add(job[
+                                      'job_id']); // Show the comment field if hidden
                                 }
                               });
                             },
@@ -475,19 +483,27 @@ class _FreelancerDashboardState extends State<FreelancerDashboard> {
                             controller: _commentController,
                             decoration: InputDecoration(
                               hintText: 'Write a comment...',
-                              border: UnderlineInputBorder( // Keep only the bottom border
-                                borderSide: BorderSide(color: Colors.grey), // Set the color of the bottom border
+                              border: UnderlineInputBorder(
+                                // Keep only the bottom border
+                                borderSide: BorderSide(
+                                    color: Colors
+                                        .grey), // Set the color of the bottom border
                               ),
                               focusedBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(color: Colors.deepOrange), // Color of the border when focused
+                                borderSide: BorderSide(
+                                    color: Colors
+                                        .deepOrange), // Color of the border when focused
                               ),
                               suffixIcon: IconButton(
                                 icon: Icon(Icons.send), // Use the send icon
                                 onPressed: () {
-                                  String comment = _commentController.text.trim();
+                                  String comment =
+                                      _commentController.text.trim();
                                   if (comment.isNotEmpty) {
-                                    _submitComment(job['job_id'], comment); // Submit the comment
-                                    _commentController.clear(); // Clear the input after submission
+                                    _submitComment(job['job_id'],
+                                        comment); // Submit the comment
+                                    _commentController
+                                        .clear(); // Clear the input after submission
                                   }
                                 },
                               ),
@@ -561,7 +577,6 @@ class _FreelancerDashboardState extends State<FreelancerDashboard> {
     // print('Comment submitted for job ID $jobId: $comment');
   }
 
-
   void _showNotifications(BuildContext context) {
     // This method will show the notifications in a dialog
     showDialog(
@@ -602,7 +617,10 @@ class _FreelancerDashboardState extends State<FreelancerDashboard> {
             child: DrawerHeader(
               child: Text(
                 'Navigation',
-                style: TextStyle(color: Colors.deepOrange, fontSize: 24, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                    color: Colors.deepOrange,
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold),
               ),
               decoration: BoxDecoration(
                 color: Colors.transparent,
@@ -653,14 +671,14 @@ class _FreelancerDashboardState extends State<FreelancerDashboard> {
                 ListTile(
                   leading: Icon(Icons.light_mode),
                   title: Text('Light theme'),
-                  onTap: (){
+                  onTap: () {
                     Get.changeTheme(ThemeData.light());
                   },
                 ),
                 ListTile(
                   leading: Icon(Icons.dark_mode),
                   title: Text('Dark theme'),
-                  onTap: (){
+                  onTap: () {
                     Get.changeTheme(ThemeData.dark());
                   },
                 ),
@@ -695,16 +713,26 @@ class _FreelancerDashboardState extends State<FreelancerDashboard> {
     }
 
     // Make an API call to check if the profile exists for the current user
+    // Build the URI
+    final uri = Uri.parse(
+        'http://localhost:3000/api/freelancerProfile/check-profile/$user_id');
+
+// Print the URI for debugging
+    print("Making API call to: $uri");
+
+// Make an API call to check if the profile exists for the current user
     final response = await http.get(
-      Uri.parse(
-          'http://localhost:3000/api/freelancerProfile/check-profile/$user_id'),
-      // Check your API endpoint
+      uri,
       headers: {
-        'Authorization': 'Bearer $token',
+        'Authorization': 'Bearer ${userController.token.value}',
         // Ensure the token is included if necessary
         'Content-Type': 'application/json',
       },
     );
+
+// Print the response status and body for additional debugging
+    print("Response status: ${response.statusCode}");
+    print("Response body: ${response.body}");
 
     if (response.statusCode == 200) {
       var responseBody = jsonDecode(response.body);
