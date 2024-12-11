@@ -123,103 +123,237 @@ class FreelancerProfilePage extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      // Align to the start of the screen
-                      child: Text(
-                        profile.name ?? "No Name",
-                        style: TextStyle(
-                          fontSize: 30,
-                          fontWeight: FontWeight.bold,
+                    Row(
+                      children: [
+                        // Profile image as a CircleAvatar
+                        CircleAvatar(
+                          radius: Get.width * 0.1, // Set the radius of the circle
+                          backgroundImage: profile.profileImageUrl != null
+                              ? NetworkImage(profile.profileImageUrl!)
+                              : AssetImage('assets/default_avatar.png') as ImageProvider, // Use default if no image
                         ),
-                      ),
+                        SizedBox(width: Get.width * 0.03,),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              // Align to the start of the screen
+                              child: Text(
+                                profile.name ?? "No Name",
+                                style: TextStyle(
+                                  fontSize: 30,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            Row(
+                              children: [
+                                Icon(Icons.location_on, color: Colors.red,),
+                                Text('${profile.city}, Nepal', style: TextStyle(color: Colors.grey[600]),)
+                              ],
+                            ),
+                            Text('Member since: ${profile.createdAt}', style: TextStyle(color: Colors.grey[600]),)
+                          ],
+                        ),
+                      ],
                     ),
+                    SizedBox(height: Get.height * 0.03),
                     Align(
                       alignment: Alignment.centerLeft, // Align bio to the start
                       child: Text(
                         profile.bio ?? "No Bio",
                         style: TextStyle(
                           fontSize: 16, // Adjust font size for bio if needed
-                          color: Colors
-                              .grey[700], // Optional: subtle color for bio
+                          color: Colors.black, // Optional: subtle color for bio
                         ),
                       ),
                     ),
-                    SizedBox(height: 16),
-                    if (profile.skills != null)
-                      Align(
-                        alignment: Alignment.centerLeft, // Align bio to the start
-                        child: Text("Skills:\n ${profile.skills}"),
-                      ),
-                    SizedBox(height: 16),
-                    if (profile.experience != null)
-                      Align(
-                        alignment: Alignment.centerLeft, // Align bio to the start
-                        child: Text("Experience:\n ${profile.experience}"),
-                      ),
-                    SizedBox(height: 16),
-                    if (profile.education != null)
-                      Align(
-                        alignment: Alignment.centerLeft, // Align bio to the start
-                        child: Text("Education:\n ${profile.education}"),
-                      ),
                   ],
                 ),
               ),
               SizedBox(height: 16),
-              if (profile.portfolioImages != null &&
-                  profile.portfolioImages!.isNotEmpty)
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+              Container(
+                color: Colors.grey[200],
+                child: Column(
                   children: [
-                    Text("Portfolio Images:", style: TextStyle(color: Colors.deepOrange, fontWeight: FontWeight.bold, fontSize: 20),),
-                    SizedBox(height: 8),
-                    Wrap(
-                      spacing: 8,
-                      children: profile.portfolioImages!.map((portfolio) {
-                        return GestureDetector(
-                          onTap: () {
-                            // Navigate to fullscreen view
-                            Get.to(
-                                () => FullScreenImageView(imageUrl: portfolio));
-                          },
-                          child: Image.network(
-                            portfolio,
-                            width: 100,
-                            height: 100,
-                            fit: BoxFit.cover,
+                    // Skills Card
+                    if (profile.skills != null)
+                      Card(
+                        margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                        elevation: 4,
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: RichText(
+                              text: TextSpan(
+                                text: "Skills\n", // The label part
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold, // Apply style to the label
+                                  color: Colors.black,   // Apply color to the label
+                                ),
+                                children: [
+                                  TextSpan(
+                                    text: profile.skills, // The actual education content
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.normal,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
-                        );
-                      }).toList(),
-                    ),
+                        ),
+                      ),
+                    // Experience Card
+                    if (profile.experience != null)
+                      Card(
+                        margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                        elevation: 4,
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: RichText(
+                              text: TextSpan(
+                                text: "Experience\n", // The label part
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold, // Apply style to the label
+                                  color: Colors.black,   // Apply color to the label
+                                ),
+                                children: [
+                                  TextSpan(
+                                    text: profile.experience, // The actual education content
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.normal,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    // Education Card
+                    if (profile.education != null)
+                      Card(
+                        margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                        elevation: 4,
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: RichText(
+                              text: TextSpan(
+                                text: "Education\n", // The label part
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold, // Apply style to the label
+                                  color: Colors.black,   // Apply color to the label
+                                ),
+                                children: [
+                                  TextSpan(
+                                    text: profile.education, // The actual education content
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.normal,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    // Portfolio Images Card
+                    if (profile.portfolioImages != null && profile.portfolioImages!.isNotEmpty)
+                      Card(
+                        margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                        elevation: 4,
+                        child: SizedBox(
+                          width: double.infinity, // Match the width of other cards
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Portfolio Images:",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20),
+                                ),
+                                SizedBox(height: 8),
+                                Wrap(
+                                  spacing: 8,
+                                  children: profile.portfolioImages!.map((portfolio) {
+                                    return GestureDetector(
+                                      onTap: () {
+                                        Get.to(() => FullScreenImageView(imageUrl: portfolio));
+                                      },
+                                      child: Image.network(
+                                        portfolio,
+                                        width: 100,
+                                        height: 100,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    );
+                                  }).toList(),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    // Certificates Card
+                    if (profile.certificates != null && profile.certificates!.isNotEmpty)
+                      Card(
+                        margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                        elevation: 4,
+                        child: SizedBox(
+                          width: double.infinity, // Match the width of other cards
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Certificates:",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20),
+                                ),
+                                SizedBox(height: 8),
+                                Wrap(
+                                  spacing: 8,
+                                  children: profile.certificates!.map((cert) {
+                                    return GestureDetector(
+                                      onTap: () {
+                                        Get.to(() => FullScreenImageView(imageUrl: cert));
+                                      },
+                                      child: Image.network(
+                                        cert,
+                                        width: 100,
+                                        height: 100,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    );
+                                  }).toList(),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
                   ],
                 ),
-              if (profile.certificates != null &&
-                  profile.certificates!.isNotEmpty)
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text("Certificates:", style: TextStyle(color: Colors.deepOrange, fontWeight: FontWeight.bold, fontSize: 20),),
-                    SizedBox(height: 8),
-                    Wrap(
-                      spacing: 8,
-                      children: profile.certificates!.map((cert) {
-                        return GestureDetector(
-                          onTap: () {
-                            // Navigate to fullscreen view
-                            Get.to(() => FullScreenImageView(imageUrl: cert));
-                          },
-                          child: Image.network(
-                            cert,
-                            width: 100,
-                            height: 100,
-                            fit: BoxFit.cover,
-                          ),
-                        );
-                      }).toList(),
-                    ),
-                  ],
-                ),
+              ),
+
             ],
           ),
         );

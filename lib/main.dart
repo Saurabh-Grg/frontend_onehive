@@ -21,6 +21,7 @@ class OneHive extends StatelessWidget {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'OneHive',
+
       theme: ThemeData(
           primarySwatch: Colors.orange
       ),

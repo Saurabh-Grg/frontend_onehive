@@ -11,6 +11,8 @@ class FreelancerProfile {
   final String? profileImageUrl;
   final List<String>? portfolioImages;
   final List<String>? certificates;
+  final String city;
+  final String createdAt;
 
   FreelancerProfile({
     required this.id,
@@ -23,6 +25,8 @@ class FreelancerProfile {
     this.profileImageUrl,
     this.portfolioImages,
     this.certificates,
+    required this.city,
+    required this.createdAt
   });
 
   factory FreelancerProfile.fromJson(Map<String, dynamic> json) {
@@ -45,6 +49,8 @@ class FreelancerProfile {
           ? List<String>.from(jsonDecode(json['certificates']))
           : List<String>.from(json['certificates']))
           : [],
+      city: json['user']['city'],
+      createdAt: json['user']['createdAt']
     );
   }
 
@@ -60,6 +66,8 @@ class FreelancerProfile {
       'profileImageUrl': profileImageUrl,
       'portfolioImages': portfolioImages,
       'certificates': certificates,
+      'city': city,
+      'createdAt': createdAt
     };
   }
 }

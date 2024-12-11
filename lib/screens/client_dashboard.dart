@@ -1173,7 +1173,7 @@ class _ClientDashboardState extends State<ClientDashboard> {
                 final proposal = proposals[index];
 
                 return Card(
-                  // color: Colors.white,
+                   color:  Colors.white,
                   margin: EdgeInsets.symmetric(vertical: screenWidth * 0.02),
                   elevation: 4,
                   child: Padding(
