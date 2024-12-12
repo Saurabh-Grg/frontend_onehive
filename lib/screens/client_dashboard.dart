@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:onehive_frontend/controllers/total_proposal_controller.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
@@ -130,6 +131,7 @@ class _ClientDashboardState extends State<ClientDashboard> {
     Future<void> _refreshDashboard() async {
       // Simulate a network call or data refresh, e.g., fetch new data
       await Future.delayed(Duration(seconds: 1));
+      fetchJobs();
 
       // Optionally, update the state with new data
       setState(() {
@@ -141,8 +143,7 @@ class _ClientDashboardState extends State<ClientDashboard> {
       appBar: AppBar(
         title: Text(
           'Hi! $username',
-          style:
-              TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(fontWeight: FontWeight.bold),
         ),
         actions: [
           IconButton(
@@ -239,9 +240,7 @@ class _ClientDashboardState extends State<ClientDashboard> {
             child: DrawerHeader(
               child: Text(
                 'Navigation',
-                style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
               decoration: BoxDecoration(
                 color: Colors.transparent,
@@ -461,6 +460,9 @@ class _ClientDashboardState extends State<ClientDashboard> {
     }
   }
 
+  final TotalProposalsController totalProposalsController =
+      Get.put(TotalProposalsController());
+
   Widget _buildSummaryCards(double screenWidth) {
     return Padding(
       padding: EdgeInsets.all(screenWidth * 0.02),
@@ -475,11 +477,16 @@ class _ClientDashboardState extends State<ClientDashboard> {
                   screenWidth,
                   'assets/images/bg1.png')),
           Expanded(
-              child: _buildSummaryCard(
-                  'Active Proposals',
-                  activeProposals.toString(),
-                  screenWidth,
-                  'assets/images/bg2.png')),
+            child: Obx(() {
+              // Observe the value of `totalProposals`
+              return _buildSummaryCard(
+                'Active Proposals',
+                totalProposalsController.totalProposals.value.toString(),
+                screenWidth,
+                'assets/images/bg2.png',
+              );
+            }),
+          ),
           Expanded(
               child: _buildSummaryCard(
                   'Ongoing Projects',
@@ -992,7 +999,8 @@ class _ClientDashboardState extends State<ClientDashboard> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => JobDetailsPage(jobId: int.parse(job['job_id']!)),
+                            builder: (context) => JobDetailsPage(
+                                jobId: int.parse(job['job_id']!)),
                           ),
                         );
                       },
@@ -1009,7 +1017,8 @@ class _ClientDashboardState extends State<ClientDashboard> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => AllJobPostingsPage(), // Navigate to All Jobs Page
+                    builder: (context) =>
+                        AllJobPostingsPage(), // Navigate to All Jobs Page
                   ),
                 );
               },
@@ -1173,7 +1182,7 @@ class _ClientDashboardState extends State<ClientDashboard> {
                 final proposal = proposals[index];
 
                 return Card(
-                   color:  Colors.white,
+                  color: Colors.white,
                   margin: EdgeInsets.symmetric(vertical: screenWidth * 0.02),
                   elevation: 4,
                   child: Padding(

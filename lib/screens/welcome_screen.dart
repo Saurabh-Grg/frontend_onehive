@@ -62,9 +62,6 @@ class WelcomeScreen extends StatelessWidget {
                   ),
                   child: Text('Get Started'),
                 ),
-                TextButton(onPressed: (){
-                  Get.toNamed('SubmitReviewScreen');
-                }, child: Text("Rating"))
               ],
             ),
           ),
