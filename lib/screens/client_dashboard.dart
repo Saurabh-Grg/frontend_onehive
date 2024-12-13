@@ -57,6 +57,8 @@ class _ClientDashboardState extends State<ClientDashboard> {
     _fetchTotalJobPostings(); // Fetch the data when the widget is created
     fetchJobs(); // Fetch jobs when the widget is initialized
     _loadProposals();
+    // Fetch total proposals when the dashboard is initialized
+    totalProposalsController.fetchTotalProposals();
   }
 
   Future<void> _getToken() async {
@@ -932,7 +934,12 @@ class _ClientDashboardState extends State<ClientDashboard> {
                       subtitle: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Description: ${job['description']}'),
+                          Text(
+                            'Description: ${job['description']}',
+                            // Limit the description to 2 lines
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis, // Show "..." for long text
+                          ),
                           // Display job description
                           Text('Category: ${job['category']}'),
                         ],
