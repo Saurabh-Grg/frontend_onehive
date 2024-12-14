@@ -3,9 +3,11 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:onehive_frontend/constants/apis_endpoints.dart';
+import 'package:onehive_frontend/controllers/ThemeController.dart';
 import 'package:onehive_frontend/screens/proposal_form.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import '../controllers/LikedJobsController.dart';
 import '../controllers/UserController.dart';
 import 'client_profile_page.dart';
 import 'freelancer_profile_creation.dart';
@@ -132,6 +134,10 @@ class _FreelancerDashboardState extends State<FreelancerDashboard> {
       print('Error fetching jobs: $error');
     }
   }
+
+  final LikedJobsController likedJobsController =
+      Get.put(LikedJobsController());
+  final ThemeController themeController = Get.put(ThemeController());
 
   @override
   Widget build(BuildContext context) {
@@ -271,18 +277,20 @@ class _FreelancerDashboardState extends State<FreelancerDashboard> {
   }
 
   // Function to handle job liking
-  void _likeJob(int jobId) {
-    setState(() {
-      if (likedJobs.contains(jobId)) {
-        likedJobs.remove(jobId); // Unlike if already liked
-      } else {
-        likedJobs.add(jobId); // Add to liked jobs if not already liked
-      }
-
-      // Optionally, you can send this information to the backend here
-      // to persist the liked jobs to the freelancer's profile
-    });
-  }
+  // void _likeJob(int jobId) {
+  //   setState(() {
+  //     if (likedJobs.contains(jobId)) {
+  //       Get.snackbar("Unliked", "This job is removed from your LIKED JOBS list");
+  //       likedJobs.remove(jobId); // Unlike if already liked
+  //     } else {
+  //       Get.snackbar("Liked", "This job is added to your LIKED JOBS list");
+  //       likedJobs.add(jobId); // Add to liked jobs if not already liked
+  //     }
+  //
+  //     // Optionally, you can send this information to the backend here
+  //     // to persist the liked jobs to the freelancer's profile
+  //   });
+  // }
 
   Set<int> visibleCommentFields =
       {}; // Keeps track of job IDs with visible comment fields
@@ -406,7 +414,7 @@ class _FreelancerDashboardState extends State<FreelancerDashboard> {
                       fontSize: 14.0,
                       color: Colors.black,
                     ),
-                    maxLines: 2, // Limit the description to 2 lines
+                    maxLines: 3, // Limit the description to 2 lines
                     overflow: TextOverflow.ellipsis, // Show "..." for long text
                   ),
                   SizedBox(height: 8.0),
@@ -418,21 +426,19 @@ class _FreelancerDashboardState extends State<FreelancerDashboard> {
                       Row(
                         children: [
                           // Like Button
-                          IconButton(
+                          Obx(() => IconButton(
                             icon: Icon(
-                              likedJobs.contains(job['job_id'])
+                              likedJobsController.likedJobs.contains(job['job_id'])
                                   ? Icons.favorite
                                   : Icons.favorite_border,
-                              color: likedJobs.contains(job['job_id'])
+                              color: likedJobsController.likedJobs.contains(job['job_id'])
                                   ? Colors.red
                                   : Colors.grey,
                             ),
                             onPressed: () {
-                              _likeJob(
-                                  job['job_id']); // Handle like button press
+                              likedJobsController.toggleLikeJob(job['job_id']); // Handle like/unlike
                             },
-                          ),
-                          // Comment Button
+                          )),
                           // Comment Button
                           IconButton(
                             icon: Icon(Icons.comment),
@@ -642,6 +648,13 @@ class _FreelancerDashboardState extends State<FreelancerDashboard> {
             },
           ),
           ListTile(
+            leading: Icon(Icons.favorite_sharp), // Icon for My Projects
+            title: Text('Liked jobs'),
+            onTap: () {
+              // Implement navigation to My Projects
+            },
+          ),
+          ListTile(
             leading: Icon(Icons.attach_money), // Icon for Earnings
             title: Text('Earnings'),
             onTap: () {
@@ -665,26 +678,21 @@ class _FreelancerDashboardState extends State<FreelancerDashboard> {
             },
           ),
           // Dark mode toggle
-          Container(
-            child: Column(
-              children: [
-                ListTile(
-                  leading: Icon(Icons.light_mode),
-                  title: Text('Light theme'),
-                  onTap: () {
-                    Get.changeTheme(ThemeData.light());
-                  },
+          Obx(() => SwitchListTile(
+                title: Text(
+                  themeController.isDarkTheme.value
+                      ? 'Dark Theme'
+                      : 'Light Theme',
+                  style: TextStyle(fontSize: 16),
                 ),
-                ListTile(
-                  leading: Icon(Icons.dark_mode),
-                  title: Text('Dark theme'),
-                  onTap: () {
-                    Get.changeTheme(ThemeData.dark());
-                  },
-                ),
-              ],
-            ),
-          ),
+                value: themeController.isDarkTheme.value,
+                onChanged: (value) {
+                  themeController.toggleTheme();
+                },
+                secondary: Icon(themeController.isDarkTheme.value
+                    ? Icons.dark_mode
+                    : Icons.light_mode),
+              )),
           ListTile(
             leading: Icon(Icons.logout), // Icon for Log Out
             title: Text('Log Out'),

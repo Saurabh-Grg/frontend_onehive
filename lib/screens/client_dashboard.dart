@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
+import '../controllers/ThemeController.dart';
 import '../controllers/UserController.dart';
 import '../job_forms/API_development_integration.dart';
 import '../job_forms/UI_UX_design.dart';
@@ -124,6 +125,8 @@ class _ClientDashboardState extends State<ClientDashboard> {
           prefs.getString('username') ?? 'User'; // Default to 'User' if null
     });
   }
+
+  final ThemeController themeController = Get.put(ThemeController());
 
   @override
   Widget build(BuildContext context) {
@@ -264,27 +267,23 @@ class _ClientDashboardState extends State<ClientDashboard> {
               // Navigator.push(context, MaterialPageRoute(builder: (context) => PaymentInformation()));
             },
           ),
+          Obx(() => SwitchListTile(
+                title: Text(
+                  themeController.isDarkTheme.value
+                      ? 'Dark Theme'
+                      : 'Light Theme',
+                  style: TextStyle(fontSize: 16),
+                ),
+                value: themeController.isDarkTheme.value,
+                onChanged: (value) {
+                  themeController.toggleTheme();
+                },
+                secondary: Icon(themeController.isDarkTheme.value
+                    ? Icons.dark_mode
+                    : Icons.light_mode),
+              )),
           //dark mode to-do
-          Container(
-            child: Column(
-              children: [
-                ListTile(
-                  leading: Icon(Icons.light_mode),
-                  title: Text('light theme'),
-                  onTap: () {
-                    Get.changeTheme(ThemeData.light());
-                  },
-                ),
-                ListTile(
-                  leading: Icon(Icons.dark_mode),
-                  title: Text('Dark theme'),
-                  onTap: () {
-                    Get.changeTheme(ThemeData.dark());
-                  },
-                ),
-              ],
-            ),
-          ),
+
           ListTile(
             leading: Icon(Icons.logout), // Icon for Log Out
             title: Text('Log Out'),
@@ -490,11 +489,13 @@ class _ClientDashboardState extends State<ClientDashboard> {
             }),
           ),
           Expanded(
-              child: _buildSummaryCard(
-                  'Ongoing Projects',
-                  ongoingProjects.toString(),
-                  screenWidth,
-                  'assets/images/bg3.png')),
+            child: _buildSummaryCard(
+                'Ongoing Projects',
+                ongoingProjects.toString(),
+                screenWidth,
+                'assets/images/bg3.png',
+            ),
+          ),
         ],
       ),
     );
@@ -938,7 +939,8 @@ class _ClientDashboardState extends State<ClientDashboard> {
                             'Description: ${job['description']}',
                             // Limit the description to 2 lines
                             maxLines: 2,
-                            overflow: TextOverflow.ellipsis, // Show "..." for long text
+                            overflow: TextOverflow
+                                .ellipsis, // Show "..." for long text
                           ),
                           // Display job description
                           Text('Category: ${job['category']}'),
@@ -1189,7 +1191,6 @@ class _ClientDashboardState extends State<ClientDashboard> {
                 final proposal = proposals[index];
 
                 return Card(
-                  color: Colors.white,
                   margin: EdgeInsets.symmetric(vertical: screenWidth * 0.02),
                   elevation: 4,
                   child: Padding(
@@ -1324,7 +1325,7 @@ class _ClientDashboardState extends State<ClientDashboard> {
             style: TextStyle(
               fontSize: screenWidth * 0.05,
               fontWeight: FontWeight.bold,
-              color: primaryColor,
+              // color: Colors.green,
             ), // Responsive font size
           ),
           // Placeholder for ongoing projects
@@ -1334,6 +1335,7 @@ class _ClientDashboardState extends State<ClientDashboard> {
             itemCount: 2, // Replace with actual project count
             itemBuilder: (context, index) {
               return Card(
+                color: Colors.green[50],
                 margin: EdgeInsets.symmetric(vertical: screenWidth * 0.02),
                 // Responsive margin
                 child: ListTile(
