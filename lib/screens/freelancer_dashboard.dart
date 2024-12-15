@@ -135,8 +135,7 @@ class _FreelancerDashboardState extends State<FreelancerDashboard> {
     }
   }
 
-  final LikedJobsController likedJobsController =
-      Get.put(LikedJobsController());
+  final LikedJobsController likedJobsController = Get.put(LikedJobsController());
   final ThemeController themeController = Get.put(ThemeController());
 
   @override
@@ -722,13 +721,7 @@ class _FreelancerDashboardState extends State<FreelancerDashboard> {
 
     // Make an API call to check if the profile exists for the current user
     // Build the URI
-    final uri = Uri.parse(
-        'http://localhost:3000/api/freelancerProfile/check-profile/$user_id');
-
-// Print the URI for debugging
-    print("Making API call to: $uri");
-
-// Make an API call to check if the profile exists for the current user
+    final uri = Uri.parse('http://localhost:3000/api/freelancerProfile/check-profile/$user_id');
     final response = await http.get(
       uri,
       headers: {

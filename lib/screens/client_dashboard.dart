@@ -1230,8 +1230,8 @@ class _ClientDashboardState extends State<ClientDashboard> {
                                           builder: (context) =>
                                               FreelancerProfilePage(
                                             freelancerId:
-                                                proposal.freelancerId!,
-                                            jobId: proposal.jobId!,
+                                                proposal.freelancerId,
+                                            jobId: proposal.jobId,
                                           ),
                                         ),
                                       );
