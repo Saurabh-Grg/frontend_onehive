@@ -1159,7 +1159,7 @@ class _ClientDashboardState extends State<ClientDashboard> {
           Text(
             'Incoming Proposals',
             style: TextStyle(
-              fontSize: screenWidth * 0.05,
+              fontSize: screenWidth * 0.06,
               fontWeight: FontWeight.bold,
               color: Colors.deepOrange, // Adjust to your primary color
             ),
@@ -1167,17 +1167,22 @@ class _ClientDashboardState extends State<ClientDashboard> {
           SizedBox(height: screenWidth * 0.03),
 
           // Loading Indicator
-          if (isLoading) Center(child: CircularProgressIndicator()),
+          if (isLoading)
+            Center(child: CircularProgressIndicator(color: Colors.deepOrange)),
 
           // Check if there are any proposals
           if (!isLoading && proposals.isEmpty)
             Center(
-              child: Text(
-                'No proposals at the moment.',
-                style: TextStyle(
-                  fontSize: screenWidth * 0.045,
-                  fontWeight: FontWeight.w400,
-                  color: Colors.grey,
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.1),
+                child: Text(
+                  'No proposals at the moment.',
+                  style: TextStyle(
+                    fontSize: screenWidth * 0.045,
+                    fontWeight: FontWeight.w400,
+                    color: Colors.grey,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
               ),
             ),
@@ -1192,73 +1197,90 @@ class _ClientDashboardState extends State<ClientDashboard> {
 
                 return Card(
                   margin: EdgeInsets.symmetric(vertical: screenWidth * 0.02),
-                  elevation: 4,
+                  elevation: 6,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15), // Rounded corners for cards
+                  ),
                   child: Padding(
-                    padding: EdgeInsets.all(screenWidth * 0.02),
+                    padding: EdgeInsets.all(screenWidth * 0.04),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        RichText(
-                          text: TextSpan(
-                            children: [
-                              TextSpan(
-                                text: 'Proposal from ',
-                                style: TextStyle(
-                                  fontSize: screenWidth * 0.045,
-                                  color: Colors.deepOrange,
-                                ),
+                        Row(
+                          children: [
+                            Icon(Icons.assignment_ind, color: Colors.deepOrange, size: screenWidth * 0.05),
+                            SizedBox(width: screenWidth * 0.02),
+                            Text(
+                              'Proposal from',
+                              style: TextStyle(
+                                fontSize: screenWidth * 0.04,
+                                color: Colors.deepOrange,
+                                fontWeight: FontWeight.bold,
                               ),
-                              TextSpan(
-                                text: proposal.name,
+                            ),
+                            // Using RichText and TextSpan to handle tap gesture
+                            RichText(
+                              text: TextSpan(
                                 style: TextStyle(
-                                  fontSize: screenWidth * 0.045,
-                                  color: Colors.deepOrange,
-                                  // Set the name color to black
+                                  fontSize: screenWidth * 0.04,
+                                  color: Colors.black,
                                   fontWeight: FontWeight.bold,
-                                  // decoration: TextDecoration.underline, // Optional: underline to indicate clickability
                                 ),
-                                recognizer: TapGestureRecognizer()
-                                  ..onTap = () {
-                                    // Debug: Ensure non-null IDs
-                                    if (proposal.freelancerId != null &&
-                                        proposal.jobId != null) {
-                                      print(
-                                          "Navigating to FreelancerProfilePage with jobId: ${proposal.jobId} and freelancerId: ${proposal.freelancerId}");
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              FreelancerProfilePage(
-                                            freelancerId:
-                                                proposal.freelancerId,
-                                            jobId: proposal.jobId,
-                                          ),
-                                        ),
-                                      );
-                                    } else {
-                                      print(
-                                          "Error: Missing jobId or freelancerId in proposal.");
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        SnackBar(
-                                            content: Text(
-                                                "Error: Missing job or freelancer details.")),
-                                      );
-                                    }
-                                  },
+                                children: [
+                                  TextSpan(
+                                    text: ' ${proposal.name}',
+                                    recognizer: TapGestureRecognizer()
+                                      ..onTap = () {
+                                        // Debug: Ensure non-null IDs
+                                        if (proposal.freelancerId != null &&
+                                            proposal.jobId != null) {
+                                          print(
+                                              "Navigating to FreelancerProfilePage with jobId: ${proposal.jobId} and freelancerId: ${proposal.freelancerId}");
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  FreelancerProfilePage(
+                                                    freelancerId: proposal.freelancerId,
+                                                    jobId: proposal.jobId,
+                                                  ),
+                                            ),
+                                          );
+                                        } else {
+                                          print(
+                                              "Error: Missing jobId or freelancerId in proposal.");
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                            SnackBar(
+                                                content: Text(
+                                                    "Error: Missing job or freelancer details.")),
+                                          );
+                                        }
+                                      },
+                                  ),
+                                ],
                               ),
-                              TextSpan(
-                                text: ' for job "${proposal.title}"',
-                                style: TextStyle(
-                                  fontSize: screenWidth * 0.045,
-                                  color: Colors.deepOrange,
-                                ),
-                              ),
-                            ],
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: screenWidth * 0.02),
+                        Text(
+                          'Job: "${proposal.title}"',
+                          style: TextStyle(
+                            fontSize: screenWidth * 0.04,
+                            color: Colors.black54,
                           ),
                         ),
-                        Text('Proposed Budget: Rs. ${proposal.budget}'),
                         SizedBox(height: screenWidth * 0.01),
+                        Text(
+                          'Proposed Budget: Rs. ${proposal.budget}',
+                          style: TextStyle(
+                            fontSize: screenWidth * 0.04,
+                            color: Colors.green,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        SizedBox(height: screenWidth * 0.02),
                         Text(
                           proposal.useEscrow
                               ? 'Payment will be held in Escrow'
@@ -1270,36 +1292,48 @@ class _ClientDashboardState extends State<ClientDashboard> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        SizedBox(height: screenWidth * 0.02),
+                        SizedBox(height: screenWidth * 0.03),
 
                         // Action buttons (Accept/Decline)
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
-                            SizedBox(
-                              width: screenWidth * 0.35,
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  _handleAcceptProposal(context,
-                                      proposal); // Pass context and useEscrow argument
-                                },
-                                style: ElevatedButton.styleFrom(
-                                    // backgroundColor: Colors.white, // Button background color
-                                    ),
-                                child: Text('Accept'),
+                            ElevatedButton(
+                              onPressed: () {
+                                _handleAcceptProposal(context, proposal);
+                              },
+                              style: ElevatedButton.styleFrom(
+                                padding: EdgeInsets.all(12),
+                                backgroundColor: Colors.deepOrange, // Background color
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                textStyle: TextStyle(
+                                  fontSize: screenWidth * 0.04,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                foregroundColor: Colors.white, // Set the text color here
                               ),
+                              child: Text('Accept'),
                             ),
-                            SizedBox(
-                              width: screenWidth * 0.35,
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  _handleDeclineProposal(proposal);
-                                },
-                                style: ElevatedButton.styleFrom(
-                                    // backgroundColor: Colors.white, // Button background color
-                                    ),
-                                child: Text('Decline'),
+                            ElevatedButton(
+                              onPressed: () {
+                                _handleDeclineProposal(proposal);
+                              },
+                              style: ElevatedButton.styleFrom(
+                                padding: EdgeInsets.all(12),
+                                backgroundColor: Colors.grey, // Background color
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                textStyle: TextStyle(
+                                  fontSize: screenWidth * 0.04,
+                                  fontWeight: FontWeight.bold,
+                                    color: Colors.white
+                                ),
+                                foregroundColor: Colors.white, // Set the text color here
                               ),
+                              child: Text('Decline'),
                             ),
                           ],
                         ),
@@ -1313,6 +1347,171 @@ class _ClientDashboardState extends State<ClientDashboard> {
       ),
     );
   }
+
+
+  // Widget _buildProposalsSection(double screenWidth) {
+  //   return Padding(
+  //     padding: EdgeInsets.all(screenWidth * 0.05),
+  //     child: Column(
+  //       crossAxisAlignment: CrossAxisAlignment.start,
+  //       children: [
+  //         Text(
+  //           'Incoming Proposals',
+  //           style: TextStyle(
+  //             fontSize: screenWidth * 0.05,
+  //             fontWeight: FontWeight.bold,
+  //             color: Colors.deepOrange, // Adjust to your primary color
+  //           ),
+  //         ),
+  //         SizedBox(height: screenWidth * 0.03),
+  //
+  //         // Loading Indicator
+  //         if (isLoading) Center(child: CircularProgressIndicator()),
+  //
+  //         // Check if there are any proposals
+  //         if (!isLoading && proposals.isEmpty)
+  //           Center(
+  //             child: Text(
+  //               'No proposals at the moment.',
+  //               style: TextStyle(
+  //                 fontSize: screenWidth * 0.045,
+  //                 fontWeight: FontWeight.w400,
+  //                 color: Colors.grey,
+  //               ),
+  //             ),
+  //           ),
+  //
+  //         if (!isLoading && proposals.isNotEmpty)
+  //           ListView.builder(
+  //             shrinkWrap: true,
+  //             physics: NeverScrollableScrollPhysics(),
+  //             itemCount: proposals.length,
+  //             itemBuilder: (context, index) {
+  //               final proposal = proposals[index];
+  //
+  //               return Card(
+  //                 margin: EdgeInsets.symmetric(vertical: screenWidth * 0.02),
+  //                 elevation: 4,
+  //                 child: Padding(
+  //                   padding: EdgeInsets.all(screenWidth * 0.02),
+  //                   child: Column(
+  //                     crossAxisAlignment: CrossAxisAlignment.start,
+  //                     children: [
+  //                       RichText(
+  //                         text: TextSpan(
+  //                           children: [
+  //                             TextSpan(
+  //                               text: 'Proposal from ',
+  //                               style: TextStyle(
+  //                                 fontSize: screenWidth * 0.045,
+  //                                 color: Colors.deepOrange,
+  //                               ),
+  //                             ),
+  //                             TextSpan(
+  //                               text: proposal.name,
+  //                               style: TextStyle(
+  //                                 fontSize: screenWidth * 0.045,
+  //                                 color: Colors.deepOrange,
+  //                                 // Set the name color to black
+  //                                 fontWeight: FontWeight.bold,
+  //                                 // decoration: TextDecoration.underline, // Optional: underline to indicate clickability
+  //                               ),
+  //                               recognizer: TapGestureRecognizer()
+  //                                 ..onTap = () {
+  //                                   // Debug: Ensure non-null IDs
+  //                                   if (proposal.freelancerId != null &&
+  //                                       proposal.jobId != null) {
+  //                                     print(
+  //                                         "Navigating to FreelancerProfilePage with jobId: ${proposal.jobId} and freelancerId: ${proposal.freelancerId}");
+  //                                     Navigator.push(
+  //                                       context,
+  //                                       MaterialPageRoute(
+  //                                         builder: (context) =>
+  //                                             FreelancerProfilePage(
+  //                                           freelancerId:
+  //                                               proposal.freelancerId,
+  //                                           jobId: proposal.jobId,
+  //                                         ),
+  //                                       ),
+  //                                     );
+  //                                   } else {
+  //                                     print(
+  //                                         "Error: Missing jobId or freelancerId in proposal.");
+  //                                     ScaffoldMessenger.of(context)
+  //                                         .showSnackBar(
+  //                                       SnackBar(
+  //                                           content: Text(
+  //                                               "Error: Missing job or freelancer details.")),
+  //                                     );
+  //                                   }
+  //                                 },
+  //                             ),
+  //                             TextSpan(
+  //                               text: ' for job "${proposal.title}"',
+  //                               style: TextStyle(
+  //                                 fontSize: screenWidth * 0.045,
+  //                                 color: Colors.deepOrange,
+  //                               ),
+  //                             ),
+  //                           ],
+  //                         ),
+  //                       ),
+  //                       Text('Proposed Budget: Rs. ${proposal.budget}'),
+  //                       SizedBox(height: screenWidth * 0.01),
+  //                       Text(
+  //                         proposal.useEscrow
+  //                             ? 'Payment will be held in Escrow'
+  //                             : 'Payment after job completion',
+  //                         style: TextStyle(
+  //                           color: proposal.useEscrow
+  //                               ? Colors.deepOrange
+  //                               : Colors.orange,
+  //                           fontWeight: FontWeight.bold,
+  //                         ),
+  //                       ),
+  //                       SizedBox(height: screenWidth * 0.02),
+  //
+  //                       // Action buttons (Accept/Decline)
+  //                       Row(
+  //                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  //                         children: [
+  //                           SizedBox(
+  //                             width: screenWidth * 0.35,
+  //                             child: ElevatedButton(
+  //                               onPressed: () {
+  //                                 _handleAcceptProposal(context,
+  //                                     proposal); // Pass context and useEscrow argument
+  //                               },
+  //                               style: ElevatedButton.styleFrom(
+  //                                   // backgroundColor: Colors.white, // Button background color
+  //                                   ),
+  //                               child: Text('Accept'),
+  //                             ),
+  //                           ),
+  //                           SizedBox(
+  //                             width: screenWidth * 0.35,
+  //                             child: ElevatedButton(
+  //                               onPressed: () {
+  //                                 _handleDeclineProposal(proposal);
+  //                               },
+  //                               style: ElevatedButton.styleFrom(
+  //                                   // backgroundColor: Colors.white, // Button background color
+  //                                   ),
+  //                               child: Text('Decline'),
+  //                             ),
+  //                           ),
+  //                         ],
+  //                       ),
+  //                     ],
+  //                   ),
+  //                 ),
+  //               );
+  //             },
+  //           ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   Widget _buildOngoingProjectsSection(double screenWidth) {
     return Padding(
