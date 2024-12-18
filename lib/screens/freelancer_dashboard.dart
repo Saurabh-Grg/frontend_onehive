@@ -676,6 +676,14 @@ class _FreelancerDashboardState extends State<FreelancerDashboard> {
               Get.toNamed('/leaderboard');
             },
           ),
+          ListTile(
+            leading: Icon(Icons.chat_rounded), // Icon for Leaderboard
+            title: Text('Messages'),
+            onTap: () {
+              // Implement navigation to Leaderboard
+              Get.toNamed('/chatPage');
+            },
+          ),
           // Dark mode toggle
           Obx(() => SwitchListTile(
                 title: Text(

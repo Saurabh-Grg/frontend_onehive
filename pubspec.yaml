@@ -46,6 +46,7 @@ dependencies:
   get: ^4.6.6
   timeago: ^3.7.0
   flutter_rating_bar: ^4.0.1
+  socket_io_client: ^3.0.2
 
 dev_dependencies:
   flutter_test:

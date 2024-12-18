@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:onehive_frontend/providers/client_profile_provider.dart';
 import 'package:onehive_frontend/providers/jobProvider.dart';
 import 'package:onehive_frontend/providers/user_provider.dart';
+import 'package:onehive_frontend/screens/ChatPage.dart';
 import 'package:onehive_frontend/screens/LeaderboardScreen.dart';
 import 'package:onehive_frontend/screens/RatingScreen.dart';
 import 'package:onehive_frontend/screens/SubmitReviewScreen.dart';
@@ -36,6 +37,7 @@ class OneHive extends StatelessWidget {
         GetPage(name: '/leaderboard', page: () => LeaderboardScreen()),
         GetPage(name: '/SubmitReviewScreen', page: () => SubmitReviewScreen()),
         GetPage(name: '/totalProposal', page: () => TotalProposalsView()),
+        GetPage(name: '/chatPage', page: () => ChatScreen()),
         // GetPage(name: '/SubmitReviewScreen', page: () => SubmitReviewScreen()),
       ],
       // routes: {
