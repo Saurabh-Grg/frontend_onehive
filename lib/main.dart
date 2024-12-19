@@ -12,6 +12,7 @@ import 'package:onehive_frontend/screens/freelancer_dashboard.dart';
 import 'package:onehive_frontend/screens/login_form.dart';
 import 'package:onehive_frontend/screens/total_proposal_view.dart';
 import 'package:onehive_frontend/screens/welcome_screen.dart';
+import 'package:onehive_frontend/services/SocketService.dart';
 import 'package:onehive_frontend/services/job_posting_service.dart';
 import 'package:provider/provider.dart';
 
@@ -40,10 +41,6 @@ class OneHive extends StatelessWidget {
         GetPage(name: '/chatPage', page: () => ChatScreen()),
         // GetPage(name: '/SubmitReviewScreen', page: () => SubmitReviewScreen()),
       ],
-      // routes: {
-      //   '/login': (context) => LoginForm(),
-      //   '/dashboard': (context) => ClientDashboard()
-      // },
     );
   }
 }
@@ -60,4 +57,6 @@ void main() {
       child: OneHive(),
     ),
   );
+  // Initialize SocketService here
+  Get.lazyPut(()=>SocketService());
 }
