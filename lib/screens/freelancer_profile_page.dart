@@ -1,38 +1,130 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../controllers/FreelancerProfileController.dart';
 import 'FullScreenImageView.dart';
 
-class FreelancerProfilePage extends StatelessWidget {
-  final int
-      freelancerId; // Use int for consistency if IDs are stored as integers
+class FreelancerProfilePage extends StatefulWidget {
+  final int freelancerId;
   final int jobId;
-  final FreelancerProfileController controller =
-      Get.put(FreelancerProfileController());
 
-  FreelancerProfilePage(
-      {Key? key, required this.freelancerId, required this.jobId})
-      : super(key: key) {
+  FreelancerProfilePage({Key? key, required this.freelancerId, required this.jobId})
+      : super(key: key);
+
+  @override
+  _FreelancerProfilePageState createState() => _FreelancerProfilePageState();
+}
+
+class _FreelancerProfilePageState extends State<FreelancerProfilePage> {
+  final FreelancerProfileController controller = Get.put(FreelancerProfileController());
+
+  @override
+  void initState() {
+    super.initState();
     // Initialize the controller with the provided IDs
-    controller.initialize(freelancerId: freelancerId, jobId: jobId);
+    controller.initialize(freelancerId: widget.freelancerId, jobId: widget.jobId);
+    // Fetch the follow status from SharedPreferences when the page is loaded
+    _loadFollowStatus();
+  }
+
+  Future<void> _loadFollowStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+    bool? status = prefs.getBool('isFollowing_${widget.freelancerId}');
+
+    if (status != null) {
+      controller.isFollowing.value = status;
+    } else {
+      controller.fetchFollowStatus(); // Fallback to fetching from API if not found
+    }
+  }
+
+
+  // Show a confirmation dialog
+  Future<bool> _showConfirmationDialog(BuildContext context) async {
+    return await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Confirmation"),
+          content: Text(
+            controller.isFollowing.value
+                ? "Are you sure you want to unfollow?"
+                : "Are you sure you want to follow?",
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Get.back(result: false),
+              child: const Text("No"),
+            ),
+            TextButton(
+              onPressed: () => Get.back(result: true),
+              child: const Text("Yes"),
+            ),
+          ],
+        );
+      },
+    ) ??
+        false; // Return false if dialog is dismissed
   }
 
   @override
   Widget build(BuildContext context) {
     print(
-        "Navigated to FreelancerProfilePage with freelancerId: $freelancerId");
+        "Navigated to FreelancerProfilePage with freelancerId: ${widget.freelancerId}");
 
     // Fetch the freelancer profile on page load
-    controller.fetchFreelancerProfile(freelancerId);
+    controller.fetchFreelancerProfile(widget.freelancerId);
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           "OneHive",
-          style:
-              TextStyle(fontWeight: FontWeight.bold, color: Colors.deepOrange),
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.deepOrange,
+          ),
         ),
+        actions: [
+          Obx(() {
+            return Padding(
+              padding: const EdgeInsets.only(right: 4.0),
+              child: ElevatedButton(
+                onPressed: () async {
+                  // Show confirmation dialog
+                  bool confirm = await _showConfirmationDialog(context);
+
+                  if (confirm) {
+                    int userIdInt = int.parse(controller.userController.userId.value); // Convert String to int
+
+                    if (controller.isFollowing.value) {
+                      controller.unfollowFreelancer(
+                        userIdInt,
+                        widget.freelancerId, // Use freelancerId to unfollow
+                      );
+                    } else {
+                      controller.followFreelancer(
+                        userIdInt,
+                        widget.freelancerId, // Use freelancerId to follow
+                      );
+                    }
+                  }
+                },
+                child: Text(
+                  controller.isFollowing.value ? "Unfollow" : "Follow",
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: controller.isFollowing.value ? Colors.grey[200] : Colors.deepOrange,
+                  foregroundColor: controller.isFollowing.value ? Colors.black : Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+              ),
+            );
+          }),
+        ],
       ),
       body: Obx(() {
         if (controller.isLoading.value) {
@@ -417,3 +509,4 @@ class FreelancerProfilePage extends StatelessWidget {
     );
   }
 }
+

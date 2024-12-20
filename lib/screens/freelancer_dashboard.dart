@@ -8,7 +8,9 @@ import 'package:onehive_frontend/screens/proposal_form.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import '../controllers/LikedJobsController.dart';
+import '../controllers/NotificationController.dart';
 import '../controllers/UserController.dart';
+import 'NotificationsPage.dart';
 import 'client_profile_page.dart';
 import 'freelancer_profile_creation.dart';
 import 'freelancer_profile_update.dart';
@@ -45,6 +47,27 @@ class _FreelancerDashboardState extends State<FreelancerDashboard> {
   @override
   void initState() {
     super.initState();
+
+    // Initialize controllers
+    Get.put(UserController());
+    Get.put(
+        NotificationController()); // Synchronously put the NotificationController
+    Get.put(LikedJobsController());
+    Get.put(ThemeController());
+
+    // Ensure user data is loaded from SharedPreferences
+    final userController = Get.find<UserController>();
+    userController.loadUserFromPrefs().then((_) {
+      // Fetch notifications for the user once the user ID is loaded
+      final userId = int.tryParse(userController.userId.value);
+      if (userId != null) {
+        final notificationController = Get.find<NotificationController>();
+        notificationController.fetchNotifications(userId);
+      } else {
+        Get.snackbar("Error", "User ID not found");
+      }
+    });
+
     _getToken();
     _getUserId(); // Fetch the token when dashboard initializes
     _loadUserFullName(); // Load the username from preferences when the screen is initialized
@@ -135,7 +158,8 @@ class _FreelancerDashboardState extends State<FreelancerDashboard> {
     }
   }
 
-  final LikedJobsController likedJobsController = Get.put(LikedJobsController());
+  final LikedJobsController likedJobsController =
+      Get.put(LikedJobsController());
   final ThemeController themeController = Get.put(ThemeController());
 
   @override
@@ -162,9 +186,40 @@ class _FreelancerDashboardState extends State<FreelancerDashboard> {
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.notifications),
+            icon: Stack(
+              children: [
+                Icon(Icons.notifications),
+                Obx(() {
+                  if (!Get.isRegistered<NotificationController>()) {
+                    return SizedBox
+                        .shrink(); // Return an empty widget if the controller is not registered
+                  }
+
+                  final notificationController =
+                      Get.find<NotificationController>();
+                  final unreadCount = notificationController.notifications
+                      .where((n) => !n.isRead)
+                      .length;
+
+                  return unreadCount > 0
+                      ? Positioned(
+                          right: 0,
+                          child: CircleAvatar(
+                            radius: 8,
+                            backgroundColor: Colors.red,
+                            child: Text(
+                              '$unreadCount',
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 12),
+                            ),
+                          ),
+                        )
+                      : SizedBox.shrink();
+                }),
+              ],
+            ),
             onPressed: () {
-              _showNotifications(context);
+              Get.to(() => NotificationsPage());
             },
           ),
           Padding(
@@ -426,18 +481,21 @@ class _FreelancerDashboardState extends State<FreelancerDashboard> {
                         children: [
                           // Like Button
                           Obx(() => IconButton(
-                            icon: Icon(
-                              likedJobsController.likedJobs.contains(job['job_id'])
-                                  ? Icons.favorite
-                                  : Icons.favorite_border,
-                              color: likedJobsController.likedJobs.contains(job['job_id'])
-                                  ? Colors.red
-                                  : Colors.grey,
-                            ),
-                            onPressed: () {
-                              likedJobsController.toggleLikeJob(job['job_id']); // Handle like/unlike
-                            },
-                          )),
+                                icon: Icon(
+                                  likedJobsController.likedJobs
+                                          .contains(job['job_id'])
+                                      ? Icons.favorite
+                                      : Icons.favorite_border,
+                                  color: likedJobsController.likedJobs
+                                          .contains(job['job_id'])
+                                      ? Colors.red
+                                      : Colors.grey,
+                                ),
+                                onPressed: () {
+                                  likedJobsController.toggleLikeJob(
+                                      job['job_id']); // Handle like/unlike
+                                },
+                              )),
                           // Comment Button
                           IconButton(
                             icon: Icon(Icons.comment),
@@ -582,35 +640,35 @@ class _FreelancerDashboardState extends State<FreelancerDashboard> {
     // print('Comment submitted for job ID $jobId: $comment');
   }
 
-  void _showNotifications(BuildContext context) {
-    // This method will show the notifications in a dialog
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Notifications'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                Text('Notification 1: Your job has been posted.'),
-                Text('Notification 2: You received a new proposal.'),
-                Text('Notification 3: A freelancer accepted your job.'),
-                // Add more notifications as needed
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: Text('Close'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
+  // void _showNotifications(BuildContext context) {
+  //   // This method will show the notifications in a dialog
+  //   showDialog(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return AlertDialog(
+  //         title: Text('Notifications'),
+  //         content: SingleChildScrollView(
+  //           child: ListBody(
+  //             children: <Widget>[
+  //               Text('Notification 1: Your job has been posted.'),
+  //               Text('Notification 2: You received a new proposal.'),
+  //               Text('Notification 3: A freelancer accepted your job.'),
+  //               // Add more notifications as needed
+  //             ],
+  //           ),
+  //         ),
+  //         actions: <Widget>[
+  //           TextButton(
+  //             child: Text('Close'),
+  //             onPressed: () {
+  //               Navigator.of(context).pop();
+  //             },
+  //           ),
+  //         ],
+  //       );
+  //     },
+  //   );
+  // }
 
   Widget _buildDrawer(BuildContext context) {
     return Drawer(
@@ -681,7 +739,7 @@ class _FreelancerDashboardState extends State<FreelancerDashboard> {
             title: Text('Messages'),
             onTap: () {
               // Implement navigation to Leaderboard
-              Get.toNamed('/chatPage');
+              Get.toNamed('/chatListPage');
             },
           ),
           // Dark mode toggle
@@ -729,7 +787,8 @@ class _FreelancerDashboardState extends State<FreelancerDashboard> {
 
     // Make an API call to check if the profile exists for the current user
     // Build the URI
-    final uri = Uri.parse('http://localhost:3000/api/freelancerProfile/check-profile/$user_id');
+    final uri = Uri.parse(
+        'http://localhost:3000/api/freelancerProfile/check-profile/$user_id');
     final response = await http.get(
       uri,
       headers: {
