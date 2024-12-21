@@ -1243,6 +1243,7 @@ class _ClientDashboardState extends State<ClientDashboard> {
                                                   FreelancerProfilePage(
                                                     freelancerId: proposal.freelancerId,
                                                     jobId: proposal.jobId,
+
                                                   ),
                                             ),
                                           );

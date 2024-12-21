@@ -1,9 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/NotificationController.dart';
+import '../controllers/UserController.dart';
 
 class NotificationsPage extends StatelessWidget {
   final NotificationController controller = Get.find();
+
+  NotificationsPage({Key? key}) : super(key: key) {
+    _markAllAsRead(); // Automatically mark all notifications as read
+  }
+
+  void _markAllAsRead() {
+    final userController = Get.find<UserController>();
+    final userId = int.tryParse(userController.userId.value);
+    if (userId != null) {
+      controller.markAllAsRead(userId);
+    } else {
+      Get.snackbar('Error', 'User ID not found');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,8 +44,7 @@ class NotificationsPage extends StatelessWidget {
                   ? Icon(Icons.check, color: Colors.green)
                   : Icon(Icons.mark_email_unread, color: Colors.blue),
               onTap: () {
-                // Mark as read
-                controller.markAsRead(notification.notification_id);
+                // You can define specific actions for individual notifications if needed
               },
             );
           },

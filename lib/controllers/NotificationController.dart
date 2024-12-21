@@ -52,17 +52,32 @@ class NotificationController extends GetxController {
   }
 
 
-  void markAsRead(int notificationId) {
-    // Mark a notification as read in the backend or locally
-    final index = notifications.indexWhere((n) => n.notification_id == notificationId);
-    if (index != -1) {
-      notifications[index] = NotificationModel(
-        notification_id: notifications[index].notification_id,
-        message: notifications[index].message,
-        isRead: true,
-        createdAt: notifications[index].createdAt,
-      );
-      notifications.refresh();
+  Future<void> markAllAsRead(int userId) async {
+    try {
+      isLoading.value = true;
+      final url = 'http://localhost:3000/api/notifications/user/$userId/readAll';
+      final response = await http.put(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        // Update all notifications locally
+        notifications.value = notifications.map((n) {
+          return NotificationModel(
+            notification_id: n.notification_id,
+            message: n.message,
+            isRead: true,
+            createdAt: n.createdAt,
+          );
+        }).toList();
+        notifications.refresh(); // Refresh the observable list
+        Get.snackbar('Success', 'All notifications marked as read');
+      } else {
+        Get.snackbar('Error', 'Failed to mark notifications as read');
+      }
+    } catch (e) {
+      print('Error marking all notifications as read: $e');
+      Get.snackbar('Error', 'Something went wrong');
+    } finally {
+      isLoading.value = false;
     }
   }
 }
