@@ -142,68 +142,90 @@
 //   }
 // }
 
+//
+// import 'package:flutter/material.dart';
+// import 'package:get/get.dart';
+// import '../controllers/ChatController.dart';
+//
+// class ChatScreen extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     final ChatController chatController = Get.put(ChatController());
+//
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: Text('Real-Time Chat'),
+//         centerTitle: true,
+//       ),
+//       body: SafeArea(
+//         child: Column(
+//           children: [
+//             // Chat messages list
+//             Expanded(
+//               child: Obx(() {
+//                 return ListView.builder(
+//                   itemCount: chatController.messages.length,
+//                   itemBuilder: (context, index) {
+//                     return ListTile(
+//                       title: Text(chatController.messages[index]),
+//                     );
+//                   },
+//                 );
+//               }),
+//             ),
+//             // Message input
+//             Padding(
+//               padding: const EdgeInsets.all(8.0),
+//               child: Row(
+//                 children: [
+//                   Expanded(
+//                     child: TextField(
+//                       onSubmitted: (message) {
+//                         chatController.sendMessage(message);
+//                       },
+//                       decoration: InputDecoration(
+//                         hintText: 'Type a message...',
+//                         filled: true,
+//                         fillColor: Colors.white,
+//                         border: OutlineInputBorder(),
+//                       ),
+//                     ),
+//                   ),
+//                   IconButton(
+//                     icon: Icon(Icons.send),
+//                     onPressed: () {
+//                       String message = 'Hello, this is a test message';
+//                       chatController.sendMessage(message);
+//                     },
+//                   ),
+//                 ],
+//               ),
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
 
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import '../controllers/ChatController.dart';
+import '../models/Chat.dart';
 
 class ChatScreen extends StatelessWidget {
+  final Chat chat;
+
+  const ChatScreen({Key? key, required this.chat}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
-    final ChatController chatController = Get.put(ChatController());
-
     return Scaffold(
       appBar: AppBar(
-        title: Text('Real-Time Chat'),
-        centerTitle: true,
+        title: Text(chat.name),
       ),
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Chat messages list
-            Expanded(
-              child: Obx(() {
-                return ListView.builder(
-                  itemCount: chatController.messages.length,
-                  itemBuilder: (context, index) {
-                    return ListTile(
-                      title: Text(chatController.messages[index]),
-                    );
-                  },
-                );
-              }),
-            ),
-            // Message input
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      onSubmitted: (message) {
-                        chatController.sendMessage(message);
-                      },
-                      decoration: InputDecoration(
-                        hintText: 'Type a message...',
-                        filled: true,
-                        fillColor: Colors.white,
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.send),
-                    onPressed: () {
-                      String message = 'Hello, this is a test message';
-                      chatController.sendMessage(message);
-                    },
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
+      body: Center(
+        child: Text('Chat with ${chat.name}'),
       ),
     );
   }
 }
+

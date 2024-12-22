@@ -188,11 +188,10 @@ class _FreelancerDashboardState extends State<FreelancerDashboard> {
           IconButton(
             icon: Stack(
               children: [
-                Icon(Icons.notifications),
+                Icon(Icons.notifications, size: 32),
                 Obx(() {
                   if (!Get.isRegistered<NotificationController>()) {
-                    return SizedBox
-                        .shrink(); // Return an empty widget if the controller is not registered
+                    return SizedBox.shrink();
                   }
 
                   final notificationController =

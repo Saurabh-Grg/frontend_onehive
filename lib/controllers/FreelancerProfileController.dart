@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
 import '../models/FreelancerProfile.dart';
@@ -8,9 +9,13 @@ import 'UserController.dart';
 class FreelancerProfileController extends GetxController {
   final UserController userController = Get.find();
 
+  // Map to store follow status for each freelancer
+  var followStatuses = <int, bool>{}.obs; // Using a map to store follow status
+
   // State variables
   var isLoading = false.obs;
   var profile = Rxn<FreelancerProfile>();
+  var isFollowing = false.obs; // Track follow status
   int? freelancerId;
   int? jobId;
 
@@ -19,6 +24,47 @@ class FreelancerProfileController extends GetxController {
     this.freelancerId = freelancerId;
     this.jobId = jobId;
     print("Controller initialized with freelancerId: $freelancerId, jobId: $jobId");
+  }
+
+  // In FreelancerProfileController:
+  Future<void> fetchFollowStatus() async {
+    if (freelancerId == null) {
+      print("Error: freelancerId is null.");
+      return;
+    }
+
+    try {
+      final Uri followStatusUri = Uri.parse(
+          'http://localhost:3000/api/follow/status/${userController.userId.value}/$freelancerId');
+
+      final response = await http.get(
+        followStatusUri,
+        headers: {
+          'Authorization': 'Bearer ${userController.token.value}',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        isFollowing.value = data['isFollowing'];
+
+        // Save the follow status to SharedPreferences
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setBool('isFollowing_$freelancerId', isFollowing.value);
+
+      } else {
+        print("Failed to fetch follow status. Status: ${response.statusCode}");
+      }
+    } catch (e) {
+      print("Error occurred while fetching follow status: $e");
+    }
+  }
+
+// Call fetchFollowStatus() on initialization
+  @override
+  void onInit() {
+    super.onInit();
+    fetchFollowStatus(); // Make sure this is called when the page is loaded
   }
 
   Future<void> fetchFreelancerProfile(int userId) async {
@@ -91,6 +137,61 @@ class FreelancerProfileController extends GetxController {
       Get.snackbar("Error", "An error occurred: $e");
     } finally {
       isLoading(false);
+    }
+  }
+  Future<void> followFreelancer(int followerId, int followedId) async {
+    try {
+      final followUri = Uri.parse('http://localhost:3000/api/follow/follow');
+      final response = await http.post(
+        followUri,
+        headers: {
+          'Authorization': 'Bearer ${userController.token.value}',
+          'Content-Type': 'application/json',
+        },
+        body: json.encode({
+          'followerId': followerId,
+          'followedId': followedId,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        Get.snackbar("Success", data['message']);
+        fetchFollowStatus(); // Update the follow status
+      } else {
+        Get.snackbar("Error", "Failed to follow freelancer");
+      }
+    } catch (e) {
+      print("Error following freelancer: $e");
+      Get.snackbar("Error", "An error occurred: $e");
+    }
+  }
+
+  Future<void> unfollowFreelancer(int followerId, int followedId) async {
+    try {
+      final unfollowUri = Uri.parse('http://localhost:3000/api/follow/unfollow');
+      final response = await http.post(
+        unfollowUri,
+        headers: {
+          'Authorization': 'Bearer ${userController.token.value}',
+          'Content-Type': 'application/json',
+        },
+        body: json.encode({
+          'followerId': followerId,
+          'followedId': followedId,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        Get.snackbar("Success", data['message']);
+        fetchFollowStatus(); // Update the follow status
+      } else {
+        Get.snackbar("Error", "Failed to unfollow freelancer");
+      }
+    } catch (e) {
+      print("Error unfollowing freelancer: $e");
+      Get.snackbar("Error", "An error occurred: $e");
     }
   }
 }

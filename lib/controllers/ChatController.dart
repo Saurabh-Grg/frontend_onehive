@@ -107,24 +107,59 @@
 //   }
 // }
 
+// import 'package:get/get.dart';
+// import '../services/SocketService.dart';
+//
+// class ChatController extends GetxController {
+//   final SocketService socketService = Get.find();
+//   var messages = <String>[].obs;
+//   var receiverId = 1; // Replace with actual receiver ID
+//
+//   // Send a message using the SocketService
+//   void sendMessage(String message) {
+//     socketService.sendMessage(receiverId, message);
+//     messages.add('Me: $message');  // Add to local chat view
+//   }
+//
+//   // Listen for incoming messages
+//   void listenForMessages() {
+//     socketService.socket.on('receiveMessage', (data) {
+//       messages.add('Received: ${data['message']}');
+//     });
+//   }
+// }
+
 import 'package:get/get.dart';
-import '../services/SocketService.dart';
+import '../models/Chat.dart';
+
 
 class ChatController extends GetxController {
-  final SocketService socketService = Get.find();
-  var messages = <String>[].obs;
-  var receiverId = 1; // Replace with actual receiver ID
+  var chatList = <Chat>[].obs;
 
-  // Send a message using the SocketService
-  void sendMessage(String message) {
-    socketService.sendMessage(receiverId, message);
-    messages.add('Me: $message');  // Add to local chat view
+  @override
+  void onInit() {
+    super.onInit();
+    loadChats();
   }
 
-  // Listen for incoming messages
-  void listenForMessages() {
-    socketService.socket.on('receiveMessage', (data) {
-      messages.add('Received: ${data['message']}');
-    });
+  void loadChats() {
+    // Simulating fetching chat data
+    chatList.value = [
+      Chat(
+        id: '1',
+        name: 'John Doe',
+        lastMessage: 'Hello!',
+        time: '10:00 AM',
+        isOnline: true,
+      ),
+      Chat(
+        id: '2',
+        name: 'Jane Smith',
+        lastMessage: 'How are you?',
+        time: '9:45 AM',
+        isOnline: false,
+      ),
+      // Add more chat data
+    ];
   }
 }

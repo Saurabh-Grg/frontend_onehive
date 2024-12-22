@@ -24,7 +24,7 @@ class NotificationsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Notifications'),
+        title: Text('Notifications', style: TextStyle(fontWeight: FontWeight.bold),),
       ),
       body: Obx(() {
         if (controller.isLoading.value) {

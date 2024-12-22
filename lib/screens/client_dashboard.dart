@@ -148,7 +148,7 @@ class _ClientDashboardState extends State<ClientDashboard> {
       appBar: AppBar(
         title: Text(
           'Hi! $username',
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.deepOrange),
         ),
         actions: [
           IconButton(
@@ -262,6 +262,22 @@ class _ClientDashboardState extends State<ClientDashboard> {
           ListTile(
             leading: Icon(Icons.attach_money),
             title: Text('Payment Information'),
+            onTap: () {
+              // Implement navigation to payment information
+              // Navigator.push(context, MaterialPageRoute(builder: (context) => PaymentInformation()));
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.message),
+            title: Text('Messages'),
+            onTap: () {
+              // Implement navigation to payment information
+              // Navigator.push(context, MaterialPageRoute(builder: (context) => PaymentInformation()));
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.person),
+            title: Text('Following'),
             onTap: () {
               // Implement navigation to payment information
               // Navigator.push(context, MaterialPageRoute(builder: (context) => PaymentInformation()));
@@ -817,8 +833,8 @@ class _ClientDashboardState extends State<ClientDashboard> {
 
   // Function to fetch job postings from the backend
   Future<void> fetchJobs() async {
-    String? user_id = await _getUserId();
-    final String url = 'http://localhost:3000/api/jobPosting/jobs/$user_id';
+    String? userId = await _getUserId(); //if error occurs, make user_id
+    final String url = 'http://localhost:3000/api/jobPosting/jobs/$userId';
     try {
       final response = await http.get(Uri.parse(url));
       if (response.statusCode == 200) {
