@@ -732,10 +732,6 @@ class _ClientDashboardState extends State<ClientDashboard> {
                     selectedCategory!,
                     currentUserId,
                   );
-
-                  // Print current job posting details for debugging
-                  // jobPostingService.printCurrentJobPostingDetails();
-
                   try {
                     // Store temp job posting
                     await jobPostingService.storeTempJob();
@@ -743,10 +739,6 @@ class _ClientDashboardState extends State<ClientDashboard> {
                     // Optionally, check the stored data after submission
                     jobPostingService
                         .printCurrentJobPostingDetails(); // For debugging
-
-                    // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    //   content: Text('Job posting stored successfully!'),
-                    // ));
 
                     // Navigate to the respective form based on the selected category
                     Widget targetPage;
@@ -1366,204 +1358,118 @@ class _ClientDashboardState extends State<ClientDashboard> {
   }
 
 
-  // Widget _buildProposalsSection(double screenWidth) {
-  //   return Padding(
-  //     padding: EdgeInsets.all(screenWidth * 0.05),
-  //     child: Column(
-  //       crossAxisAlignment: CrossAxisAlignment.start,
-  //       children: [
-  //         Text(
-  //           'Incoming Proposals',
-  //           style: TextStyle(
-  //             fontSize: screenWidth * 0.05,
-  //             fontWeight: FontWeight.bold,
-  //             color: Colors.deepOrange, // Adjust to your primary color
-  //           ),
-  //         ),
-  //         SizedBox(height: screenWidth * 0.03),
-  //
-  //         // Loading Indicator
-  //         if (isLoading) Center(child: CircularProgressIndicator()),
-  //
-  //         // Check if there are any proposals
-  //         if (!isLoading && proposals.isEmpty)
-  //           Center(
-  //             child: Text(
-  //               'No proposals at the moment.',
-  //               style: TextStyle(
-  //                 fontSize: screenWidth * 0.045,
-  //                 fontWeight: FontWeight.w400,
-  //                 color: Colors.grey,
-  //               ),
-  //             ),
-  //           ),
-  //
-  //         if (!isLoading && proposals.isNotEmpty)
-  //           ListView.builder(
-  //             shrinkWrap: true,
-  //             physics: NeverScrollableScrollPhysics(),
-  //             itemCount: proposals.length,
-  //             itemBuilder: (context, index) {
-  //               final proposal = proposals[index];
-  //
-  //               return Card(
-  //                 margin: EdgeInsets.symmetric(vertical: screenWidth * 0.02),
-  //                 elevation: 4,
-  //                 child: Padding(
-  //                   padding: EdgeInsets.all(screenWidth * 0.02),
-  //                   child: Column(
-  //                     crossAxisAlignment: CrossAxisAlignment.start,
-  //                     children: [
-  //                       RichText(
-  //                         text: TextSpan(
-  //                           children: [
-  //                             TextSpan(
-  //                               text: 'Proposal from ',
-  //                               style: TextStyle(
-  //                                 fontSize: screenWidth * 0.045,
-  //                                 color: Colors.deepOrange,
-  //                               ),
-  //                             ),
-  //                             TextSpan(
-  //                               text: proposal.name,
-  //                               style: TextStyle(
-  //                                 fontSize: screenWidth * 0.045,
-  //                                 color: Colors.deepOrange,
-  //                                 // Set the name color to black
-  //                                 fontWeight: FontWeight.bold,
-  //                                 // decoration: TextDecoration.underline, // Optional: underline to indicate clickability
-  //                               ),
-  //                               recognizer: TapGestureRecognizer()
-  //                                 ..onTap = () {
-  //                                   // Debug: Ensure non-null IDs
-  //                                   if (proposal.freelancerId != null &&
-  //                                       proposal.jobId != null) {
-  //                                     print(
-  //                                         "Navigating to FreelancerProfilePage with jobId: ${proposal.jobId} and freelancerId: ${proposal.freelancerId}");
-  //                                     Navigator.push(
-  //                                       context,
-  //                                       MaterialPageRoute(
-  //                                         builder: (context) =>
-  //                                             FreelancerProfilePage(
-  //                                           freelancerId:
-  //                                               proposal.freelancerId,
-  //                                           jobId: proposal.jobId,
-  //                                         ),
-  //                                       ),
-  //                                     );
-  //                                   } else {
-  //                                     print(
-  //                                         "Error: Missing jobId or freelancerId in proposal.");
-  //                                     ScaffoldMessenger.of(context)
-  //                                         .showSnackBar(
-  //                                       SnackBar(
-  //                                           content: Text(
-  //                                               "Error: Missing job or freelancer details.")),
-  //                                     );
-  //                                   }
-  //                                 },
-  //                             ),
-  //                             TextSpan(
-  //                               text: ' for job "${proposal.title}"',
-  //                               style: TextStyle(
-  //                                 fontSize: screenWidth * 0.045,
-  //                                 color: Colors.deepOrange,
-  //                               ),
-  //                             ),
-  //                           ],
-  //                         ),
-  //                       ),
-  //                       Text('Proposed Budget: Rs. ${proposal.budget}'),
-  //                       SizedBox(height: screenWidth * 0.01),
-  //                       Text(
-  //                         proposal.useEscrow
-  //                             ? 'Payment will be held in Escrow'
-  //                             : 'Payment after job completion',
-  //                         style: TextStyle(
-  //                           color: proposal.useEscrow
-  //                               ? Colors.deepOrange
-  //                               : Colors.orange,
-  //                           fontWeight: FontWeight.bold,
-  //                         ),
-  //                       ),
-  //                       SizedBox(height: screenWidth * 0.02),
-  //
-  //                       // Action buttons (Accept/Decline)
-  //                       Row(
-  //                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-  //                         children: [
-  //                           SizedBox(
-  //                             width: screenWidth * 0.35,
-  //                             child: ElevatedButton(
-  //                               onPressed: () {
-  //                                 _handleAcceptProposal(context,
-  //                                     proposal); // Pass context and useEscrow argument
-  //                               },
-  //                               style: ElevatedButton.styleFrom(
-  //                                   // backgroundColor: Colors.white, // Button background color
-  //                                   ),
-  //                               child: Text('Accept'),
-  //                             ),
-  //                           ),
-  //                           SizedBox(
-  //                             width: screenWidth * 0.35,
-  //                             child: ElevatedButton(
-  //                               onPressed: () {
-  //                                 _handleDeclineProposal(proposal);
-  //                               },
-  //                               style: ElevatedButton.styleFrom(
-  //                                   // backgroundColor: Colors.white, // Button background color
-  //                                   ),
-  //                               child: Text('Decline'),
-  //                             ),
-  //                           ),
-  //                         ],
-  //                       ),
-  //                     ],
-  //                   ),
-  //                 ),
-  //               );
-  //             },
-  //           ),
-  //       ],
-  //     ),
-  //   );
-  // }
-
   Widget _buildOngoingProjectsSection(double screenWidth) {
     return Padding(
       padding: EdgeInsets.all(screenWidth * 0.05), // Responsive padding
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Section Title
           Text(
             'Ongoing Projects',
             style: TextStyle(
-              fontSize: screenWidth * 0.05,
+              fontSize: screenWidth * 0.06,
               fontWeight: FontWeight.bold,
-              // color: Colors.green,
             ), // Responsive font size
           ),
-          // Placeholder for ongoing projects
-          ListView.builder(
+          SizedBox(height: screenWidth * 0.04), // Spacing between title and list
+          // Ongoing Projects List
+          AnimatedList(
+            initialItemCount: 2, // Replace with actual project count
             shrinkWrap: true,
             physics: NeverScrollableScrollPhysics(),
-            itemCount: 2, // Replace with actual project count
-            itemBuilder: (context, index) {
-              return Card(
-                color: Colors.green[50],
-                margin: EdgeInsets.symmetric(vertical: screenWidth * 0.02),
-                // Responsive margin
-                child: ListTile(
-                  title: Text('Project Title $index',
-                      style: TextStyle(fontSize: screenWidth * 0.04)),
-                  // Responsive font size
-                  subtitle: Text('Status: In Progress\nDeadline: 2023-12-01'),
-                  trailing: IconButton(
-                    icon: Icon(Icons.message),
-                    onPressed: () {
-                      // Implement messaging functionality
+            itemBuilder: (context, index, animation) {
+              return SlideTransition(
+                position: animation.drive(
+                  Tween<Offset>(
+                    begin: Offset(-1.0, 0.0),
+                    end: Offset(0.0, 0.0),
+                  ).chain(CurveTween(curve: Curves.easeOut)),
+                ),
+                child: Card(
+                  elevation: 4, // Add shadow effect
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15), // Rounded corners
+                  ),
+                  margin: EdgeInsets.symmetric(vertical: screenWidth * 0.03),
+                  child: InkWell(
+                    onTap: () {
+                      // Navigate to project details
                     },
+                    borderRadius: BorderRadius.circular(15),
+                    splashColor: Colors.green[100],
+                    child: Padding(
+                      padding: EdgeInsets.all(screenWidth * 0.04),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Project Title
+                          Row(
+                            children: [
+                              Icon(Icons.work, size: screenWidth * 0.06),
+                              SizedBox(width: screenWidth * 0.03),
+                              Expanded(
+                                child: Text(
+                                  'Project Title $index',
+                                  style: TextStyle(
+                                    fontSize: screenWidth * 0.05,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: screenWidth * 0.02),
+                          // Project Status and Deadline
+                          Row(
+                            children: [
+                              Icon(Icons.access_time, size: screenWidth * 0.045),
+                              SizedBox(width: screenWidth * 0.02),
+                              Expanded(
+                                child: Text(
+                                  'Status: In Progress\nDeadline: 2023-12-01',
+                                  style: TextStyle(
+                                    fontSize: screenWidth * 0.04,
+                                    color: Colors.grey[600],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: screenWidth * 0.03),
+                          // Action Buttons
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              ElevatedButton.icon(
+                                icon: Icon(Icons.info_outline, size: screenWidth * 0.045),
+                                label: Text('View Details'),
+                                onPressed: () {
+                                  // Navigate to project details
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: screenWidth * 0.025,
+                                      horizontal: screenWidth * 0.05),
+                                  backgroundColor: Colors.deepOrange,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                ),
+                              ),
+                              IconButton(
+                                icon: Icon(Icons.message, size: screenWidth * 0.06),
+                                onPressed: () {
+                                  // Implement messaging functionality
+                                },
+                                tooltip: 'Message',
+                                color: Colors.deepOrange,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
               );
