@@ -4,6 +4,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:onehive_frontend/controllers/total_proposal_controller.dart';
+import 'package:onehive_frontend/screens/PaymentPage.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
@@ -1104,10 +1105,16 @@ class _ClientDashboardState extends State<ClientDashboard> {
 
   void _handleAcceptProposal(BuildContext context, Proposal proposal) {
     if (proposal.useEscrow) {
+      // Navigator.push(
+      //   context,
+      //   MaterialPageRoute(
+      //     builder: (context) => EscrowPaymentPage(proposal: proposal),
+      //   ),
+      // );
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => EscrowPaymentPage(proposal: proposal),
+          builder: (context) => PaymentPage(),
         ),
       );
     } else {
@@ -1442,8 +1449,8 @@ class _ClientDashboardState extends State<ClientDashboard> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               ElevatedButton.icon(
-                                icon: Icon(Icons.info_outline, size: screenWidth * 0.045),
-                                label: Text('View Details'),
+                                icon: Icon(Icons.info_outline, size: screenWidth * 0.045, color: Colors.white,),
+                                label: Text('View Details', style: TextStyle(color: Colors.white),),
                                 onPressed: () {
                                   // Navigate to project details
                                 },

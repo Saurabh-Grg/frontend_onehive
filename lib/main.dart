@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:onehive_frontend/models/EsewaScreen.dart';
 import 'package:onehive_frontend/providers/client_profile_provider.dart';
 import 'package:onehive_frontend/providers/jobProvider.dart';
 import 'package:onehive_frontend/providers/user_provider.dart';
@@ -40,7 +39,6 @@ class OneHive extends StatelessWidget {
         GetPage(name: '/SubmitReviewScreen', page: () => SubmitReviewScreen()),
         GetPage(name: '/totalProposal', page: () => TotalProposalsView()),
         GetPage(name: '/chatListPage', page: () => ChatListPage()),
-        GetPage(name: '/esewaScreen', page: () => EsewaScreen()),
         // GetPage(name: '/SubmitReviewScreen', page: () => SubmitReviewScreen()),
       ],
     );
@@ -59,6 +57,4 @@ void main() {
       child: OneHive(),
     ),
   );
-  // Initialize SocketService here
-  Get.lazyPut(()=>SocketService());
 }

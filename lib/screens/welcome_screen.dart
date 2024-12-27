@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:onehive_frontend/models/EsewaScreen.dart';
 import 'login_form.dart';
 
 
@@ -63,9 +62,6 @@ class WelcomeScreen extends StatelessWidget {
                   ),
                   child: Text('Get Started'),
                 ),
-                TextButton(onPressed: (){
-                  Get.toNamed('/esewaScreen');
-                }, child: Text("Payment"))
               ],
             ),
           ),
