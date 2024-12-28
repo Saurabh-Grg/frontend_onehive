@@ -2,18 +2,23 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'UserController.dart';
+
 class PaymentController extends GetxController {
   // Define the payment state variables
   var paymentStatus = ''.obs;
   var escrowStatus = ''.obs;
   var paymentUrl = ''.obs;
+  final UserController userController = Get.put(UserController());
 
   // Method to initiate the payment
   Future<void> initiatePayment(int clientId, int freelancerId, int jobId, double amount) async {
     try {
       final response = await http.post(
         Uri.parse('http://localhost:3000/payment/initialize'),
-        headers: {'Content-Type': 'application/json'},
+        headers: {'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${userController.token.value}'
+        },
         body: json.encode({
           'client_id': clientId,
           'freelancer_id': freelancerId,
