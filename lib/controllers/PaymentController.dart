@@ -13,11 +13,14 @@ class PaymentController extends GetxController {
 
   // Method to initiate the payment
   Future<void> initiatePayment(int clientId, int freelancerId, int jobId, double amount) async {
+    paymentStatus.value = 'initiating';
+
     try {
       final response = await http.post(
         Uri.parse('http://localhost:3000/payment/initialize'),
-        headers: {'Content-Type': 'application/json',
-          'Authorization': 'Bearer ${userController.token.value}'
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${userController.token.value}',
         },
         body: json.encode({
           'client_id': clientId,
@@ -30,7 +33,16 @@ class PaymentController extends GetxController {
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
         if (responseData['success']) {
-          paymentUrl.value = responseData['esewaRedirectUrl'];
+          // Extract the eSewa redirect URL and append query parameters
+          final esewaRedirectUrl = responseData['esewaRedirectUrl'];
+          final totalAmount = responseData['params']['total_amount'];
+          final pid = responseData['params']['pid'];
+          final scd = responseData['params']['scd'];
+          final su = responseData['params']['su'];
+          final fu = responseData['params']['fu'];
+
+          // Build the final payment URL
+          paymentUrl.value = '$esewaRedirectUrl?total_amount=$totalAmount&pid=$pid&scd=$scd&su=$su&fu=$fu';
           paymentStatus.value = 'initiated';
         } else {
           paymentStatus.value = 'error';
@@ -40,10 +52,9 @@ class PaymentController extends GetxController {
       }
     } catch (e) {
       paymentStatus.value = 'failed';
-      print("Error initiating payment: $e");
+      // _handleError(e, 'Error initiating payment');
     }
   }
-
   // Method to verify the payment
   Future<void> verifyPayment(String pid, String amt) async {
     try {

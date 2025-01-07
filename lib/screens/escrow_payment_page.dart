@@ -16,8 +16,7 @@ class EscrowPaymentPage extends StatelessWidget {
         title: Text(
           'Escrow Payment Details',
           style: TextStyle(
-            color: Colors.deepOrange,
-            fontSize: screenWidth * 0.06,
+            // color: Colors.deepOrange,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -40,15 +39,15 @@ class EscrowPaymentPage extends StatelessWidget {
                     Text(
                       'Freelancer: ${proposal.name}',
                       style: TextStyle(
-                        fontSize: screenWidth * 0.045,
+                        fontSize: screenWidth * 0.04,
                         fontWeight: FontWeight.bold,
                         color: Colors.deepOrange,
                       ),
                     ),
                     SizedBox(height: screenHeight * 0.01),
-                    Text('Project: ${proposal.title}', style: TextStyle(fontSize: screenWidth * 0.04)),
+                    Text('Project: ${proposal.title}', ),
                     SizedBox(height: screenHeight * 0.01),
-                    Text('Proposed Budget: \$${proposal.budget}', style: TextStyle(fontSize: screenWidth * 0.04)),
+                    Text('Proposed Budget: Rs. ${proposal.budget}',),
                   ],
                 ),
               ),
@@ -67,7 +66,7 @@ class EscrowPaymentPage extends StatelessWidget {
                     Text(
                       'Escrow Payment Breakdown',
                       style: TextStyle(
-                        fontSize: screenWidth * 0.05,
+                        fontSize: screenWidth * 0.04,
                         fontWeight: FontWeight.bold,
                         color: Colors.deepOrange,
                       ),
@@ -76,24 +75,24 @@ class EscrowPaymentPage extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('Freelancer Payment:', style: TextStyle(fontSize: screenWidth * 0.045)),
-                        Text('\$${proposal.budget}', style: TextStyle(fontSize: screenWidth * 0.045)),
+                        Text('Freelancer Payment:',),
+                        Text('Rs. ${proposal.budget}',),
                       ],
                     ),
                     SizedBox(height: screenHeight * 0.01),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('System Commission (5%):', style: TextStyle(fontSize: screenWidth * 0.045)),
-                        Text('\$${(proposal.budget * 0.05).toStringAsFixed(2)}', style: TextStyle(fontSize: screenWidth * 0.045)),
+                        Text('Commission (5%):',),
+                        Text('Rs. ${(proposal.budget * 0.05).toStringAsFixed(2)}'),
                       ],
                     ),
                     Divider(height: screenHeight * 0.03, color: Colors.grey),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('Total Amount:', style: TextStyle(fontSize: screenWidth * 0.05, fontWeight: FontWeight.bold, color: Colors.deepOrange)),
-                        Text('\$${(proposal.budget * 1.05).toStringAsFixed(2)}', style: TextStyle(fontSize: screenWidth * 0.05, fontWeight: FontWeight.bold)),
+                        Text('Total Amount:', style: TextStyle(fontSize: screenWidth * 0.04, fontWeight: FontWeight.bold, color: Colors.deepOrange)),
+                        Text('Rs. ${(proposal.budget * 1.05).toStringAsFixed(2)}', style: TextStyle(fontSize: screenWidth * 0.05, fontWeight: FontWeight.bold)),
                       ],
                     ),
                   ],
@@ -114,7 +113,7 @@ class EscrowPaymentPage extends StatelessWidget {
                 Expanded(
                   child: Text(
                     'I understand that my payment will be held in escrow until the project is completed and approved.',
-                    style: TextStyle(fontSize: screenWidth * 0.04),
+                    style: TextStyle(fontSize: screenWidth * 0.03, color: Colors.grey[600]),
                   ),
                 ),
               ],
@@ -127,9 +126,9 @@ class EscrowPaymentPage extends StatelessWidget {
                 style: ElevatedButton.styleFrom(
                   padding: EdgeInsets.symmetric(
                     vertical: screenHeight * 0.02,
-                    horizontal: screenWidth * 0.3,
+                    horizontal: screenWidth * 0.19,
                   ),
-                  backgroundColor: Colors.orange,
+                  backgroundColor: Colors.deepOrange,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
@@ -140,7 +139,7 @@ class EscrowPaymentPage extends StatelessWidget {
                 child: Text(
                   'Proceed to Payment',
                   style: TextStyle(
-                    fontSize: screenWidth * 0.05,
+                    fontSize: screenWidth * 0.03,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),

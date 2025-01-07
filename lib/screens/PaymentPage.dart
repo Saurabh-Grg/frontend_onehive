@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:get/get.dart';
 import '../controllers/PaymentController.dart';
 
@@ -13,18 +14,23 @@ class PaymentPage extends StatelessWidget {
         child: Obx(() {
           // Check the payment status and render accordingly
           if (paymentController.paymentStatus.value == 'initiated') {
+            // Convert Uri to WebUri for compatibility with InAppWebView
+            WebUri webUri = WebUri(paymentController.paymentUrl.value);
             // Redirect to eSewa payment page
-            // return WebView(
-            //   initialUrl: paymentController.paymentUrl.value, // The eSewa URL
-            //   javascriptMode: JavascriptMode.unrestricted,
-            //   onPageStarted: (String url) {
-            //     if (url.contains('verify')) {
-            //       // Handle success page: redirect to success page in your app
-            //     } else if (url.contains('failed')) {
-            //       // Handle failure page: show failure message
-            //     }
-            //   },
-            // );
+            return InAppWebView(
+              initialUrlRequest: URLRequest(
+                url: webUri, // Use WebUri here
+              ),
+              onLoadStart: (controller, url) {
+                if (url != null) {
+                  if (url.toString().contains('verify')) {
+                    // Handle success page: redirect to success page in your app
+                  } else if (url.toString().contains('failed')) {
+                    // Handle failure page: show failure message
+                  }
+                }
+              },
+            );
           } else if (paymentController.paymentStatus.value == 'verified') {
             return Text('Payment Verified');
           } else if (paymentController.paymentStatus.value == 'error') {

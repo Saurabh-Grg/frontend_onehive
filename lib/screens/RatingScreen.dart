@@ -13,7 +13,7 @@ class RatingsScreen extends StatelessWidget {
         title: Text(
           'My Ratings',
           style:
-              TextStyle(color: Colors.deepOrange, fontWeight: FontWeight.bold),
+              TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
       body: Padding(

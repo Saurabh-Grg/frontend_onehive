@@ -689,7 +689,7 @@ class _ClientDashboardState extends State<ClientDashboard> {
                     return DropdownMenuItem<String>(
                       value: category,
                       child: Text(category),
-                    );
+                    ) ;
                   }).toList(),
                   onChanged: (String? newValue) {
                     selectedCategory = newValue;
@@ -706,20 +706,11 @@ class _ClientDashboardState extends State<ClientDashboard> {
                 if (_titleController.text.isNotEmpty &&
                     _descriptionController.text.isNotEmpty &&
                     selectedCategory != null) {
-                  // Retrieve the current user from the UserProvider
-                  final userProvider =
-                      Provider.of<UserProvider>(context, listen: false);
                   String? currentUserIdStr =
-                      userProvider.currentUser?.userId?.toString();
-
-                  if (currentUserIdStr == null) {
-                    print("User ID is not available.");
-                    return; // Handle the case where the user ID is not found
-                  }
+                      userController.userId.value.toString();
 
                   // Convert currentUserId from String to int
-                  int currentUserId = int.tryParse(currentUserIdStr) ??
-                      0; // Use a default value if parsing fails
+                  int currentUserId = int.tryParse(currentUserIdStr) ?? 0; // Use a default value if parsing fails
 
                   // Retrieve the job posting service
                   final jobPostingService =
@@ -1105,18 +1096,18 @@ class _ClientDashboardState extends State<ClientDashboard> {
 
   void _handleAcceptProposal(BuildContext context, Proposal proposal) {
     if (proposal.useEscrow) {
-      // Navigator.push(
-      //   context,
-      //   MaterialPageRoute(
-      //     builder: (context) => EscrowPaymentPage(proposal: proposal),
-      //   ),
-      // );
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => PaymentPage(),
+          builder: (context) => EscrowPaymentPage(proposal: proposal),
         ),
       );
+      // Navigator.push(
+      //   context,
+      //   MaterialPageRoute(
+      //     builder: (context) => PaymentPage(),
+      //   ),
+      // );
     } else {
       _acceptProposal(proposal);
     }
