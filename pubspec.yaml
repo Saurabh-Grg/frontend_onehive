@@ -47,6 +47,7 @@ dependencies:
   socket_io_client: ^3.0.2
   webview_flutter: ^4.10.0
   flutter_inappwebview: ^6.1.5
+  fl_chart: ^0.70.1
 
 dev_dependencies:
   flutter_test:

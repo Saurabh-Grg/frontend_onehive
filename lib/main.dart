@@ -4,6 +4,7 @@ import 'package:onehive_frontend/providers/client_profile_provider.dart';
 import 'package:onehive_frontend/providers/jobProvider.dart';
 import 'package:onehive_frontend/providers/user_provider.dart';
 import 'package:onehive_frontend/screens/ChatListPage.dart';
+import 'package:onehive_frontend/screens/EarningsPage.dart';
 import 'package:onehive_frontend/screens/LeaderboardScreen.dart';
 import 'package:onehive_frontend/screens/RatingScreen.dart';
 import 'package:onehive_frontend/screens/SubmitReviewScreen.dart';
@@ -12,7 +13,6 @@ import 'package:onehive_frontend/screens/freelancer_dashboard.dart';
 import 'package:onehive_frontend/screens/login_form.dart';
 import 'package:onehive_frontend/screens/total_proposal_view.dart';
 import 'package:onehive_frontend/screens/welcome_screen.dart';
-import 'package:onehive_frontend/services/SocketService.dart';
 import 'package:onehive_frontend/services/job_posting_service.dart';
 import 'package:provider/provider.dart';
 
@@ -28,7 +28,6 @@ class OneHive extends StatelessWidget {
       theme: ThemeData(
           primarySwatch: Colors.orange
       ),
-      // home: WelcomeScreen(),
       getPages: [
         GetPage(name: '/', page: () => WelcomeScreen()),
         GetPage(name: '/login', page: () => LoginForm()),
@@ -39,6 +38,7 @@ class OneHive extends StatelessWidget {
         GetPage(name: '/SubmitReviewScreen', page: () => SubmitReviewScreen()),
         GetPage(name: '/totalProposal', page: () => TotalProposalsView()),
         GetPage(name: '/chatListPage', page: () => ChatListPage()),
+        GetPage(name: '/earnings', page: () => EarningsPage()),
         // GetPage(name: '/SubmitReviewScreen', page: () => SubmitReviewScreen()),
       ],
     );

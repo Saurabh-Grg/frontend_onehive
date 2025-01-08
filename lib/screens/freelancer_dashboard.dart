@@ -639,35 +639,6 @@ class _FreelancerDashboardState extends State<FreelancerDashboard> {
     // print('Comment submitted for job ID $jobId: $comment');
   }
 
-  // void _showNotifications(BuildContext context) {
-  //   // This method will show the notifications in a dialog
-  //   showDialog(
-  //     context: context,
-  //     builder: (BuildContext context) {
-  //       return AlertDialog(
-  //         title: Text('Notifications'),
-  //         content: SingleChildScrollView(
-  //           child: ListBody(
-  //             children: <Widget>[
-  //               Text('Notification 1: Your job has been posted.'),
-  //               Text('Notification 2: You received a new proposal.'),
-  //               Text('Notification 3: A freelancer accepted your job.'),
-  //               // Add more notifications as needed
-  //             ],
-  //           ),
-  //         ),
-  //         actions: <Widget>[
-  //           TextButton(
-  //             child: Text('Close'),
-  //             onPressed: () {
-  //               Navigator.of(context).pop();
-  //             },
-  //           ),
-  //         ],
-  //       );
-  //     },
-  //   );
-  // }
 
   Widget _buildDrawer(BuildContext context) {
     return Drawer(
@@ -715,6 +686,7 @@ class _FreelancerDashboardState extends State<FreelancerDashboard> {
             title: Text('Earnings'),
             onTap: () {
               // Implement navigation to Earnings
+              Get.toNamed('/earnings');
             },
           ),
           ListTile(
