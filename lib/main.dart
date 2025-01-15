@@ -37,9 +37,8 @@ class OneHive extends StatelessWidget {
         GetPage(name: '/leaderboard', page: () => LeaderboardScreen()),
         GetPage(name: '/SubmitReviewScreen', page: () => SubmitReviewScreen()),
         GetPage(name: '/totalProposal', page: () => TotalProposalsView()),
-        GetPage(name: '/chatListPage', page: () => ChatListPage()),
+        GetPage(name: '/chatListPage', page: () => FollowListsScreen()),
         GetPage(name: '/earnings', page: () => EarningsPage()),
-        // GetPage(name: '/SubmitReviewScreen', page: () => SubmitReviewScreen()),
       ],
     );
   }

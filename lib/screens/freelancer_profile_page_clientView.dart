@@ -39,7 +39,6 @@ class _FreelancerProfilePageState extends State<FreelancerProfilePage> {
     }
   }
 
-
   // Show a confirmation dialog
   Future<bool> _showConfirmationDialog(BuildContext context) async {
     return await showDialog<bool>(

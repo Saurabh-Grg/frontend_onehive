@@ -1,186 +1,114 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../controllers/ChatController.dart';
+import '../controllers/FollowController.dart';
+import '../models/FollowUser.dart';
 import 'ChatPage.dart';
 
-class ChatListPage extends StatelessWidget {
-  final ChatController chatController = Get.put(ChatController());
+class FollowListsScreen extends StatelessWidget {
+  final FollowController followController = Get.put(FollowController());
   final TextEditingController searchController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Chats',
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-        ),
-        centerTitle: true,
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(50),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: searchController,
-                    onChanged: (value) {
-                      chatController.searchChats(value);
-                    },
-                    decoration: InputDecoration(
-                      hintText: 'Search by name...',
-                      prefixIcon: const Icon(Icons.search),
-                      filled: true,
-                      fillColor: Colors.white,
-                      contentPadding: const EdgeInsets.symmetric(vertical: 0),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(
-                          color: Colors.grey.shade400, // Border color
-                          width: 1,
-                        ),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(
-                          color: Colors.grey.shade400,
-                          width: 1,
-                        ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(
-                          color: Colors.deepOrange,
-                          width: 1.5,
-                        ),
-                      ),
-                    ),
-                  ),
+        title: const Text('Chat Lists', style: TextStyle(fontWeight: FontWeight.bold)),
+      ),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+            child: TextField(
+              controller: searchController,
+              onChanged: (query) {
+                followController.filterUsers(query);
+              },
+              decoration: InputDecoration(
+                hintText: 'Search by username...',
+                prefixIcon: const Icon(Icons.search),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: const BorderSide(color: Colors.grey),
                 ),
-                const SizedBox(width: 8),
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.deepOrange,
-                    shape: BoxShape.circle,
-                  ),
-                  child: IconButton(
-                    icon: const Icon(Icons.clear, color: Colors.white),
-                    onPressed: () {
-                      searchController.clear();
-                      chatController.searchChats('');
-                    },
-                  ),
-                ),
-              ],
+              ),
             ),
           ),
-        ),
-      ),
-      body: Obx(() {
-        return RefreshIndicator(
-          onRefresh: () async {
-            chatController.loadChats(); // Reload chat list
-          },
-          child: chatController.filteredChatList.isEmpty
-              ? const Center(
-                  child: Text(
-                    'No chats available',
-                    style: TextStyle(fontSize: 18),
-                  ),
-                )
-              : ListView.builder(
-                  itemCount: chatController.filteredChatList.length,
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
-                  itemBuilder: (context, index) {
-                    final chat = chatController.filteredChatList[index];
-                    return Card(
-                      margin: const EdgeInsets.only(bottom: 10),
-                      elevation: 3,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: ListTile(
-                        leading: Stack(
-                          children: [
-                            CircleAvatar(
-                              radius: 25,
-                              backgroundColor: Colors.deepOrange.shade100,
-                              child: Text(
-                                chat.name[0],
-                                style: const TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.deepOrange,
-                                ),
-                              ),
-                            ),
-                            if (chat.isOnline)
-                              Positioned(
-                                bottom: 2,
-                                right: 2,
-                                child: Container(
-                                  width: 12,
-                                  height: 12,
-                                  decoration: BoxDecoration(
-                                    color: Colors.green,
-                                    shape: BoxShape.circle,
-                                    border: Border.all(
-                                        color: Colors.white, width: 2),
-                                  ),
-                                ),
-                              ),
-                          ],
-                        ),
-                        title: Text(
-                          chat.name,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        subtitle: Text(
-                          chat.lastMessage,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey.shade600,
-                          ),
-                        ),
-                        trailing: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              chat.time,
-                              style: const TextStyle(fontSize: 12),
-                            ),
-                            const SizedBox(height: 5),
-                          ],
-                        ),
-                        onTap: () {
-                          // Navigate to the chat screen
-                          Get.to(() => ChatScreen(chat: chat));
-                        },
-                      ),
-                    );
-                  },
+          Obx(() {
+            return ToggleButtons(
+              isSelected: [
+                followController.isShowingFollowing.value,
+                !followController.isShowingFollowing.value,
+              ],
+              onPressed: (index) {
+                followController.toggleList(index == 0);
+              },
+              borderRadius: BorderRadius.circular(10),
+              selectedColor: Colors.white, // Text color when selected
+              fillColor: Colors.deepOrange, // Background color when selected
+              children: const [
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16),
+                  child: Text('Following'),
                 ),
-        );
-      }),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.deepOrange,
-        onPressed: () {
-          // Logic for adding a new chat (placeholder)
-          Get.snackbar(
-            'Feature Not Implemented',
-            'Adding new chats will be available soon.',
-            backgroundColor: Colors.deepOrange.shade100,
-            snackPosition: SnackPosition.BOTTOM,
-          );
-        },
-        child: const Icon(Icons.add, color: Colors.white),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16),
+                  child: Text('Followers'),
+                ),
+              ],
+            );
+          }),
+          const SizedBox(height: 10),
+          Expanded(
+            child: Obx(() {
+              if (followController.isLoading.value) {
+                return const Center(child: CircularProgressIndicator());
+              }
+
+              final listToShow = followController.isShowingFollowing.value
+                  ? followController.following
+                  : followController.followers;
+
+              if (listToShow.isEmpty) {
+                return const Center(
+                  child: Text('No users to display.'),
+                );
+              }
+
+              return ListView.builder(
+                itemCount: listToShow.length,
+                itemBuilder: (context, index) {
+                  final user = listToShow[index];
+                  return UserCard(user: user);
+                },
+              );
+            }),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class UserCard extends StatelessWidget {
+  final FollowUser user;
+
+  const UserCard({Key? key, required this.user}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () {
+        Get.to(() => ChatScreen(user: user, userId: user.userId));
+      },
+      child: Card(
+        margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+        child: ListTile(
+          leading: CircleAvatar(
+            backgroundImage: NetworkImage(user.profileImageUrl),
+            onBackgroundImageError: (_, __) => const Icon(Icons.person),
+          ),
+          title: Text(user.username, style: const TextStyle(fontSize: 16)),
+        ),
       ),
     );
   }

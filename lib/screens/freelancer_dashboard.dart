@@ -41,8 +41,7 @@ class _FreelancerDashboardState extends State<FreelancerDashboard> {
   List<dynamic> likedJobs = []; // List to store liked jobs
 
   String selectedCategory = 'All'; // Default category selection
-  final TextEditingController _searchController =
-      TextEditingController(); // Controller for search bar
+  final TextEditingController _searchController = TextEditingController(); // Controller for search bar
 
   @override
   void initState() {
@@ -50,8 +49,7 @@ class _FreelancerDashboardState extends State<FreelancerDashboard> {
 
     // Initialize controllers
     Get.put(UserController());
-    Get.put(
-        NotificationController()); // Synchronously put the NotificationController
+    Get.put(NotificationController()); // Synchronously put the NotificationController
     Get.put(LikedJobsController());
     Get.put(ThemeController());
 
@@ -91,7 +89,7 @@ class _FreelancerDashboardState extends State<FreelancerDashboard> {
 
   Future<void> _loadUserProfile() async {
     final response = await http.get(
-      Uri.parse('http://localhost:3000/api/freelancerProfile'),
+      Uri.parse('http://localhost:3000/api/freelancerProfile/my-profile'),
       headers: {
         'Authorization': 'Bearer ${userController.token.value}',
         'Content-Type': 'application/json', // Optional, depending on your API
@@ -158,8 +156,7 @@ class _FreelancerDashboardState extends State<FreelancerDashboard> {
     }
   }
 
-  final LikedJobsController likedJobsController =
-      Get.put(LikedJobsController());
+  final LikedJobsController likedJobsController = Get.put(LikedJobsController());
   final ThemeController themeController = Get.put(ThemeController());
 
   @override
@@ -225,6 +222,7 @@ class _FreelancerDashboardState extends State<FreelancerDashboard> {
             padding: const EdgeInsets.symmetric(horizontal: 10),
             child: GestureDetector(
               onTap: () {
+                // Get.toNamed('freelancerProfile');
                 _navigateToProfileSettings(context);
               },
               child: CircleAvatar(

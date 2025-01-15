@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -5,16 +6,20 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../controllers/FreelancerProfileController.dart';
+import '../controllers/UserController.dart';
 import 'freelancer_dashboard.dart';
+import 'package:http/http.dart' as http;
 
 class FreelancerProfileUpdate extends StatefulWidget {
   final int profileID; // Required parameter for profile ID
-  final FreelancerProfileController controller = Get.put(FreelancerProfileController());
+  final FreelancerProfileController controller =
+      Get.put(FreelancerProfileController());
 
   FreelancerProfileUpdate({required this.profileID}); // Proper constructor
 
   @override
-  _FreelancerProfileUpdateState createState() => _FreelancerProfileUpdateState();
+  _FreelancerProfileUpdateState createState() =>
+      _FreelancerProfileUpdateState();
 }
 
 class _FreelancerProfileUpdateState extends State<FreelancerProfileUpdate> {
@@ -23,6 +28,8 @@ class _FreelancerProfileUpdateState extends State<FreelancerProfileUpdate> {
   // Define the boolean variable to track the dropdown state
   bool _isDropdownOpen = false;
 
+  // New boolean variable to track edit mode
+  bool _isEditing = false;
 
   // Controllers for different sections
   final TextEditingController _nameController = TextEditingController();
@@ -33,8 +40,65 @@ class _FreelancerProfileUpdateState extends State<FreelancerProfileUpdate> {
 
   // Profile Image, Portfolio Images, and Certificate Images
   XFile? _profileImage;
+  String? _profileImageUrl;
   List<XFile> _portfolioImages = [];
   List<XFile> _certificateImages = []; // Added for certificates
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchProfileData();
+  }
+
+  final UserController userController = Get.find();
+
+  Future<void> _fetchProfileData() async {
+    try {
+      var response = await http.get(
+        Uri.parse('http://localhost:3000/api/freelancerProfile/my-profile'),
+        headers: {
+          'Authorization': 'Bearer ${userController.token.value}',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body)['data'];
+        if (data is Map<String, dynamic>) {
+          setState(() {
+            // Populate Freelancer profile fields
+            _nameController.text = data['name'] ?? '';
+            _bioController.text = data['bio'] ?? '';
+            _skillsController.text = data['skills'] ?? '';
+            _educationController.text = data['education'] ?? '';
+            _experienceController.text = data['experience'] ?? '';
+            _profileImageUrl = data['profileImageUrl'] ?? '';
+            // Populate portfolio and certificate images
+            var portfolioImageUrls =
+                List<String>.from(data['portfolioImages'] ?? []);
+            var certificateImageUrls =
+                List<String>.from(data['certificates'] ?? []);
+
+            _portfolioImages = portfolioImageUrls
+                .map((url) =>
+                    XFile(url)) // Convert URLs to XFile for consistency
+                .toList();
+            _certificateImages = certificateImageUrls
+                .map((url) =>
+                    XFile(url)) // Convert URLs to XFile for consistency
+                .toList();
+          });
+        } else {
+          print('Data is not in the expected format');
+        }
+      } else {
+        print('Failed to fetch profile data: ${response.statusCode}');
+        print('Response body: ${response.body}');
+      }
+    } catch (e) {
+      print('Error fetching profile data: $e');
+    }
+  }
 
   // Function to pick profile image
   Future<void> _pickProfileImage() async {
@@ -106,12 +170,22 @@ class _FreelancerProfileUpdateState extends State<FreelancerProfileUpdate> {
                   child: CircleAvatar(
                     radius: 50,
                     backgroundImage: _profileImage != null
-                        ? FileImage(File(_profileImage!.path))
-                        : AssetImage('assets/images/default_profile.png')
-                            as ImageProvider,
-                    child: _profileImage == null
+                        ? FileImage(File(_profileImage!
+                            .path)) // Display the selected image from the file picker
+                        : (_profileImageUrl != null &&
+                                _profileImageUrl!.isNotEmpty)
+                            ? NetworkImage(
+                                _profileImageUrl!) // Display the fetched image from the server
+                            : AssetImage('assets/images/default_profile.png')
+                                as ImageProvider,
+                    // Display the default image
+                    child: _profileImage == null &&
+                            (_profileImageUrl == null ||
+                                _profileImageUrl!.isEmpty)
                         ? Icon(Icons.camera_alt,
-                            size: 40, color: Colors.grey[700])
+                            size: 40,
+                            color: Colors.grey[
+                                700]) // Show camera icon if no image is available
                         : null,
                   ),
                 ),
@@ -128,18 +202,33 @@ class _FreelancerProfileUpdateState extends State<FreelancerProfileUpdate> {
             ),
             SizedBox(height: 20),
             // Input fields for Name and Bio
-            TextField(
+            TextFormField(
               controller: _nameController,
               decoration: InputDecoration(
                 labelText: 'Full Name',
                 border: OutlineInputBorder(),
               ),
+              enabled: _isEditing, // Enable based on edit mode
+              validator: (value) {
+                if (_isEditing && (value == null || value.isEmpty)) {
+                  return 'Please enter the full name';
+                }
+                return null;
+              },
             ),
             SizedBox(height: 10),
-            TextField(
+            TextFormField(
               controller: _bioController,
               decoration: InputDecoration(
                   labelText: 'Bio', border: OutlineInputBorder()),
+              enabled: _isEditing,
+              // Enable based on edit mode
+              validator: (value) {
+                if (_isEditing && (value == null || value.isEmpty)) {
+                  return 'Please enter your bio';
+                }
+                return null;
+              },
               maxLines: 3,
             ),
           ],
@@ -148,24 +237,53 @@ class _FreelancerProfileUpdateState extends State<FreelancerProfileUpdate> {
       ),
       Step(
         title: Text('Skills'),
-        content: TextField(
-          controller: _skillsController,
-          decoration: InputDecoration(
-            labelText: 'Skills (comma separated)',
-            border: OutlineInputBorder(),
-          ),
+        content: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(height: 10),
+            // Add vertical space between title and content
+            TextFormField(
+              controller: _skillsController,
+              decoration: InputDecoration(
+                labelText: 'Skills (comma separated)',
+                border: OutlineInputBorder(),
+              ),
+              enabled: _isEditing, // Enable based on edit mode
+              validator: (value) {
+                if (_isEditing && (value == null || value.isEmpty)) {
+                  return 'Please enter your skills';
+                }
+                return null;
+              },
+              maxLines: 3,
+            ),
+          ],
         ),
         isActive: _currentStep >= 1,
       ),
       Step(
         title: Text('Experience'),
-        content: TextField(
-          controller: _experienceController,
-          decoration: InputDecoration(
-            labelText: 'Work Experience',
-            border: OutlineInputBorder(),
-          ),
-          maxLines: 3,
+        content: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(height: 10),
+            TextFormField(
+              controller: _experienceController,
+              decoration: InputDecoration(
+                labelText: 'Work Experience',
+                border: OutlineInputBorder(),
+              ),
+              enabled: _isEditing,
+              // Enable based on edit mode
+              validator: (value) {
+                if (_isEditing && (value == null || value.isEmpty)) {
+                  return 'Please enter your experiences';
+                }
+                return null;
+              },
+              maxLines: 3,
+            ),
+          ],
         ),
         isActive: _currentStep >= 2,
       ),
@@ -192,8 +310,13 @@ class _FreelancerProfileUpdateState extends State<FreelancerProfileUpdate> {
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(8),
                               image: DecorationImage(
-                                image: FileImage(
-                                    File(_portfolioImages[index].path)),
+                                image: _portfolioImages[index]
+                                        .path
+                                        .startsWith('http')
+                                    ? NetworkImage(_portfolioImages[index].path)
+                                    : FileImage(
+                                            File(_portfolioImages[index].path))
+                                        as ImageProvider,
                                 fit: BoxFit.cover,
                               ),
                             ),
@@ -212,7 +335,6 @@ class _FreelancerProfileUpdateState extends State<FreelancerProfileUpdate> {
                               child: Container(
                                 decoration: BoxDecoration(
                                   color: Colors.white,
-                                  // Background color for visibility
                                   shape: BoxShape.circle,
                                 ),
                                 child: Icon(
@@ -241,12 +363,26 @@ class _FreelancerProfileUpdateState extends State<FreelancerProfileUpdate> {
       ),
       Step(
         title: Text('Education'),
-        content: TextField(
-          controller: _educationController,
-          decoration: InputDecoration(
-            labelText: 'Education',
-            border: OutlineInputBorder(),
-          ),
+        content: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(height: 10),
+            TextFormField(
+              controller: _educationController,
+              decoration: InputDecoration(
+                labelText: 'Education',
+                border: OutlineInputBorder(),
+              ),
+              enabled: _isEditing, // Enable based on edit mode
+              validator: (value) {
+                if (_isEditing && (value == null || value.isEmpty)) {
+                  return 'Please enter educations';
+                }
+                return null;
+              },
+              maxLines: 3,
+            ),
+          ],
         ),
         isActive: _currentStep >= 4,
       ),
@@ -273,8 +409,14 @@ class _FreelancerProfileUpdateState extends State<FreelancerProfileUpdate> {
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(8),
                               image: DecorationImage(
-                                image: FileImage(
-                                    File(_certificateImages[index].path)),
+                                image: _certificateImages[index]
+                                        .path
+                                        .startsWith('http')
+                                    ? NetworkImage(
+                                        _certificateImages[index].path)
+                                    : FileImage(File(
+                                            _certificateImages[index].path))
+                                        as ImageProvider,
                                 fit: BoxFit.cover,
                               ),
                             ),
@@ -353,6 +495,13 @@ class _FreelancerProfileUpdateState extends State<FreelancerProfileUpdate> {
     );
   }
 
+  // New method to toggle edit mode
+  void _toggleEditMode() {
+    setState(() {
+      _isEditing = !_isEditing; // Toggle edit mode
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -362,18 +511,6 @@ class _FreelancerProfileUpdateState extends State<FreelancerProfileUpdate> {
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
-        actions: [
-          // GestureDetector to trigger the dialog from the right corner of the AppBar
-          GestureDetector(
-            onTap: () {
-              _showAvailabilityDialog(context);  // Show the availability status dialog
-            },
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: _getStatusIcon(),  // Show the icon based on the selected status
-            ),
-          ),
-        ],
       ),
       body: Column(
         children: [
@@ -397,7 +534,8 @@ class _FreelancerProfileUpdateState extends State<FreelancerProfileUpdate> {
                 }
               },
               steps: _buildSteps(),
-              controlsBuilder: (BuildContext context, ControlsDetails controls) {
+              controlsBuilder:
+                  (BuildContext context, ControlsDetails controls) {
                 return Row(
                   children: <Widget>[
                     ElevatedButton(
@@ -409,7 +547,9 @@ class _FreelancerProfileUpdateState extends State<FreelancerProfileUpdate> {
                       ),
                       onPressed: controls.onStepContinue,
                       child: Text(
-                        _currentStep < _buildSteps().length - 1 ? 'Next' : 'Submit',
+                        _currentStep < _buildSteps().length - 1
+                            ? 'Next'
+                            : 'Submit',
                         style: TextStyle(color: Colors.white),
                       ),
                     ),
@@ -419,6 +559,13 @@ class _FreelancerProfileUpdateState extends State<FreelancerProfileUpdate> {
                         onPressed: controls.onStepCancel,
                         child: Text('Back'),
                       ),
+                    IconButton(
+                      icon: Icon(
+                        _isEditing ? Icons.edit_off : Icons.edit,
+                        color: Colors.deepOrange,
+                      ),
+                      onPressed: _toggleEditMode,
+                    ),
                   ],
                 );
               },
@@ -428,67 +575,4 @@ class _FreelancerProfileUpdateState extends State<FreelancerProfileUpdate> {
       ),
     );
   }
-
-// This method displays the dialog for availability status selection
-  void _showAvailabilityDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text("Select Availability Status"),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                leading: Icon(Icons.check_circle, color: Colors.green),
-                title: Text('Available'),
-                onTap: () {
-                  setState(() {
-                    _availabilityStatus = 'Available';
-                  });
-                  Navigator.pop(context);  // Close the dialog
-                },
-              ),
-              ListTile(
-                leading: Icon(Icons.work, color: Colors.orange),
-                title: Text('Busy'),
-                onTap: () {
-                  setState(() {
-                    _availabilityStatus = 'Busy';
-                  });
-                  Navigator.pop(context);  // Close the dialog
-                },
-              ),
-              ListTile(
-                leading: Icon(Icons.cancel, color: Colors.red),
-                title: Text('Not Available'),
-                onTap: () {
-                  setState(() {
-                    _availabilityStatus = 'Not Available';
-                  });
-                  Navigator.pop(context);  // Close the dialog
-                },
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-// This method returns the correct icon based on the selected status
-  Widget _getStatusIcon() {
-    switch (_availabilityStatus) {
-      case 'Available':
-        return Icon(Icons.check_circle, color: Colors.green, size: 24);
-      case 'Busy':
-        return Icon(Icons.work, color: Colors.orange, size: 24);
-      case 'Not Available':
-        return Icon(Icons.cancel, color: Colors.red, size: 24);
-      default:
-        return Icon(Icons.event_available, color: Colors.blue, size: 24);  // Default icon
-    }
-  }
-
-
 }

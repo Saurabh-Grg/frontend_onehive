@@ -27,7 +27,7 @@ import 'all_jobPostings.dart';
 import 'client_profile_creation.dart';
 import 'client_profile_update.dart';
 import 'escrow_payment_page.dart';
-import 'freelancer_profile_page.dart';
+import 'freelancer_profile_page_clientView.dart';
 import 'job_details_page.dart';
 import 'login_form.dart';
 
@@ -269,11 +269,11 @@ class _ClientDashboardState extends State<ClientDashboard> {
             },
           ),
           ListTile(
-            leading: Icon(Icons.message),
+            leading: Icon(Icons.chat_rounded), // Icon for Leaderboard
             title: Text('Messages'),
             onTap: () {
-              // Implement navigation to payment information
-              // Navigator.push(context, MaterialPageRoute(builder: (context) => PaymentInformation()));
+              // Implement navigation to Leaderboard
+              Get.toNamed('/chatListPage');
             },
           ),
           ListTile(

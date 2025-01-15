@@ -14,10 +14,12 @@ class FreelancerProfileController extends GetxController {
 
   // State variables
   var isLoading = false.obs;
-  var profile = Rxn<FreelancerProfile>();
+  var profile = Rxn<FreelancerProfile>();  // i am using this to view freelancer profile in client screen
   var isFollowing = false.obs; // Track follow status
   int? freelancerId;
   int? jobId;
+  // var profileData = Rxn<FreelancerProfile>();  // i am using this to view freelancer profile in freelancer screen
+
 
   // Initialize the controller with necessary IDs
   void initialize({required int freelancerId, required int jobId}) {
@@ -64,8 +66,44 @@ class FreelancerProfileController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    // fetchProfileData();
     fetchFollowStatus(); // Make sure this is called when the page is loaded
   }
+
+  // void fetchProfileData() async {
+  //   try {
+  //     isLoading(true);
+  //     print('Fetching freelancer profile data...');
+  //     print('API URL: http://localhost:3000/api/freelancerProfile/my-profile');
+  //     print('Authorization Token: Bearer ${userController.token.value}');
+  //
+  //     final response = await http.get(
+  //       Uri.parse('http://localhost:3000/api/freelancerProfile/my-profile'),
+  //       headers: {
+  //         'Authorization': 'Bearer ${userController.token.value}', // Add authentication token
+  //       },
+  //     );
+  //
+  //     print('Response Status Code: ${response.statusCode}');
+  //     print('Response Body: ${response.body}');
+  //
+  //     if (response.statusCode == 200) {
+  //       var jsonData = json.decode(response.body);
+  //       print('Parsed JSON Data: $jsonData');
+  //       profileData.value = FreelancerProfile.fromJson(jsonData['data']);
+  //       print('Profile data successfully updated.');
+  //     } else {
+  //       print('Error: Failed to fetch profile data, Status Code: ${response.statusCode}');
+  //       Get.snackbar('Error', 'Failed to fetch profile data: ${response.statusCode}');
+  //     }
+  //   } catch (e) {
+  //     print('Exception occurred while fetching profile data: $e');
+  //     Get.snackbar('Error', 'An error occurred: $e');
+  //   } finally {
+  //     print('Fetch profile data process completed.');
+  //     isLoading(false);
+  //   }
+  // }
 
   Future<void> fetchFreelancerProfile(int userId) async {
     if (freelancerId == null || jobId == null) {
