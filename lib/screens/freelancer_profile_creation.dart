@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:onehive_frontend/constants/apis_endpoints.dart';
 import 'package:onehive_frontend/screens/freelancer_dashboard.dart';
 import 'package:provider/provider.dart';
 
@@ -95,7 +96,7 @@ class _FreelancerProfileCreationState extends State<FreelancerProfileCreation> {
       return;
     }
 
-    final uri = Uri.parse('http://localhost:3000/api/freelancerProfile/create');
+    final uri = Uri.parse(ApiEndpoints.createFreelancerProfile);
     final request = http.MultipartRequest('POST', uri);
     request.headers['Authorization'] = 'Bearer $token';
 

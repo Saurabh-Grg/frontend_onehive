@@ -101,6 +101,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 import 'package:get/get.dart';
+import 'package:onehive_frontend/constants/apis_endpoints.dart';
 import 'package:onehive_frontend/screens/home_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -113,13 +114,15 @@ class UserController extends GetxController {
   var username = ''.obs;
   var email = ''.obs;
   var city = ''.obs;
+  var profileImage = ''.obs; // Added variable for profile image
   var isLoggedIn = false.obs;
 
   Future<void> login(String emailInput, String password) async {
     isLoading(true);
     try {
       final response = await http.post(
-        Uri.parse('http://localhost:3000/api/auth/login'), // Replace with your IP
+        Uri.parse(ApiEndpoints.login),
+        // Uri.parse('http://10.0.2.2:3000/api/auth/login'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'email': emailInput, 'password': password}),
       );
@@ -134,6 +137,7 @@ class UserController extends GetxController {
         username.value = responseData['user']['username'] ?? '';
         email.value = responseData['user']['email'] ?? '';
         city.value = responseData['user']['city'] ?? '';
+        profileImage.value = responseData['user']['profile_image'] ?? ''; // Fetch profile image URL
         isLoggedIn(true);
 
         // Save token and other data to SharedPreferences
@@ -144,6 +148,7 @@ class UserController extends GetxController {
         await prefs.setString('username', username.value);
         await prefs.setString('email', email.value);
         await prefs.setString('city', city.value);
+        await prefs.setString('profile_image', profileImage.value); // Save profile image URL
 
         Get.snackbar("Success", "Logged in successfully");
 
@@ -187,6 +192,7 @@ class UserController extends GetxController {
     username.value = prefs.getString('username') ?? '';
     email.value = prefs.getString('email') ?? '';
     city.value = prefs.getString('city') ?? '';
+    profileImage.value = prefs.getString('profile_image') ?? ''; // Load profile image from SharedPreferences
     isLoggedIn(token.isNotEmpty);
   }
 
@@ -199,6 +205,7 @@ class UserController extends GetxController {
     username.value = '';
     email.value = '';
     city.value = '';
+    profileImage.value = ''; // Clear profile image on logout
     isLoggedIn(false);
     Get.snackbar("Success", "Logged out successfully");
   }

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:onehive_frontend/constants/apis_endpoints.dart';
 import 'package:onehive_frontend/screens/reset_password_screen.dart';
 
 class EnterOTPPage extends StatefulWidget {
@@ -85,7 +86,7 @@ class _EnterOTPPageState extends State<EnterOTPPage> {
 
     try {
       final response = await http.post(
-        Uri.parse('http://127.0.0.1:3000/api/auth/verify-otp'),
+        Uri.parse(ApiEndpoints.verifyOtp),
         headers: {'Content-Type': 'application/json'},
         body: json.encode({'email': widget.email, 'otp': otp}),
       );

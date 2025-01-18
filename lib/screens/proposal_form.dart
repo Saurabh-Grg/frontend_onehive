@@ -177,6 +177,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:file_picker/file_picker.dart';
+import 'package:onehive_frontend/constants/apis_endpoints.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProposalForm extends StatefulWidget {
@@ -231,7 +232,7 @@ class _ProposalFormState extends State<ProposalForm> {
       // Prepare proposal data
       final request = http.MultipartRequest(
         'POST',
-        Uri.parse('http://localhost:3000/api/proposals/submit'),
+        Uri.parse(ApiEndpoints.submitProposal),
       );
 
       request.headers.addAll({

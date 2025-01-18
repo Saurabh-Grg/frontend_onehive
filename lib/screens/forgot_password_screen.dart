@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:onehive_frontend/constants/apis_endpoints.dart';
 
 import 'enter_otp_page.dart';
 
@@ -32,7 +33,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     }
     try {
       final response = await http.post(
-        Uri.parse('http://localhost:3000/api/auth/forgot-password'),
+        Uri.parse(ApiEndpoints.forgotPassword),
         headers: {
           'Content-Type': 'application/json',
         },

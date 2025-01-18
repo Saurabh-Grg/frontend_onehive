@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:onehive_frontend/constants/apis_endpoints.dart';
 
 import 'login_form.dart';
 
@@ -54,7 +55,7 @@ class _RegistrationFormState extends State<RegistrationForm> {
         };
 
         final response = await http.post(
-          Uri.parse('http://localhost:3000/api/auth/register'),
+          Uri.parse(ApiEndpoints.register),
           headers: {'Content-Type': 'application/json'},
           body: jsonEncode(registrationData),
         );

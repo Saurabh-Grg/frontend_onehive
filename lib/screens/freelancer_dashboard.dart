@@ -89,7 +89,7 @@ class _FreelancerDashboardState extends State<FreelancerDashboard> {
 
   Future<void> _loadUserProfile() async {
     final response = await http.get(
-      Uri.parse('http://localhost:3000/api/freelancerProfile/my-profile'),
+      Uri.parse(ApiEndpoints.freelancerMyProfile),
       headers: {
         'Authorization': 'Bearer ${userController.token.value}',
         'Content-Type': 'application/json', // Optional, depending on your API
@@ -756,8 +756,7 @@ class _FreelancerDashboardState extends State<FreelancerDashboard> {
 
     // Make an API call to check if the profile exists for the current user
     // Build the URI
-    final uri = Uri.parse(
-        'http://localhost:3000/api/freelancerProfile/check-profile/$user_id');
+    final uri = Uri.parse('${ApiEndpoints.checkFreelancerProfile}/$user_id');
     final response = await http.get(
       uri,
       headers: {

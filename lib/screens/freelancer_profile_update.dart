@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:onehive_frontend/constants/apis_endpoints.dart';
 
 import '../controllers/FreelancerProfileController.dart';
 import '../controllers/UserController.dart';
@@ -55,7 +56,7 @@ class _FreelancerProfileUpdateState extends State<FreelancerProfileUpdate> {
   Future<void> _fetchProfileData() async {
     try {
       var response = await http.get(
-        Uri.parse('http://localhost:3000/api/freelancerProfile/my-profile'),
+        Uri.parse(ApiEndpoints.freelancerMyProfile),
         headers: {
           'Authorization': 'Bearer ${userController.token.value}',
           'Content-Type': 'application/json',

@@ -12,8 +12,9 @@ import '../services/socket_service.dart';
 class ChatScreen extends StatefulWidget {
   final FollowUser user;
   final int userId;
+  final String profileImageUrl; // Add this parameter
 
-  const ChatScreen({Key? key, required this.user, required this.userId}) : super(key: key);
+  const ChatScreen({Key? key, required this.user, required this.userId, required this.profileImageUrl }) : super(key: key);
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
@@ -126,11 +127,12 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final userController = Get.find<UserController>();
     return Scaffold(
       appBar: AppBar(
         title: Text(
           widget.user.username,
-          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          style: const TextStyle( fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
         actions: [
@@ -147,7 +149,18 @@ class _ChatScreenState extends State<ChatScreen> {
         child: Column(
           children: [
             Expanded(
+
               child: Obx(() {
+                // Check if there are messages
+                if (_chatController.messages.isEmpty) {
+                  return Center(
+                    child: Text(
+                      'You can now send a message to ${widget.user.username}!',
+                      style: TextStyle(fontSize: 16, color: Colors.grey),
+                      textAlign: TextAlign.center,
+                    ),
+                  );
+                }
                 // Use GetX's Obx to reactively rebuild when messages change
                 return ListView.builder(
                   controller: _scrollController, // Attach the ScrollController
@@ -162,13 +175,13 @@ class _ChatScreenState extends State<ChatScreen> {
                           ? null // No avatar on the left for the sender (optional, can be added if needed)
                           : CircleAvatar(
                         // Display the receiver's profile image
-                        backgroundImage: NetworkImage('https://www.example.com/path/to/profile/pic/${widget.userId}.jpg'), // Replace with actual URL
+                        backgroundImage: NetworkImage(widget.user.profileImageUrl), // Replace with actual URL
                         radius: 20,
                       ),
                       trailing: isSender
                           ? CircleAvatar(
                         // Display the sender's profile image
-                        backgroundImage: NetworkImage('https://www.example.com/path/to/profile/pic/${message.senderId}.jpg'), // Replace with actual URL
+                        backgroundImage: NetworkImage(userController.profileImage.value), // Replace with actual URL
                         radius: 20,
                       )
                           : null, // No avatar on the right for the receiver (optional, can be added if needed)

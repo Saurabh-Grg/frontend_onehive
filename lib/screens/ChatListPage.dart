@@ -98,7 +98,11 @@ class UserCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        Get.to(() => ChatScreen(user: user, userId: user.userId));
+        Get.to(() => ChatScreen(
+          user: user,
+          userId: user.userId,
+          profileImageUrl: user.profileImageUrl, // Pass profileImageUrl
+        ));
       },
       child: Card(
         margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),

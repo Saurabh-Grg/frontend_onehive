@@ -1,6 +1,7 @@
 import 'dart:convert'; // For json decoding
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:onehive_frontend/constants/apis_endpoints.dart';
 
 class JobDetailsPage extends StatefulWidget {
   final int jobId;
@@ -22,7 +23,7 @@ class _JobDetailsPageState extends State<JobDetailsPage> {
   }
 
   Future<void> fetchJobDetails() async {
-    final url = 'http://localhost:3000/api/jobPosting/jobDetails/${widget.jobId}'; // Replace with your actual API URL
+    final url = '${ApiEndpoints.jobDetails}/${widget.jobId}'; // Replace with your actual API URL
 
     try {
       final response = await http.get(Uri.parse(url));
