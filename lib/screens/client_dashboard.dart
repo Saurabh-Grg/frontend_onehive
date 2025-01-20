@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:onehive_frontend/constants/apis_endpoints.dart';
 import 'package:onehive_frontend/controllers/total_proposal_controller.dart';
 import 'package:onehive_frontend/screens/PaymentPage.dart';
 import 'package:provider/provider.dart';
@@ -80,7 +81,7 @@ class _ClientDashboardState extends State<ClientDashboard> {
 
   Future<void> _loadUserProfile() async {
     final response = await http.get(
-      Uri.parse('http://localhost:3000/api/clientProfile/client-profile'),
+      Uri.parse(ApiEndpoints.fetchClientProfile),
       headers: {
         'Authorization': 'Bearer ${userController.token.value}',
         // Add the token in the header
@@ -331,7 +332,7 @@ class _ClientDashboardState extends State<ClientDashboard> {
     // Make an API call to check if the profile exists for the current user
     final response = await http.get(
       Uri.parse(
-          'http://localhost:3000/api/clientProfile/check-profile/$user_id'),
+          '${ApiEndpoints.checkClientProfile}/$user_id'),
       // Check your API endpoint
       headers: {
         'Authorization': 'Bearer ${userController.token.value}',
@@ -458,7 +459,7 @@ class _ClientDashboardState extends State<ClientDashboard> {
     try {
       final response = await http.get(
         Uri.parse(
-            'http://localhost:3000/api/jobPosting/totalJobPostings/$user_id'),
+            '${ApiEndpoints.countTotalJobPostingByAClient}/$user_id'),
       );
 
       if (response.statusCode == 200) {
@@ -818,7 +819,7 @@ class _ClientDashboardState extends State<ClientDashboard> {
   // Function to fetch job postings from the backend
   Future<void> fetchJobs() async {
     String? userId = await _getUserId(); //if error occurs, make user_id
-    final String url = 'http://localhost:3000/api/jobPosting/jobs/$userId';
+    final String url = '${ApiEndpoints.getTotalJobsPostedByAClient}/$userId';
     try {
       final response = await http.get(Uri.parse(url));
       if (response.statusCode == 200) {
@@ -843,7 +844,7 @@ class _ClientDashboardState extends State<ClientDashboard> {
   }
 
   Future<void> _deleteJob(int job_id) async {
-    final url = 'http://localhost:3000/api/jobPosting/$job_id';
+    final url = '${ApiEndpoints.deleteJob}/$job_id';
     print("Request URL: $url");
 
     try {
@@ -1058,7 +1059,7 @@ class _ClientDashboardState extends State<ClientDashboard> {
       throw Exception('Token is null. Please log in.');
     }
     final response = await http.get(
-      Uri.parse('http://localhost:3000/api/proposals/client'),
+      Uri.parse(ApiEndpoints.getProposalForAClient),
       headers: {
         'Authorization': 'Bearer $token',
         // Add the token in the header// Include the token in the request headers

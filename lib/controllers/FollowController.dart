@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:onehive_frontend/constants/apis_endpoints.dart';
 import 'dart:convert';
 
 import '../models/FollowUser.dart';
@@ -37,7 +38,7 @@ class FollowController extends GetxController {
     try {
       isLoading(true);
       final response = await http.get(
-        Uri.parse('http://localhost:3000/api/follow/follow-lists'),
+        Uri.parse(ApiEndpoints.getFollowList),
         headers: {'Authorization': 'Bearer ${userController.token.value}'}, // Add token if needed
       );
 

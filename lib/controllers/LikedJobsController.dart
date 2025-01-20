@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:onehive_frontend/constants/apis_endpoints.dart';
 
 import 'UserController.dart';
 
@@ -10,9 +11,6 @@ class LikedJobsController extends GetxController {
   var likedJobs = <int>[].obs;
 
   final UserController userController = Get.put(UserController());
-
-  // Backend API base URL
-  final String baseUrl = "http://localhost:3000/api/liked-jobs";
 
   // Toggle like/unlike job
   Future<void> toggleLikeJob(int jobId) async {
@@ -30,7 +28,7 @@ class LikedJobsController extends GetxController {
   Future<void> likeJob(int jobId) async {
     try {
       final response = await http.post(
-        Uri.parse('$baseUrl/like-job'),
+        Uri.parse(ApiEndpoints.likeOrUnlikeJobs),
         headers: {
           "Content-Type": "application/json",
           'Authorization': 'Bearer ${userController.token.value}',
@@ -55,7 +53,7 @@ class LikedJobsController extends GetxController {
   Future<void> unlikeJob(int jobId) async {
     try {
       final response = await http.delete(
-        Uri.parse('$baseUrl/like-job'),
+        Uri.parse(ApiEndpoints.likeOrUnlikeJobs),
         headers: {
           "Content-Type": "application/json",
           'Authorization': 'Bearer ${userController.token.value}',
@@ -80,7 +78,7 @@ class LikedJobsController extends GetxController {
   Future<void> fetchLikedJobs() async {
     try {
       final response = await http.get(
-        Uri.parse('$baseUrl/liked-jobs/${userController.userId.value}'),
+        Uri.parse('${ApiEndpoints.getLikedJobs}/${userController.userId.value}'),
         headers: {"Content-Type": "application/json"},
       );
 

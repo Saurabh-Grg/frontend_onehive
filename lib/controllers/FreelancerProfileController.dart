@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:onehive_frontend/constants/apis_endpoints.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
@@ -37,7 +38,7 @@ class FreelancerProfileController extends GetxController {
 
     try {
       final Uri followStatusUri = Uri.parse(
-          'http://localhost:3000/api/follow/status/${userController.userId.value}/$freelancerId');
+          '${ApiEndpoints.getFreelancerFollowStatus}/${userController.userId.value}/$freelancerId');
 
       final response = await http.get(
         followStatusUri,
@@ -116,7 +117,7 @@ class FreelancerProfileController extends GetxController {
       // Check the freelancerId and jobId values before making the API request
       print("Fetching profile for freelancerId: $freelancerId and jobId: $jobId");
 
-      final checkProfileUri = Uri.parse('http://localhost:3000/api/freelancerProfile/check-profile/$userId');
+      final checkProfileUri = Uri.parse('${ApiEndpoints.checkFreelancerProfile}/$userId');
       print("Check profile URI: $checkProfileUri");
 
       final response = await http.get(
@@ -135,7 +136,7 @@ class FreelancerProfileController extends GetxController {
           print("Profile exists. Fetching detailed profile...");
 
           // Build the profile details URI
-          final profileDetailsUri = Uri.parse('http://localhost:3000/api/freelancerProfile/freelancer-profile/$freelancerId/$jobId');
+          final profileDetailsUri = Uri.parse('${ApiEndpoints.getFreelancerProfileByClient}/$freelancerId/$jobId');
           print("Profile details URI: $profileDetailsUri");
 
           final profileResponse = await http.get(
@@ -179,7 +180,7 @@ class FreelancerProfileController extends GetxController {
   }
   Future<void> followFreelancer(int followerId, int followedId) async {
     try {
-      final followUri = Uri.parse('http://localhost:3000/api/follow/follow');
+      final followUri = Uri.parse(ApiEndpoints.followFreelancer);
       final response = await http.post(
         followUri,
         headers: {
@@ -207,7 +208,7 @@ class FreelancerProfileController extends GetxController {
 
   Future<void> unfollowFreelancer(int followerId, int followedId) async {
     try {
-      final unfollowUri = Uri.parse('http://localhost:3000/api/follow/unfollow');
+      final unfollowUri = Uri.parse(ApiEndpoints.unFollowFreelancer);
       final response = await http.post(
         unfollowUri,
         headers: {

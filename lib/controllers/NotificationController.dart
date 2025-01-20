@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:onehive_frontend/constants/apis_endpoints.dart';
 import 'dart:convert';
 
 import '../models/NotificationModel.dart';
@@ -14,7 +15,7 @@ class NotificationController extends GetxController {
       // Start loading and log the user ID
       isLoading.value = true;
       // Construct the API endpoint and log it
-      final url = 'http://localhost:3000/api/notifications/$userId';
+      final url = '${ApiEndpoints.fetchNotifications}/$userId';
 
       // Make the API call
       final response = await http.get(Uri.parse(url));
@@ -41,7 +42,7 @@ class NotificationController extends GetxController {
   Future<void> markAllAsRead(int userId) async {
     try {
       isLoading.value = true;
-      final url = 'http://localhost:3000/api/notifications/user/$userId/readAll';
+      final url = '${ApiEndpoints.markAllNotificationAsRead}/$userId/readAll';
       final response = await http.put(Uri.parse(url));
 
       if (response.statusCode == 200) {

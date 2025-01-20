@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'dart:io';
 import 'package:http/http.dart' as http; // Add this import for HTTP requests
+import 'package:onehive_frontend/constants/apis_endpoints.dart';
 import 'package:onehive_frontend/services/job_posting_service.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -132,8 +133,7 @@ class _BackendJobPostingFormState extends State<BackendJobPostingForm> {
   // Function to send job posting data to the backend
   Future<void> _sendJobPostingToServer(
       Map<String, dynamic> jobPostingData, String? token) async {
-    final url = Uri.parse(
-        'http://localhost:3000/api/jobPosting/submit-backend-job'); // Replace with your actual endpoint
+    final url = Uri.parse(ApiEndpoints.submitBackendJobPosting); // Replace with your actual endpoint
 
     // Prepare the data for submission
     print('Preparing to send Job Posting Data to Server: $jobPostingData');

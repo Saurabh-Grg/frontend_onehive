@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
+import 'package:onehive_frontend/constants/apis_endpoints.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -70,7 +71,7 @@ class JobPostingService with ChangeNotifier {
 
     try {
       final response = await http.post(
-        Uri.parse('http://localhost:3000/api/jobPosting/store-temp-job'),
+        Uri.parse(ApiEndpoints.storeCommonJobDetails),
         headers: {
           'Content-Type': 'application/json',
         },

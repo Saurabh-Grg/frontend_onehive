@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http; // For making API requests
+import 'package:onehive_frontend/constants/apis_endpoints.dart';
 import 'package:onehive_frontend/screens/job_details_page.dart';
 import 'dart:convert';
 
@@ -58,7 +59,7 @@ class _AllJobPostingsPageState extends State<AllJobPostingsPage> {
   // Function to fetch job postings from the backend
   Future<void> fetchJobs() async {
     String? user_id = await _getUserId();
-    final String url = 'http://localhost:3000/api/jobPosting/jobs/$user_id';
+    final String url = '${ApiEndpoints.getTotalJobsPostedByAClient}/$user_id';
     try {
       final response = await http.get(Uri.parse(url));
       if (response.statusCode == 200) {

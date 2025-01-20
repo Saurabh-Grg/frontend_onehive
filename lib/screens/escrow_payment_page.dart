@@ -20,7 +20,6 @@ class EscrowPaymentPage extends StatelessWidget {
             fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor: Colors.white,
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(screenWidth * 0.05),

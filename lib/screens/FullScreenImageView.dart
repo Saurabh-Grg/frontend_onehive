@@ -43,7 +43,6 @@ class FullScreenImageView extends StatelessWidget {
           ),
         ),
       ),
-
     );
   }
 }

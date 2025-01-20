@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:onehive_frontend/constants/apis_endpoints.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -60,7 +61,7 @@ class _ClientProfileUpdateState extends State<ClientProfileUpdate> {
     // }
 
     var response = await http.get(
-      Uri.parse('http://localhost:3000/api/clientProfile/client-profile'),
+      Uri.parse(ApiEndpoints.fetchClientProfile),
       headers: {
         'Authorization': 'Bearer ${userController.token.value}',
         'Content-Type': 'application/json',},
@@ -312,7 +313,7 @@ class _ClientProfileUpdateState extends State<ClientProfileUpdate> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
 
-    var uri = Uri.parse('http://localhost:3000/api/clientProfile/client-profile/update/$profileId');
+    var uri = Uri.parse('${ApiEndpoints.updateClientProfile}/$profileId');
     print('Updating profile at: $uri'); // Add this line
     var request = http.MultipartRequest('PUT', uri);
 
