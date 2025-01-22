@@ -303,6 +303,7 @@ class _ChatScreenState extends State<ChatScreen> {
   final UserController _userController = Get.put(UserController());
   final ChatController _chatController = Get.put(ChatController());
   final ScrollController _scrollController = ScrollController();
+  bool _isTyping = false;
 
   @override
   void initState() {
@@ -310,6 +311,19 @@ class _ChatScreenState extends State<ChatScreen> {
     _socketService.connect(int.parse(_userController.userId.value));
     _chatController.loadInitialMessages([]); // Clear and load fresh messages
     _scrollToBottom();
+
+    // Listen for typing status
+    _socketService.socket?.on('typing', (data) {
+      if (data['senderId'] == widget.userId) {
+        _chatController.updateTypingStatus(widget.userId, true);
+      }
+    });
+
+    _socketService.socket?.on('stop_typing', (data) {
+      if (data['senderId'] == widget.userId) {
+        _chatController.updateTypingStatus(widget.userId, false);
+      }
+    });
   }
 
   @override
@@ -338,6 +352,21 @@ class _ChatScreenState extends State<ChatScreen> {
     _socketService.sendMessage(message);
     _messageController.clear();
     _scrollToBottom();
+  }
+
+  void _sendTypingStatus(bool isTyping) {
+    _isTyping = isTyping;
+    if (isTyping) {
+      _socketService.socket?.emit('typing', {
+        'senderId': int.parse(_userController.userId.value),
+        'receiverId': widget.userId,
+      });
+    } else {
+      _socketService.socket?.emit('stop_typing', {
+        'senderId': int.parse(_userController.userId.value),
+        'receiverId': widget.userId,
+      });
+    }
   }
 
   void _sendMedia(String filePath) {
@@ -471,6 +500,21 @@ class _ChatScreenState extends State<ChatScreen> {
                 );
               }),
             ),
+            Obx(() {
+              if (_chatController.isTyping.value) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      '${widget.user.username} is typing...',
+                      style: const TextStyle(color: Colors.grey, fontStyle: FontStyle.italic),
+                    ),
+                  ),
+                );
+              }
+              return const SizedBox.shrink();
+            }),
             _buildMessageInput(),
           ],
         ),
