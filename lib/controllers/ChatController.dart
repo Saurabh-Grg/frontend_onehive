@@ -26,19 +26,16 @@ class ChatController extends GetxController {
   // Update typing status for a specific user
   void updateTypingStatus(int userId, bool isTyping) {
     typingStatus[userId] = isTyping;
-
-    // Optional: Remove typing status after a delay if no "stop_typing" event is received
-    if (isTyping) {
-      Future.delayed(const Duration(seconds: 5), () {
-        if (typingStatus[userId] == true) {
-          typingStatus[userId] = false;
-        }
-      });
-    }
+    typingStatus.refresh(); // Trigger UI updates
   }
 
-  // Clear typing status for a specific user (e.g., when the user disconnects)
-  void clearTypingStatus(int userId) {
-    typingStatus.remove(userId);
+  // Clear typing status after a timeout
+  void clearTypingStatusAfterTimeout(int userId) {
+    Future.delayed(Duration(seconds: 3), () {
+      if (typingStatus[userId] ?? false) {
+        typingStatus[userId] = false;
+        typingStatus.refresh();
+      }
+    });
   }
 }

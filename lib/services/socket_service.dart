@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:get/get.dart';
 import 'package:onehive_frontend/constants/apis_endpoints.dart';
 import 'package:onehive_frontend/controllers/ChatController.dart';
@@ -6,6 +8,7 @@ import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class SocketService {
   IO.Socket? socket;
+  Timer? typingTimer; // Timer for managing "stop_typing" timeout
 
   // Initialize Socket connection
   void connect(int userId) {
@@ -86,18 +89,35 @@ class SocketService {
     }
   }
 
-  // Emit typing status to the server
-  void sendTypingStatus({
+  // Emit typing status to the server with timeout handling
+  void sendTypingStatusWithTimeout({
     required int senderId,
     required int receiverId,
     required bool isTyping,
   }) {
     if (socket != null) {
-      final event = isTyping ? 'typing' : 'stop_typing'; // Dynamically select event
-      socket?.emit(event, {
-        'senderId': senderId,
-        'receiverId': receiverId,
-      });
+      if (isTyping) {
+        // Emit typing event
+        socket?.emit('typing', {
+          'senderId': senderId,
+          'receiverId': receiverId,
+        });
+
+        // Reset and start the timer to emit "stop_typing" after a delay
+        typingTimer?.cancel();
+        typingTimer = Timer(Duration(seconds: 3), () {
+          socket?.emit('stop_typing', {
+            'senderId': senderId,
+            'receiverId': receiverId,
+          });
+        });
+      } else {
+        // Emit stop_typing immediately if explicitly called
+        socket?.emit('stop_typing', {
+          'senderId': senderId,
+          'receiverId': receiverId,
+        });
+      }
     }
   }
 
