@@ -9,6 +9,7 @@ import 'package:socket_io_client/socket_io_client.dart' as IO;
 class SocketService {
   IO.Socket? socket;
   Timer? typingTimer; // Timer for managing "stop_typing" timeout
+  int? userId;  // Store userId
 
   // Initialize Socket connection
   void connect(int userId) {
@@ -121,13 +122,11 @@ class SocketService {
     }
   }
 
-
-
   // Disconnect the socket
   void disconnect() {
     if (socket != null) {
       socket?.disconnect();
-      print('Disconnected from socket.');
+      print('Disconnected from socket and left the room.');
     }
   }
 }

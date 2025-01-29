@@ -30,10 +30,12 @@ class _ChatScreenState extends State<ChatScreen> {
   bool _isTyping = false;
 
   @override
-  @override
   void initState() {
     super.initState();
-    _socketService.connect(int.parse(_userController.userId.value));
+    _socketService.connect(
+      int.parse(_userController.userId.value), // Your userId
+      // widget.userId, // The chat partner's userId
+    );
     _chatController.loadInitialMessages([]); // Clear and load fresh messages
     _scrollToBottom();
 
