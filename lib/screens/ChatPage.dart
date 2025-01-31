@@ -34,7 +34,7 @@ class _ChatScreenState extends State<ChatScreen> {
     super.initState();
     _socketService.connect(
       int.parse(_userController.userId.value), // Your userId
-      // widget.userId, // The chat partner's userId
+      widget.userId, // The chat partner's userId
     );
     _chatController.loadInitialMessages([]); // Clear and load fresh messages
     _scrollToBottom();
@@ -92,13 +92,13 @@ class _ChatScreenState extends State<ChatScreen> {
     }
   }
 
-  void _sendMedia(String filePath) {
+  void _sendMedia(String filePath, String fileType) {
     final fileMessage = Message(
       messageId: DateTime.now().millisecondsSinceEpoch,
       message: '[Media]',
       senderId: int.parse(_userController.userId.value),
       receiverId: widget.userId,
-      messageType: 'media',
+      messageType: fileType,
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),
     );
@@ -115,7 +115,9 @@ class _ChatScreenState extends State<ChatScreen> {
   Future<void> _pickFile() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles();
     if (result != null && result.files.single.path != null) {
-      _sendMedia(result.files.single.path!);
+      String filePath = result.files.single.path!;
+      String fileType = result.files.single.extension ?? 'document';
+      _sendMedia(filePath, fileType);
       Get.snackbar('File Selected', result.files.single.name);
     } else {
       Get.snackbar('Cancelled', 'No file was selected.');

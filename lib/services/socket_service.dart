@@ -12,7 +12,7 @@ class SocketService {
   int? userId;  // Store userId
 
   // Initialize Socket connection
-  void connect(int userId) {
+  void connect(int senderId, int receiverId) {
     socket = IO.io(ApiEndpoints.messageBaseUrl, <String, dynamic>{
       'transports': ['websocket'],
       'autoConnect': false,
@@ -21,9 +21,13 @@ class SocketService {
     socket?.connect();
 
     // Register the userId with the server
+    // Register the specific chat room between sender and receiver
     socket?.onConnect((_) {
-      socket?.emit('join', userId);
-      print('Connected and joined room for userId: $userId');
+      socket?.emit('join_chat', {
+        'senderId': senderId,
+        'receiverId': receiverId,
+      });
+      print('Connected and joined chat room between senderId: $senderId and receiverId: $receiverId');
     });
 
     // Listen for the message history
