@@ -1,7 +1,7 @@
 class ApiEndpoints{
   // replace with laptop IP address for testing in real device
-  static const baseUrl = "http://169.254.117.17:3000/api/";
-  // static const baseUrl = "http://localhost:3000/api/";
+  // static const baseUrl = "http://169.254.117.17:3000/api/";
+  static const baseUrl = "http://localhost:3000/api/";
   static const messageBaseUrl = "http://169.254.117.17:3000";
 
   static const register = "${baseUrl}auth/register";
