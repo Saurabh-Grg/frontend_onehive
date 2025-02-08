@@ -8,6 +8,7 @@ import 'package:onehive_frontend/screens/EarningsPage.dart';
 import 'package:onehive_frontend/screens/LeaderboardScreen.dart';
 import 'package:onehive_frontend/screens/RatingScreen.dart';
 import 'package:onehive_frontend/screens/SubmitReviewScreen.dart';
+import 'package:onehive_frontend/screens/accountSetting.dart';
 import 'package:onehive_frontend/screens/client_dashboard.dart';
 import 'package:onehive_frontend/screens/freelancer_dashboard.dart';
 import 'package:onehive_frontend/screens/login_form.dart';
@@ -39,6 +40,7 @@ class OneHive extends StatelessWidget {
         GetPage(name: '/totalProposal', page: () => TotalProposalsView()),
         GetPage(name: '/chatListPage', page: () => FollowListsScreen()),
         GetPage(name: '/earnings', page: () => EarningsPage()),
+        GetPage(name: '/accountSetting', page: () => Accountsetting())
       ],
     );
   }

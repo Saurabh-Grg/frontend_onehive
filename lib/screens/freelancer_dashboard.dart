@@ -663,7 +663,8 @@ class _FreelancerDashboardState extends State<FreelancerDashboard> {
             title: Text('Account Settings'),
             onTap: () {
               // Implement navigation to account settings
-            },
+              Get.toNamed('accountSetting');
+              },
           ),
           ListTile(
             leading: Icon(Icons.work), // Icon for My Projects
