@@ -40,7 +40,7 @@ class OneHive extends StatelessWidget {
         GetPage(name: '/totalProposal', page: () => TotalProposalsView()),
         GetPage(name: '/chatListPage', page: () => FollowListsScreen()),
         GetPage(name: '/earnings', page: () => EarningsPage()),
-        GetPage(name: '/accountSetting', page: () => Accountsetting())
+        GetPage(name: '/accountSetting', page: () => AccountSetting())
       ],
     );
   }
