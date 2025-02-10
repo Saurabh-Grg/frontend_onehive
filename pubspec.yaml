@@ -49,6 +49,7 @@ dependencies:
   flutter_inappwebview: ^6.1.5
   fl_chart: ^0.70.1
   get_storage: ^2.1.1
+  local_auth: ^2.3.0
 
 dev_dependencies:
   flutter_test:

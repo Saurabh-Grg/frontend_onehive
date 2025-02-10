@@ -48,9 +48,9 @@ class AccountSetting extends StatelessWidget {
               subtitle: const Text("Use Face ID or Fingerprint",
                   style: TextStyle(fontSize: 14, color: Colors.grey)),
               trailing: Obx(() => Switch(
-                    value: controller.isBiometricEnabled.value,
-                    onChanged: (value) => controller.toggleBiometric(),
-                  )),
+                value: controller.isBiometricEnabled.value,
+                onChanged: (value) => controller.toggleBiometric(),
+              )),
             ),
             // const Divider(),
             _buildSettingsOption(

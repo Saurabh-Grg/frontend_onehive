@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:onehive_frontend/providers/client_profile_provider.dart';
 import 'package:onehive_frontend/providers/jobProvider.dart';
 import 'package:onehive_frontend/providers/user_provider.dart';
+import 'package:onehive_frontend/screens/ChangePasswordScreen.dart';
 import 'package:onehive_frontend/screens/ChatListPage.dart';
 import 'package:onehive_frontend/screens/EarningsPage.dart';
 import 'package:onehive_frontend/screens/LeaderboardScreen.dart';
@@ -42,7 +43,8 @@ class OneHive extends StatelessWidget {
         GetPage(name: '/totalProposal', page: () => TotalProposalsView()),
         GetPage(name: '/chatListPage', page: () => FollowListsScreen()),
         GetPage(name: '/earnings', page: () => EarningsPage()),
-        GetPage(name: '/accountSetting', page: () => AccountSetting())
+        GetPage(name: '/accountSetting', page: () => AccountSetting()),
+        GetPage(name: '/change-password', page: () => ChangePasswordScreen())
       ],
     );
   }
