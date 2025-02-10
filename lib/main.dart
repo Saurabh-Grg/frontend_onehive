@@ -17,6 +17,8 @@ import 'package:onehive_frontend/screens/welcome_screen.dart';
 import 'package:onehive_frontend/services/job_posting_service.dart';
 import 'package:provider/provider.dart';
 
+import 'controllers/UserController.dart';
+
 class OneHive extends StatelessWidget {
   OneHive({super.key});
 
@@ -47,6 +49,7 @@ class OneHive extends StatelessWidget {
 }
 
 void main() {
+  Get.put(UserController()); // Register UserController globally
   runApp(
     MultiProvider( // Use MultiProvider to provide multiple providers
       providers: [
