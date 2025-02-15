@@ -31,15 +31,15 @@ class AccountSetting extends StatelessWidget {
                 "Notification Settings",
                 "Manage app notifications",
                 Icons.notifications_active_outlined, () {
-              Get.toNamed('/notifications');
+              // Get.toNamed('/notifications');
             }),
             _buildSettingsOption("Language Selection",
                 "Choose your preferred language", Icons.language, () {
-              Get.toNamed('/language-settings');
+                  _showLanguageSelectionDialog();
             }),
             _buildSettingsOption("Privacy Settings",
                 "Manage data and permissions", Icons.privacy_tip_outlined, () {
-              Get.toNamed('/privacy-settings');
+              // Get.toNamed('/privacy-settings');
             }),
             ListTile(
               leading: const Icon(Icons.fingerprint, color: Colors.deepOrange),
@@ -56,7 +56,7 @@ class AccountSetting extends StatelessWidget {
             _buildSettingsOption(
                 "Help & Support", "Get assistance or FAQs", Icons.help_outline,
                 () {
-              Get.toNamed('/help-support');
+              // Get.toNamed('/help-support');
             }),
             _buildSettingsOption(
                 "About App", "Learn more about this app", Icons.info_outline,
@@ -107,7 +107,7 @@ class AccountSetting extends StatelessWidget {
               const CircleAvatar(
                 radius: 40,
                 backgroundImage:
-                    NetworkImage('https://placekitten.com/200/200'),
+                    NetworkImage('https://i.pinimg.com/474x/49/4d/2e/494d2e25fad7412b4f11beb7242ba804.jpg'),
               ),
               const SizedBox(width: 15), // Spacing between avatar and text
               Expanded(
@@ -128,7 +128,7 @@ class AccountSetting extends StatelessWidget {
               ),
               TextButton(
                 onPressed: () {
-                  Get.toNamed('/edit-profile');
+                  // Get.toNamed('/edit-profile');
                 },
                 child: const Icon(Icons.edit, color: Colors.deepOrange),
               ),
@@ -138,6 +138,36 @@ class AccountSetting extends StatelessWidget {
       ),
     );
   }
+
+  void _showLanguageSelectionDialog() {
+    Get.defaultDialog(
+      title: "Select Language",
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ListTile(
+            leading: const Icon(Icons.language, color: Colors.deepOrange),
+            title: const Text("English"),
+            onTap: () {
+              // Set the language to English
+              controller.changeLanguage('en');
+              Get.back();
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.language, color: Colors.deepOrange),
+            title: const Text("Nepali (नेपाली)"),
+            onTap: () {
+              // Set the language to Nepali
+              controller.changeLanguage('ne');
+              Get.back();
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
 
   Widget _buildDeleteAccountButton() {
     return SizedBox(

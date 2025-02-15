@@ -58,6 +58,11 @@ class AccountSettingController extends GetxController {
     }
   }
 
+  void changeLanguage(String langCode) {
+    var locale = Locale(langCode);
+    Get.updateLocale(locale);
+  }
+
   void logout() {
     Get.offAllNamed('/login');
   }
