@@ -97,7 +97,7 @@ class AboutApp extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 6.0),
       child: Row(
         children: [
-          const Icon(Icons.check_circle, color: Colors.green),
+          const Icon(Icons.check_circle, color: Colors.deepOrange),
           const SizedBox(width: 10),
           Text(feature, style: const TextStyle(fontSize: 16)),
         ],
@@ -165,7 +165,7 @@ class AboutApp extends StatelessWidget {
               },
               child: const Text(
                 "View Privacy Policy",
-                style: TextStyle(fontSize: 16, color: Colors.blue),
+                style: TextStyle(fontSize: 16, color: Colors.deepOrange),
               ),
             ),
           ],

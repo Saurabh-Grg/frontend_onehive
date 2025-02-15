@@ -258,7 +258,7 @@ class _ClientDashboardState extends State<ClientDashboard> {
             leading: Icon(Icons.settings), // Icon for Account Settings
             title: Text('Account Settings'),
             onTap: () {
-              // Implement navigation to account settings
+              Get.toNamed('/accountSetting');
             },
           ),
           ListTile(
@@ -277,14 +277,14 @@ class _ClientDashboardState extends State<ClientDashboard> {
               Get.toNamed('/chatListPage');
             },
           ),
-          ListTile(
-            leading: Icon(Icons.person),
-            title: Text('Following'),
-            onTap: () {
-              // Implement navigation to payment information
-              // Navigator.push(context, MaterialPageRoute(builder: (context) => PaymentInformation()));
-            },
-          ),
+          // ListTile(
+          //   leading: Icon(Icons.person),
+          //   title: Text('Following'),
+          //   onTap: () {
+          //     // Implement navigation to payment information
+          //     // Navigator.push(context, MaterialPageRoute(builder: (context) => PaymentInformation()));
+          //   },
+          // ),
           Obx(() => SwitchListTile(
                 title: Text(
                   themeController.isDarkTheme.value
