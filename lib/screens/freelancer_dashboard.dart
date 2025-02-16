@@ -670,7 +670,7 @@ class _FreelancerDashboardState extends State<FreelancerDashboard> {
             leading: Icon(Icons.work), // Icon for My Projects
             title: Text('My Projects'),
             onTap: () {
-              // Implement navigation to My Projects
+              Get.toNamed('/my-projects');
             },
           ),
           ListTile(
