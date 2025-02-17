@@ -14,7 +14,7 @@ class MyProjectsController extends GetxController {
   }
 
   void fetchProjects() async {
-    await Future.delayed(Duration(seconds: 2)); // Simulating API delay
+    await Future.delayed(Duration(seconds: 1)); // Simulating API delay
     projects.value = [
       ProjectModel(
         title: "Flutter Mobile App Development",
