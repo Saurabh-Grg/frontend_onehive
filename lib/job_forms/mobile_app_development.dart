@@ -101,7 +101,9 @@ class _MobileAppDevelopmentJobPostingFormState extends State<MobileAppDevelopmen
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Job Posting Form - Mobile App Development'),
+        title: Text('Job Posting Form - Mobile App Development',
+            style: TextStyle(fontWeight: FontWeight.bold),),
+        // backgroundColor: Colors.deepOrange[700],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -109,38 +111,13 @@ class _MobileAppDevelopmentJobPostingFormState extends State<MobileAppDevelopmen
           key: _formKey,
           child: ListView(
             children: [
-              // Job Title
-              TextFormField(
-                decoration: InputDecoration(labelText: 'Job Title'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter the job title';
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  jobTitle = value!;
-                },
-              ),
-
-              // Job Description
-              TextFormField(
-                decoration: InputDecoration(labelText: 'Job Description'),
-                maxLines: 4,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter the job description';
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  jobDescription = value!;
-                },
-              ),
-
               // Platform Preferences
               DropdownButtonFormField<String>(
-                decoration: InputDecoration(labelText: 'Platform'),
+                decoration: InputDecoration(labelText: 'Platform',
+                  filled: true,
+                  fillColor: Colors.teal[50],
+                  border: OutlineInputBorder(),
+                ),
                 value: selectedPlatform,
                 items: platforms.map((String platform) {
                   return DropdownMenuItem<String>(
@@ -154,10 +131,15 @@ class _MobileAppDevelopmentJobPostingFormState extends State<MobileAppDevelopmen
                   });
                 },
               ),
+              const SizedBox(height: 15),
 
               // App Type
               DropdownButtonFormField<String>(
-                decoration: InputDecoration(labelText: 'App Type'),
+                decoration: InputDecoration(labelText: 'App Type',
+                  filled: true,
+                  fillColor: Colors.teal[50],
+                  border: OutlineInputBorder(),
+                ),
                 value: appType,
                 items: appTypes.map((String type) {
                   return DropdownMenuItem<String>(
@@ -171,10 +153,15 @@ class _MobileAppDevelopmentJobPostingFormState extends State<MobileAppDevelopmen
                   });
                 },
               ),
+              const SizedBox(height: 15),
 
               // Design Preference
               DropdownButtonFormField<String>(
-                decoration: InputDecoration(labelText: 'Design Preference'),
+                decoration: InputDecoration(labelText: 'Design Preference',
+                  filled: true,
+                  fillColor: Colors.teal[50],
+                  border: OutlineInputBorder(),
+                ),
                 value: designPreference,
                 items: designPreferences.map((String design) {
                   return DropdownMenuItem<String>(
@@ -188,10 +175,15 @@ class _MobileAppDevelopmentJobPostingFormState extends State<MobileAppDevelopmen
                   });
                 },
               ),
+              const SizedBox(height: 15),
 
               // Backend Integration
               DropdownButtonFormField<String>(
-                decoration: InputDecoration(labelText: 'Backend Integration'),
+                decoration: InputDecoration(labelText: 'Backend Integration',
+                  filled: true,
+                  fillColor: Colors.teal[50],
+                  border: OutlineInputBorder(),
+                ),
                 value: backendIntegration,
                 items: ['Yes', 'No'].map((String option) {
                   return DropdownMenuItem<String>(
@@ -205,12 +197,18 @@ class _MobileAppDevelopmentJobPostingFormState extends State<MobileAppDevelopmen
                   });
                 },
               ),
+              const SizedBox(height: 15),
 
               // Features
               TextFormField(
                 controller: featureController,
-                decoration: InputDecoration(labelText: 'Feature (e.g., Push Notifications)'),
+                decoration: InputDecoration(labelText: 'Feature (e.g., Push Notifications)',
+                  filled: true,
+                  fillColor: Colors.teal[50],
+                  border: OutlineInputBorder(),
+                ),
               ),
+              const SizedBox(height: 15),
               ElevatedButton(
                 onPressed: _addFeature,
                 child: Text('Add Feature'),
@@ -219,6 +217,7 @@ class _MobileAppDevelopmentJobPostingFormState extends State<MobileAppDevelopmen
               Column(
                 children: features.map((feature) => Text(feature)).toList(),
               ),
+              const SizedBox(height: 15),
 
               // Project Start Date
               ListTile(
@@ -233,10 +232,15 @@ class _MobileAppDevelopmentJobPostingFormState extends State<MobileAppDevelopmen
                 trailing: Icon(Icons.calendar_today),
                 onTap: () => _selectDate(context, isStart: false),
               ),
+              const SizedBox(height: 15),
 
               // Payment Type
               DropdownButtonFormField<String>(
-                decoration: InputDecoration(labelText: 'Payment Type'),
+                decoration: InputDecoration(labelText: 'Payment Type',
+                  filled: true,
+                  fillColor: Colors.teal[50],
+                  border: OutlineInputBorder(),
+                ),
                 value: paymentType,
                 items: paymentTypes.map((String type) {
                   return DropdownMenuItem<String>(
@@ -251,18 +255,28 @@ class _MobileAppDevelopmentJobPostingFormState extends State<MobileAppDevelopmen
                   });
                 },
               ),
+              const SizedBox(height: 15),
 
               // Budget Range
               TextFormField(
-                decoration: InputDecoration(labelText: 'Budget Range (e.g., \$500 - \$1,000)'),
+                decoration: InputDecoration(labelText: 'Budget Range (e.g., \$500 - \$1,000)',
+                  filled: true,
+                  fillColor: Colors.teal[50],
+                  border: OutlineInputBorder(),
+                ),
                 onSaved: (value) {
                   budgetRange = value!;
                 },
               ),
+              const SizedBox(height: 15),
 
               // Experience Level
               DropdownButtonFormField<String>(
-                decoration: InputDecoration(labelText: 'Experience Level'),
+                decoration: InputDecoration(labelText: 'Experience Level',
+                  filled: true,
+                  fillColor: Colors.teal[50],
+                  border: OutlineInputBorder(),
+                ),
                 value: experienceLevel,
                 items: experienceLevels.map((String level) {
                   return DropdownMenuItem<String>(
@@ -276,16 +290,22 @@ class _MobileAppDevelopmentJobPostingFormState extends State<MobileAppDevelopmen
                   });
                 },
               ),
+              const SizedBox(height: 15),
 
               // Additional Notes
               TextFormField(
-                decoration: InputDecoration(labelText: 'Additional Notes'),
+                decoration: InputDecoration(labelText: 'Additional Notes',
+                  filled: true,
+                  fillColor: Colors.teal[50],
+                  border: OutlineInputBorder(),
+                ),
                 maxLines: 3,
                 onSaved: (value) {
                   additionalNotes = value!;
                 },
               ),
 
+              const SizedBox(height: 15),
               // Attach Files
               ElevatedButton(
                 onPressed: _pickFiles,
@@ -295,6 +315,7 @@ class _MobileAppDevelopmentJobPostingFormState extends State<MobileAppDevelopmen
               Column(
                 children: attachedFiles!.map((file) => Text(file.path.split('/').last)).toList(),
               ),
+              const SizedBox(height: 15),
 
               // Submit Button
               ElevatedButton(
