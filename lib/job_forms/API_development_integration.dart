@@ -111,7 +111,10 @@ class _ApiDevelopmentJobPostingFormState extends State<ApiDevelopmentJobPostingF
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Job Posting Form - API Development and Integration'),
+        title: Text('Job Posting Form - API Development and Integration',
+            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)
+        ),
+        backgroundColor: Colors.deepOrange[700],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -119,38 +122,15 @@ class _ApiDevelopmentJobPostingFormState extends State<ApiDevelopmentJobPostingF
           key: _formKey,
           child: ListView(
             children: [
-              // Job Title
-              TextFormField(
-                decoration: InputDecoration(labelText: 'Job Title'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter the job title';
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  jobTitle = value!;
-                },
-              ),
-
-              // Job Description
-              TextFormField(
-                decoration: InputDecoration(labelText: 'Job Description'),
-                maxLines: 4,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter the job description';
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  jobDescription = value!;
-                },
-              ),
+              const SizedBox(height: 15),
 
               // Technology Preferences
               DropdownButtonFormField<String>(
-                decoration: InputDecoration(labelText: 'Technology'),
+                decoration: InputDecoration(labelText: 'Technology',
+                  filled: true,
+                  fillColor: Colors.teal[50],
+                  border: OutlineInputBorder(),
+                ),
                 value: selectedTechnology,
                 items: technologies.map((String tech) {
                   return DropdownMenuItem<String>(
@@ -164,10 +144,15 @@ class _ApiDevelopmentJobPostingFormState extends State<ApiDevelopmentJobPostingF
                   });
                 },
               ),
+              const SizedBox(height: 15),
 
               // API Type
               DropdownButtonFormField<String>(
-                decoration: InputDecoration(labelText: 'API Type'),
+                decoration: InputDecoration(labelText: 'API Type',
+                  filled: true,
+                  fillColor: Colors.teal[50],
+                  border: OutlineInputBorder(),
+                ),
                 value: apiType,
                 items: apiTypes.map((String type) {
                   return DropdownMenuItem<String>(
@@ -181,10 +166,15 @@ class _ApiDevelopmentJobPostingFormState extends State<ApiDevelopmentJobPostingF
                   });
                 },
               ),
+              const SizedBox(height: 15),
 
               // Authentication Method
               DropdownButtonFormField<String>(
-                decoration: InputDecoration(labelText: 'Authentication Method'),
+                decoration: InputDecoration(labelText: 'Authentication Method',
+                  filled: true,
+                  fillColor: Colors.teal[50],
+                  border: OutlineInputBorder(),
+                ),
                 value: authenticationMethod,
                 items: authenticationMethods.map((String method) {
                   return DropdownMenuItem<String>(
@@ -198,20 +188,30 @@ class _ApiDevelopmentJobPostingFormState extends State<ApiDevelopmentJobPostingF
                   });
                 },
               ),
+              const SizedBox(height: 15),
 
               // Endpoints
               TextFormField(
-                decoration: InputDecoration(labelText: 'API Endpoint (e.g., /users, /products)'),
+                decoration: InputDecoration(labelText: 'API Endpoint (e.g., /users, /products)',
+                  filled: true,
+                  fillColor: Colors.teal[50],
+                  border: OutlineInputBorder(),
+                ),
                 onFieldSubmitted: _addEndpoint,
               ),
               // Display added endpoints
               Column(
                 children: endpoints.map((endpoint) => Text(endpoint)).toList(),
               ),
+              const SizedBox(height: 15),
 
               // Data Format
               DropdownButtonFormField<String>(
-                decoration: InputDecoration(labelText: 'Data Format'),
+                decoration: InputDecoration(labelText: 'Data Format',
+                  filled: true,
+                  fillColor: Colors.teal[50],
+                  border: OutlineInputBorder(),
+                ),
                 value: dataFormat,
                 items: ['JSON', 'XML', 'Other'].map((String format) {
                   return DropdownMenuItem<String>(
@@ -225,6 +225,7 @@ class _ApiDevelopmentJobPostingFormState extends State<ApiDevelopmentJobPostingF
                   });
                 },
               ),
+              const SizedBox(height: 15),
 
               // Project Start Date
               ListTile(
@@ -239,10 +240,15 @@ class _ApiDevelopmentJobPostingFormState extends State<ApiDevelopmentJobPostingF
                 trailing: Icon(Icons.calendar_today),
                 onTap: () => _selectDate(context, isStart: false),
               ),
+              const SizedBox(height: 15),
 
               // Payment Type
               DropdownButtonFormField<String>(
-                decoration: InputDecoration(labelText: 'Payment Type'),
+                decoration: InputDecoration(labelText: 'Payment Type',
+                  filled: true,
+                  fillColor: Colors.teal[50],
+                  border: OutlineInputBorder(),
+                ),
                 value: paymentType,
                 items: ['Fixed Price', 'Hourly'].map((String type) {
                   return DropdownMenuItem<String>(
@@ -256,10 +262,15 @@ class _ApiDevelopmentJobPostingFormState extends State<ApiDevelopmentJobPostingF
                   });
                 },
               ),
+              const SizedBox(height: 15),
 
               // Budget Range
               TextFormField(
-                decoration: InputDecoration(labelText: 'Budget Range (e.g., \$500 - \$1,000)'),
+                decoration: InputDecoration(labelText: 'Budget Range (e.g., \$500 - \$1,000)',
+                  filled: true,
+                  fillColor: Colors.teal[50],
+                  border: OutlineInputBorder(),
+                ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter the budget range';
@@ -270,10 +281,15 @@ class _ApiDevelopmentJobPostingFormState extends State<ApiDevelopmentJobPostingF
                   budgetRange = value!;
                 },
               ),
+              const SizedBox(height: 15),
 
               // Required Experience Level
               DropdownButtonFormField<String>(
-                decoration: InputDecoration(labelText: 'Experience Level'),
+                decoration: InputDecoration(labelText: 'Experience Level',
+                  filled: true,
+                  fillColor: Colors.teal[50],
+                  border: OutlineInputBorder(),
+                ),
                 value: experienceLevel,
                 items: experienceLevels.map((String level) {
                   return DropdownMenuItem<String>(
@@ -287,27 +303,43 @@ class _ApiDevelopmentJobPostingFormState extends State<ApiDevelopmentJobPostingF
                   });
                 },
               ),
+              const SizedBox(height: 15),
 
               // Additional Notes
               TextFormField(
-                decoration: InputDecoration(labelText: 'Additional Notes'),
+                decoration: InputDecoration(labelText: 'Additional Notes',
+                  filled: true,
+                  fillColor: Colors.teal[50],
+                  border: OutlineInputBorder(),
+                ),
                 maxLines: 3,
                 onSaved: (value) {
                   additionalNotes = value!;
                 },
               ),
+              const SizedBox(height: 15),
 
               // Attach Files
               ElevatedButton(
                 onPressed: _pickFiles,
                 child: Text('Attach Files'),
               ),
+              const SizedBox(height: 15),
 
-              // Submit Button
-              SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: _submitForm,
-                child: Text('Submit Job Posting'),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: _submitForm,
+                  child: Text(
+                    'Submit Job Posting',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.orangeAccent[700],
+                    padding: EdgeInsets.symmetric(vertical: 16.0),
+                    textStyle: TextStyle(fontSize: 18),
+                  ),
+                ),
               ),
             ],
           ),
