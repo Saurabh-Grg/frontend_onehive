@@ -78,7 +78,10 @@ class _UIUXDesignJobPostingFormState extends State<UIUXDesignJobPostingForm> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Job Posting Form - UI/UX Design'),
+        title: Text('Job Posting Form - UI/UX Design',
+            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)
+        ),
+        backgroundColor: Colors.deepOrange[700],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -86,38 +89,14 @@ class _UIUXDesignJobPostingFormState extends State<UIUXDesignJobPostingForm> {
           key: _formKey,
           child: ListView(
             children: [
-              // Job Title
-              TextFormField(
-                decoration: InputDecoration(labelText: 'Job Title'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter the job title';
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  jobTitle = value!;
-                },
-              ),
-
-              // Job Description
-              TextFormField(
-                decoration: InputDecoration(labelText: 'Job Description'),
-                maxLines: 4,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter the job description';
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  jobDescription = value!;
-                },
-              ),
-
+              const SizedBox(height: 15),
               // Project Type
               DropdownButtonFormField<String>(
-                decoration: InputDecoration(labelText: 'Project Type'),
+                decoration: InputDecoration(labelText: 'Project Type',
+                  filled: true,
+                  fillColor: Colors.teal[50],
+                  border: OutlineInputBorder(),
+                ),
                 value: projectType,
                 items: projectTypes.map((String type) {
                   return DropdownMenuItem<String>(
@@ -131,10 +110,15 @@ class _UIUXDesignJobPostingFormState extends State<UIUXDesignJobPostingForm> {
                   });
                 },
               ),
+              const SizedBox(height: 15),
 
               // Design Focus
               DropdownButtonFormField<String>(
-                decoration: InputDecoration(labelText: 'Design Focus'),
+                decoration: InputDecoration(labelText: 'Design Focus',
+                  filled: true,
+                  fillColor: Colors.teal[50],
+                  border: OutlineInputBorder(),
+                ),
                 value: designFocus,
                 items: designFocusOptions.map((String focus) {
                   return DropdownMenuItem<String>(
@@ -148,10 +132,15 @@ class _UIUXDesignJobPostingFormState extends State<UIUXDesignJobPostingForm> {
                   });
                 },
               ),
+              const SizedBox(height: 15),
 
               // Target Audience
               TextFormField(
-                decoration: InputDecoration(labelText: 'Target Audience'),
+                decoration: InputDecoration(labelText: 'Target Audience',
+                  filled: true,
+                  fillColor: Colors.teal[50],
+                  border: OutlineInputBorder(),
+                ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter the target audience';
@@ -162,10 +151,15 @@ class _UIUXDesignJobPostingFormState extends State<UIUXDesignJobPostingForm> {
                   targetAudience = value!;
                 },
               ),
+              const SizedBox(height: 15),
 
               // Preferred Color Scheme
               DropdownButtonFormField<String>(
-                decoration: InputDecoration(labelText: 'Preferred Color Scheme'),
+                decoration: InputDecoration(labelText: 'Preferred Color Scheme',
+                  filled: true,
+                  fillColor: Colors.teal[50],
+                  border: OutlineInputBorder(),
+                ),
                 value: preferredColorScheme,
                 items: colorSchemes.map((String scheme) {
                   return DropdownMenuItem<String>(
@@ -179,10 +173,15 @@ class _UIUXDesignJobPostingFormState extends State<UIUXDesignJobPostingForm> {
                   });
                 },
               ),
+              const SizedBox(height: 15),
 
               // Platforms
               DropdownButtonFormField<String>(
-                decoration: InputDecoration(labelText: 'Platforms'),
+                decoration: InputDecoration(labelText: 'Platforms',
+                  filled: true,
+                  fillColor: Colors.teal[50],
+                  border: OutlineInputBorder(),
+                ),
                 value: platforms,
                 items: platformsOptions.map((String platform) {
                   return DropdownMenuItem<String>(
@@ -196,10 +195,15 @@ class _UIUXDesignJobPostingFormState extends State<UIUXDesignJobPostingForm> {
                   });
                 },
               ),
+              const SizedBox(height: 15),
 
               // Project Duration
               DropdownButtonFormField<String>(
-                decoration: InputDecoration(labelText: 'Project Duration'),
+                decoration: InputDecoration(labelText: 'Project Duration',
+                  filled: true,
+                  fillColor: Colors.teal[50],
+                  border: OutlineInputBorder(),
+                ),
                 value: projectDuration,
                 items: projectDurations.map((String duration) {
                   return DropdownMenuItem<String>(
@@ -213,10 +217,15 @@ class _UIUXDesignJobPostingFormState extends State<UIUXDesignJobPostingForm> {
                   });
                 },
               ),
+              const SizedBox(height: 15),
 
               // Budget Range
               TextFormField(
-                decoration: InputDecoration(labelText: 'Budget Range (e.g., \$500 - \$1,000)'),
+                decoration: InputDecoration(labelText: 'Budget Range (e.g., \$500 - \$1,000)',
+                  filled: true,
+                  fillColor: Colors.teal[50],
+                  border: OutlineInputBorder(),
+                ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter the budget range';
@@ -227,10 +236,15 @@ class _UIUXDesignJobPostingFormState extends State<UIUXDesignJobPostingForm> {
                   budgetRange = value!;
                 },
               ),
+              const SizedBox(height: 15),
 
               // Required Experience Level
               DropdownButtonFormField<String>(
-                decoration: InputDecoration(labelText: 'Experience Level'),
+                decoration: InputDecoration(labelText: 'Experience Level',
+                  filled: true,
+                  fillColor: Colors.teal[50],
+                  border: OutlineInputBorder(),
+                ),
                 value: experienceLevel,
                 items: experienceLevels.map((String level) {
                   return DropdownMenuItem<String>(
@@ -244,27 +258,43 @@ class _UIUXDesignJobPostingFormState extends State<UIUXDesignJobPostingForm> {
                   });
                 },
               ),
+              const SizedBox(height: 15),
 
               // Additional Notes
               TextFormField(
-                decoration: InputDecoration(labelText: 'Additional Notes'),
+                decoration: InputDecoration(labelText: 'Additional Notes',
+                  filled: true,
+                  fillColor: Colors.teal[50],
+                  border: OutlineInputBorder(),
+                ),
                 maxLines: 3,
                 onSaved: (value) {
                   additionalNotes = value!;
                 },
               ),
+              const SizedBox(height: 15),
 
               // Attach Files
               ElevatedButton(
                 onPressed: _pickFiles,
                 child: Text('Attach Files'),
               ),
+              const SizedBox(height: 15),
 
-              // Submit Button
-              SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: _submitForm,
-                child: Text('Submit Job Posting'),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: _submitForm,
+                  child: Text(
+                    'Submit Job Posting',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.orangeAccent[700],
+                    padding: EdgeInsets.symmetric(vertical: 16.0),
+                    textStyle: TextStyle(fontSize: 18),
+                  ),
+                ),
               ),
             ],
           ),
