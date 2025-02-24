@@ -463,7 +463,7 @@ class _FreelancerDashboardState extends State<FreelancerDashboard> {
                     job['description'],
                     style: TextStyle(
                       fontSize: 14.0,
-                      color: Colors.black,
+                      // color: Colors.black,
                     ),
                     maxLines: 3, // Limit the description to 2 lines
                     overflow: TextOverflow.ellipsis, // Show "..." for long text

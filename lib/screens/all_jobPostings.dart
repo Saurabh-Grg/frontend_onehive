@@ -70,7 +70,8 @@ class _AllJobPostingsPageState extends State<AllJobPostingsPage> {
             'title': job['title'].toString(),
             'description': job['description'].toString(), // Add description here
             'category': job['category'].toString(),
-            // 'status': job['status']
+            'status': job['status'].toString(),
+            'payment_status': job['payment_status'].toString()
           }));
         });
       } else {
@@ -127,6 +128,20 @@ class _AllJobPostingsPageState extends State<AllJobPostingsPage> {
               children: [
                 Text('Description: ${job['description']}'), // Display job description
                 Text('Category: ${job['category']}'),
+                Text(
+                  'Job Status: ${job['status']}',
+                  style: TextStyle(
+                    color: _getJobStatusColor(job['status']),
+                    // fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  'Payment Status: ${job['payment_status']}',
+                  style: TextStyle(
+                    color: _getPaymentStatusColor(job['payment_status']),
+                    // fontWeight: FontWeight.bold,
+                  ),
+                ),
               ],
             ),
             trailing: Row(
@@ -160,5 +175,38 @@ class _AllJobPostingsPageState extends State<AllJobPostingsPage> {
         );
       },
     );
+  }
+  // Helper function to get color based on job status
+  Color _getJobStatusColor(String? status) {
+    switch (status?.toLowerCase()) {
+      case 'pending':
+        return Colors.amber;
+      case 'ongoing':
+        return Colors.blue;
+      case 'completed':
+        return Colors.green;
+      case 'disputed':
+        return Colors.red;
+      default:
+        return Colors.grey;
+    }
+  }
+
+  // Helper function to get color based on job status
+  Color _getPaymentStatusColor(String? status) {
+    switch (status?.toLowerCase()) {
+      case 'unpaid':
+        return Colors.red;
+      case 'pending':
+        return Colors.amber;
+      case 'escrowed':
+        return Colors.blue;
+      case 'released':
+        return Colors.green;
+      case 'disputed':
+        return Colors.deepOrange;
+      default:
+        return Colors.grey;
+    }
   }
 }

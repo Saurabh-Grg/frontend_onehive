@@ -150,7 +150,8 @@ class _ClientDashboardState extends State<ClientDashboard> {
       appBar: AppBar(
         title: Text(
           'Hi! $username',
-          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.deepOrange),
+          style:
+              TextStyle(fontWeight: FontWeight.bold, color: Colors.deepOrange),
         ),
         actions: [
           IconButton(
@@ -331,8 +332,7 @@ class _ClientDashboardState extends State<ClientDashboard> {
 
     // Make an API call to check if the profile exists for the current user
     final response = await http.get(
-      Uri.parse(
-          '${ApiEndpoints.checkClientProfile}/$user_id'),
+      Uri.parse('${ApiEndpoints.checkClientProfile}/$user_id'),
       // Check your API endpoint
       headers: {
         'Authorization': 'Bearer ${userController.token.value}',
@@ -458,8 +458,7 @@ class _ClientDashboardState extends State<ClientDashboard> {
     String? user_id = await _getUserId();
     try {
       final response = await http.get(
-        Uri.parse(
-            '${ApiEndpoints.countTotalJobPostingByAClient}/$user_id'),
+        Uri.parse('${ApiEndpoints.countTotalJobPostingByAClient}/$user_id'),
       );
 
       if (response.statusCode == 200) {
@@ -508,10 +507,10 @@ class _ClientDashboardState extends State<ClientDashboard> {
           ),
           Expanded(
             child: _buildSummaryCard(
-                'Ongoing Projects',
-                ongoingProjects.toString(),
-                screenWidth,
-                'assets/images/bg3.png',
+              'Ongoing Projects',
+              ongoingProjects.toString(),
+              screenWidth,
+              'assets/images/bg3.png',
             ),
           ),
         ],
@@ -690,7 +689,7 @@ class _ClientDashboardState extends State<ClientDashboard> {
                     return DropdownMenuItem<String>(
                       value: category,
                       child: Text(category),
-                    ) ;
+                    );
                   }).toList(),
                   onChanged: (String? newValue) {
                     selectedCategory = newValue;
@@ -711,7 +710,8 @@ class _ClientDashboardState extends State<ClientDashboard> {
                       userController.userId.value.toString();
 
                   // Convert currentUserId from String to int
-                  int currentUserId = int.tryParse(currentUserIdStr) ?? 0; // Use a default value if parsing fails
+                  int currentUserId = int.tryParse(currentUserIdStr) ??
+                      0; // Use a default value if parsing fails
 
                   // Retrieve the job posting service
                   final jobPostingService =
@@ -832,7 +832,8 @@ class _ClientDashboardState extends State<ClientDashboard> {
                 'description': job['description'].toString(),
                 // Add description here
                 'category': job['category'].toString(),
-                // 'status': job['status']
+                'status': job['status'].toString(),
+                'payment_status': job['payment_status'].toString()
               }));
         });
       } else {
@@ -928,7 +929,7 @@ class _ClientDashboardState extends State<ClientDashboard> {
                       title: Text(
                         job['title']!,
                         style: TextStyle(
-                          fontSize: screenWidth * 0.04,
+                          fontSize: screenWidth * 0.036,
                           color: Colors.deepOrange,
                           fontWeight: FontWeight.bold,
                         ),
@@ -945,6 +946,20 @@ class _ClientDashboardState extends State<ClientDashboard> {
                           ),
                           // Display job description
                           Text('Category: ${job['category']}'),
+                          Text(
+                            'Job Status: ${job['status']}',
+                            style: TextStyle(
+                              color: _getJobStatusColor(job['status']),
+                              // fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            'Payment Status: ${job['payment_status']}',
+                            style: TextStyle(
+                              color: _getPaymentStatusColor(job['payment_status']),
+                              // fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ],
                       ),
                       trailing: Row(
@@ -1046,6 +1061,39 @@ class _ClientDashboardState extends State<ClientDashboard> {
         ),
       ],
     );
+  }
+  // Helper function to get color based on job status
+  Color _getJobStatusColor(String? status) {
+    switch (status?.toLowerCase()) {
+      case 'pending':
+        return Colors.amber;
+      case 'ongoing':
+        return Colors.blue;
+      case 'completed':
+        return Colors.green;
+      case 'disputed':
+        return Colors.red;
+      default:
+        return Colors.grey;
+    }
+  }
+
+  // Helper function to get color based on job status
+  Color _getPaymentStatusColor(String? status) {
+    switch (status?.toLowerCase()) {
+      case 'unpaid':
+        return Colors.red;
+      case 'pending':
+        return Colors.amber;
+      case 'escrowed':
+        return Colors.blue;
+      case 'released':
+        return Colors.green;
+      case 'disputed':
+        return Colors.deepOrange;
+      default:
+        return Colors.grey;
+    }
   }
 
   List<Proposal> proposals = [];
@@ -1166,7 +1214,7 @@ class _ClientDashboardState extends State<ClientDashboard> {
           Text(
             'Incoming Proposals',
             style: TextStyle(
-              fontSize: screenWidth * 0.06,
+              fontSize: screenWidth * 0.05,
               fontWeight: FontWeight.bold,
               color: Colors.deepOrange, // Adjust to your primary color
             ),
@@ -1213,14 +1261,17 @@ class _ClientDashboardState extends State<ClientDashboard> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        // Proposal from Section (kept as it is)
                         Row(
                           children: [
-                            Icon(Icons.assignment_ind, color: Colors.deepOrange, size: screenWidth * 0.05),
+                            Icon(Icons.assignment_ind,
+                                color: Colors.deepOrange,
+                                size: screenWidth * 0.05),
                             SizedBox(width: screenWidth * 0.02),
                             Text(
                               'Proposal from',
                               style: TextStyle(
-                                fontSize: screenWidth * 0.04,
+                                fontSize: screenWidth * 0.036,
                                 color: Colors.deepOrange,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -1229,7 +1280,7 @@ class _ClientDashboardState extends State<ClientDashboard> {
                             RichText(
                               text: TextSpan(
                                 style: TextStyle(
-                                  fontSize: screenWidth * 0.04,
+                                  fontSize: screenWidth * 0.036,
                                   color: Colors.black,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -1238,30 +1289,16 @@ class _ClientDashboardState extends State<ClientDashboard> {
                                     text: ' ${proposal.name}',
                                     recognizer: TapGestureRecognizer()
                                       ..onTap = () {
-                                        // Debug: Ensure non-null IDs
                                         if (proposal.freelancerId != null &&
                                             proposal.jobId != null) {
-                                          print(
-                                              "Navigating to FreelancerProfilePage with jobId: ${proposal.jobId} and freelancerId: ${proposal.freelancerId}");
                                           Navigator.push(
                                             context,
                                             MaterialPageRoute(
-                                              builder: (context) =>
-                                                  FreelancerProfilePage(
-                                                    freelancerId: proposal.freelancerId,
-                                                    jobId: proposal.jobId,
-
-                                                  ),
+                                              builder: (context) => FreelancerProfilePage(
+                                                freelancerId: proposal.freelancerId,
+                                                jobId: proposal.jobId,
+                                              ),
                                             ),
-                                          );
-                                        } else {
-                                          print(
-                                              "Error: Missing jobId or freelancerId in proposal.");
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(
-                                            SnackBar(
-                                                content: Text(
-                                                    "Error: Missing job or freelancer details.")),
                                           );
                                         }
                                       },
@@ -1271,79 +1308,57 @@ class _ClientDashboardState extends State<ClientDashboard> {
                             ),
                           ],
                         ),
-                        SizedBox(height: screenWidth * 0.02),
-                        Text(
-                          'Job: "${proposal.title}"',
-                          style: TextStyle(
-                            fontSize: screenWidth * 0.04,
-                            color: Colors.black54,
-                          ),
-                        ),
-                        SizedBox(height: screenWidth * 0.01),
-                        Text(
-                          'Proposed Budget: Rs. ${proposal.budget}',
-                          style: TextStyle(
-                            fontSize: screenWidth * 0.04,
-                            color: Colors.green,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        SizedBox(height: screenWidth * 0.02),
-                        Text(
-                          proposal.useEscrow
-                              ? 'Payment will be held in Escrow'
-                              : 'Payment after job completion',
-                          style: TextStyle(
-                            color: proposal.useEscrow
-                                ? Colors.deepOrange
-                                : Colors.orange,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        SizedBox(height: screenWidth * 0.03),
-
-                        // Action buttons (Accept/Decline)
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            ElevatedButton(
-                              onPressed: () {
-                                _handleAcceptProposal(context, proposal);
-                              },
-                              style: ElevatedButton.styleFrom(
-                                padding: EdgeInsets.all(12),
-                                backgroundColor: Colors.deepOrange, // Background color
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                textStyle: TextStyle(
-                                  fontSize: screenWidth * 0.04,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                foregroundColor: Colors.white, // Set the text color here
-                              ),
-                              child: Text('Accept'),
+                        // ListTile for job title, proposed budget, and payment status
+                        ListTile(
+                          contentPadding: EdgeInsets.all(0),
+                          title: Text(
+                            'Job: "${proposal.title}"',
+                            style: TextStyle(
+                              color: Colors.black87,
                             ),
-                            ElevatedButton(
-                              onPressed: () {
-                                _handleDeclineProposal(proposal);
-                              },
-                              style: ElevatedButton.styleFrom(
-                                padding: EdgeInsets.all(12),
-                                backgroundColor: Colors.grey, // Background color
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
+                          ),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(height: screenWidth * 0.01),
+                              Text(
+                                'Proposed Budget: Rs. ${proposal.budget}',
+                                style: TextStyle(
+                                  // color: Colors.green,
                                 ),
-                                textStyle: TextStyle(
-                                  fontSize: screenWidth * 0.04,
-                                  fontWeight: FontWeight.bold,
-                                    color: Colors.white
-                                ),
-                                foregroundColor: Colors.white, // Set the text color here
                               ),
-                              child: Text('Decline'),
-                            ),
-                          ],
+                              SizedBox(height: screenWidth * 0.01),
+                              Text(
+                                proposal.useEscrow
+                                    ? 'Payment will be held in Escrow'
+                                    : 'Payment after job completion',
+                                style: TextStyle(
+                                  color: proposal.useEscrow
+                                      ? Colors.deepOrange
+                                      : Colors.orange,
+                                ),
+                              ),
+                            ],
+                          ),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                icon: Icon(Icons.check_circle_outline, color: Colors.green),
+                                iconSize: screenWidth * 0.08,
+                                onPressed: () {
+                                  _handleAcceptProposal(context, proposal);
+                                },
+                              ),
+                              IconButton(
+                                icon: Icon(Icons.cancel_outlined, color: Colors.red),
+                                iconSize: screenWidth * 0.08,
+                                onPressed: () {
+                                  _handleDeclineProposal(proposal);
+                                },
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),
@@ -1351,11 +1366,11 @@ class _ClientDashboardState extends State<ClientDashboard> {
                 );
               },
             ),
+
         ],
       ),
     );
   }
-
 
   Widget _buildOngoingProjectsSection(double screenWidth) {
     return Padding(
@@ -1367,11 +1382,13 @@ class _ClientDashboardState extends State<ClientDashboard> {
           Text(
             'Ongoing Projects',
             style: TextStyle(
-              fontSize: screenWidth * 0.06,
+              fontSize: screenWidth * 0.05,
               fontWeight: FontWeight.bold,
+              color: Colors.deepOrange
             ), // Responsive font size
           ),
-          SizedBox(height: screenWidth * 0.04), // Spacing between title and list
+          SizedBox(height: screenWidth * 0.04),
+          // Spacing between title and list
           // Ongoing Projects List
           AnimatedList(
             initialItemCount: 2, // Replace with actual project count
@@ -1422,7 +1439,8 @@ class _ClientDashboardState extends State<ClientDashboard> {
                           // Project Status and Deadline
                           Row(
                             children: [
-                              Icon(Icons.access_time, size: screenWidth * 0.045),
+                              Icon(Icons.access_time,
+                                  size: screenWidth * 0.045),
                               SizedBox(width: screenWidth * 0.02),
                               Expanded(
                                 child: Text(
@@ -1441,8 +1459,15 @@ class _ClientDashboardState extends State<ClientDashboard> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               ElevatedButton.icon(
-                                icon: Icon(Icons.info_outline, size: screenWidth * 0.045, color: Colors.white,),
-                                label: Text('View Details', style: TextStyle(color: Colors.white),),
+                                icon: Icon(
+                                  Icons.info_outline,
+                                  size: screenWidth * 0.045,
+                                  color: Colors.white,
+                                ),
+                                label: Text(
+                                  'View Details',
+                                  style: TextStyle(color: Colors.white),
+                                ),
                                 onPressed: () {
                                   // Navigate to project details
                                 },
@@ -1457,7 +1482,8 @@ class _ClientDashboardState extends State<ClientDashboard> {
                                 ),
                               ),
                               IconButton(
-                                icon: Icon(Icons.message, size: screenWidth * 0.06),
+                                icon: Icon(Icons.message,
+                                    size: screenWidth * 0.06),
                                 onPressed: () {
                                   // Implement messaging functionality
                                 },
