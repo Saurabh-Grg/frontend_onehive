@@ -266,6 +266,13 @@ class _ClientDashboardState extends State<ClientDashboard> {
             },
           ),
           ListTile(
+            leading: Icon(Icons.work_history_outlined),
+            title: Text('My Job History'),
+            onTap: (){
+
+            },
+          ),
+          ListTile(
             leading: Icon(Icons.attach_money),
             title: Text('Payment Information'),
             onTap: () {
@@ -1476,7 +1483,13 @@ class _ClientDashboardState extends State<ClientDashboard> {
                           ListTile(
                             contentPadding: EdgeInsets.all(0),
                             title: Text('Status: In Progress'),
-                            subtitle: Text('Deadline: 2025/10/11'),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text('Deadline: 2025/10/11'),
+                                Text('Payment status: ')
+                              ],
+                            ),
                           ),
 
                           // Action Buttons
