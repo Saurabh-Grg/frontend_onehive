@@ -142,6 +142,9 @@ class _ClientDashboardState extends State<ClientDashboard> {
 
       // Optionally, update the state with new data
       setState(() {
+        fetchJobs();
+        fetchProposals();
+        _fetchTotalJobPostings();
         // Update state or refresh data here
       });
     }
@@ -929,7 +932,7 @@ class _ClientDashboardState extends State<ClientDashboard> {
                       title: Text(
                         job['title']!,
                         style: TextStyle(
-                          fontSize: screenWidth * 0.036,
+                          fontSize: screenWidth * 0.038,
                           color: Colors.deepOrange,
                           fontWeight: FontWeight.bold,
                         ),
@@ -956,7 +959,8 @@ class _ClientDashboardState extends State<ClientDashboard> {
                           Text(
                             'Payment Status: ${job['payment_status']}',
                             style: TextStyle(
-                              color: _getPaymentStatusColor(job['payment_status']),
+                              color:
+                                  _getPaymentStatusColor(job['payment_status']),
                               // fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -1062,6 +1066,7 @@ class _ClientDashboardState extends State<ClientDashboard> {
       ],
     );
   }
+
   // Helper function to get color based on job status
   Color _getJobStatusColor(String? status) {
     switch (status?.toLowerCase()) {
@@ -1167,13 +1172,14 @@ class _ClientDashboardState extends State<ClientDashboard> {
       context,
       MaterialPageRoute(
         builder: (context) => AgreementScreen(
+          proposalId: proposal.proposalId,
           clientName: 'Client Name',
           clientEmail: 'client@example.com',
           freelancerName: 'Freelancer Name',
           freelancerEmail: 'freelancer@example.com',
           jobTitle: 'Job Title',
           budget: 5000.0,
-          useEscrow: true,
+          // useEscrow: true,
         ),
       ),
     );
@@ -1246,15 +1252,19 @@ class _ClientDashboardState extends State<ClientDashboard> {
             ListView.builder(
               shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),
-              itemCount: proposals.length,
+              itemCount: proposals.length > 2 ? 2 : proposals.length,
+              // Show only the latest 2 proposals
               itemBuilder: (context, index) {
-                final proposal = proposals[index];
+                // Reverse the order of proposals
+                final reversedIndex = proposals.length - 1 - index;
+                final proposal = proposals[reversedIndex];
 
                 return Card(
                   margin: EdgeInsets.symmetric(vertical: screenWidth * 0.02),
                   elevation: 6,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15), // Rounded corners for cards
+                    borderRadius:
+                        BorderRadius.circular(15), // Rounded corners for cards
                   ),
                   child: Padding(
                     padding: EdgeInsets.all(screenWidth * 0.04),
@@ -1271,7 +1281,7 @@ class _ClientDashboardState extends State<ClientDashboard> {
                             Text(
                               'Proposal from',
                               style: TextStyle(
-                                fontSize: screenWidth * 0.036,
+                                fontSize: screenWidth * 0.038,
                                 color: Colors.deepOrange,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -1280,7 +1290,7 @@ class _ClientDashboardState extends State<ClientDashboard> {
                             RichText(
                               text: TextSpan(
                                 style: TextStyle(
-                                  fontSize: screenWidth * 0.036,
+                                  fontSize: screenWidth * 0.04,
                                   color: Colors.black,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -1294,8 +1304,10 @@ class _ClientDashboardState extends State<ClientDashboard> {
                                           Navigator.push(
                                             context,
                                             MaterialPageRoute(
-                                              builder: (context) => FreelancerProfilePage(
-                                                freelancerId: proposal.freelancerId,
+                                              builder: (context) =>
+                                                  FreelancerProfilePage(
+                                                freelancerId:
+                                                    proposal.freelancerId,
                                                 jobId: proposal.jobId,
                                               ),
                                             ),
@@ -1324,8 +1336,8 @@ class _ClientDashboardState extends State<ClientDashboard> {
                               Text(
                                 'Proposed Budget: Rs. ${proposal.budget}',
                                 style: TextStyle(
-                                  // color: Colors.green,
-                                ),
+                                    // color: Colors.green,
+                                    ),
                               ),
                               SizedBox(height: screenWidth * 0.01),
                               Text(
@@ -1344,14 +1356,16 @@ class _ClientDashboardState extends State<ClientDashboard> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               IconButton(
-                                icon: Icon(Icons.check_circle_outline, color: Colors.green),
+                                icon: Icon(Icons.check_circle_outline,
+                                    color: Colors.green),
                                 iconSize: screenWidth * 0.08,
                                 onPressed: () {
                                   _handleAcceptProposal(context, proposal);
                                 },
                               ),
                               IconButton(
-                                icon: Icon(Icons.cancel_outlined, color: Colors.red),
+                                icon: Icon(Icons.cancel_outlined,
+                                    color: Colors.red),
                                 iconSize: screenWidth * 0.08,
                                 onPressed: () {
                                   _handleDeclineProposal(proposal);
@@ -1366,7 +1380,27 @@ class _ClientDashboardState extends State<ClientDashboard> {
                 );
               },
             ),
-
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            // Align button to the right
+            children: [
+              TextButton(
+                onPressed: () {
+                  // Navigate to AllProposalsPage when "View All" is clicked
+                  Get.toNamed('/totalProposal');
+                },
+                child: Text(
+                  'View All',
+                  style: TextStyle(
+                    fontSize: screenWidth * 0.035,
+                    color: Colors.deepOrange,
+                    decoration:
+                        TextDecoration.underline, // Adds underline to the text
+                  ),
+                ),
+              ),
+            ],
+          ),
         ],
       ),
     );
@@ -1382,10 +1416,9 @@ class _ClientDashboardState extends State<ClientDashboard> {
           Text(
             'Ongoing Projects',
             style: TextStyle(
-              fontSize: screenWidth * 0.05,
-              fontWeight: FontWeight.bold,
-              color: Colors.deepOrange
-            ), // Responsive font size
+                fontSize: screenWidth * 0.05,
+                fontWeight: FontWeight.bold,
+                color: Colors.deepOrange), // Responsive font size
           ),
           SizedBox(height: screenWidth * 0.04),
           // Spacing between title and list
@@ -1422,38 +1455,30 @@ class _ClientDashboardState extends State<ClientDashboard> {
                           // Project Title
                           Row(
                             children: [
-                              Icon(Icons.work, size: screenWidth * 0.06),
+                              Icon(
+                                Icons.work,
+                                size: screenWidth * 0.05,
+                                color: Colors.deepOrange,
+                              ),
                               SizedBox(width: screenWidth * 0.03),
-                              Expanded(
+                              Flexible(
                                 child: Text(
                                   'Project Title $index',
                                   style: TextStyle(
-                                    fontSize: screenWidth * 0.05,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                      fontSize: screenWidth * 0.038,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.deepOrange),
                                 ),
                               ),
                             ],
                           ),
-                          SizedBox(height: screenWidth * 0.02),
-                          // Project Status and Deadline
-                          Row(
-                            children: [
-                              Icon(Icons.access_time,
-                                  size: screenWidth * 0.045),
-                              SizedBox(width: screenWidth * 0.02),
-                              Expanded(
-                                child: Text(
-                                  'Status: In Progress\nDeadline: 2023-12-01',
-                                  style: TextStyle(
-                                    fontSize: screenWidth * 0.04,
-                                    color: Colors.grey[600],
-                                  ),
-                                ),
-                              ),
-                            ],
+
+                          ListTile(
+                            contentPadding: EdgeInsets.all(0),
+                            title: Text('Status: In Progress'),
+                            subtitle: Text('Deadline: 2025/10/11'),
                           ),
-                          SizedBox(height: screenWidth * 0.03),
+
                           // Action Buttons
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,

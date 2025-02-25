@@ -47,4 +47,71 @@ class TotalProposalsController extends GetxController {
       isLoading(false);
     }
   }
+
+  // Future<void> acceptProposal(String proposalId) async {
+  //   try {
+  //     isLoading(true);
+  //     // Debugging: Print the proposalId to check if it's correct
+  //     print("Proposal ID: $proposalId");
+  //
+  //     String apiUrl = "${ApiEndpoints.acceptProposalByClient}/$proposalId";
+  //     // Debugging: Print the URI
+  //     print("API URL: $apiUrl");
+  //
+  //
+  //     final response = await http.post(
+  //       Uri.parse(apiUrl),
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         "Authorization": 'Bearer ${userController.token.value}',
+  //       },
+  //     );
+  //
+  //     if (response.statusCode == 200) {
+  //       Get.snackbar("Success", "Proposal accepted successfully.");
+  //       return true; // Success
+  //     } else {
+  //       var errorMessage = json.decode(response.body)['error'] ?? "Error occurred.";
+  //       Get.snackbar("Error", errorMessage);
+  //       print(errorMessage);
+  //     }
+  //   } catch (e) {
+  //     Get.snackbar("Error", "Something went wrong. Please try again.");
+  //     print("Error occurred: $e"); // Print the error for debugging
+  //   } finally {
+  //     isLoading(false);
+  //   }
+  // }
+
+// Refactor the acceptProposal method to return a success/failure boolean
+  Future<bool> acceptProposal(String proposalId) async {
+    try {
+      isLoading(true);
+
+      String apiUrl = "${ApiEndpoints.acceptProposalByClient}/$proposalId";
+
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": 'Bearer ${userController.token.value}',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        Get.snackbar("Success", "Proposal accepted successfully.");
+        return true; // Success
+      } else {
+        var errorMessage = json.decode(response.body)['error'] ?? "Error occurred.";
+        Get.snackbar("Error", errorMessage);
+        return false; // Failure
+      }
+    } catch (e) {
+      Get.snackbar("Error", "Something went wrong. Please try again.");
+      print("Error occurred: $e");
+      return false; // Failure
+    } finally {
+      isLoading(false);
+    }
+  }
 }

@@ -56,7 +56,7 @@ class NotificationController extends GetxController {
           );
         }).toList();
         notifications.refresh(); // Refresh the observable list
-        Get.snackbar('Success', 'All notifications marked as read');
+        Get.snackbar('Success', 'All notifications read.');
       } else {
         Get.snackbar('Error', 'Failed to mark notifications as read');
       }

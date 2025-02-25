@@ -10,7 +10,7 @@ class TotalProposalsView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Total Proposals Received'),
+        title: Text('Total Proposals Received', style: TextStyle(fontWeight: FontWeight.bold),),
       ),
       body: Obx(() {
         if (controller.isLoading.value) {

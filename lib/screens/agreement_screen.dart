@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:intl/intl.dart';
+
+import '../controllers/total_proposal_controller.dart';
 
 class AgreementScreen extends StatelessWidget {
+  final int proposalId;
   final String clientName;
   final String clientEmail;
   final String freelancerName;
@@ -10,6 +15,7 @@ class AgreementScreen extends StatelessWidget {
   final bool useEscrow;
 
   AgreementScreen({
+    required this.proposalId, // Accept the proposal ID
     required this.clientName,
     required this.clientEmail,
     required this.freelancerName,
@@ -21,135 +27,193 @@ class AgreementScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String formattedDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
     return Scaffold(
       appBar: AppBar(
-        title: Text('Project Agreement'),
-        backgroundColor: Colors.orange,
+        title: Text('OneHive Agreement',
+            style: TextStyle(fontWeight: FontWeight.bold)),
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Center(
-              child: Text(
-                'Freelance Project Agreement',
-                style: TextStyle(
-                  fontSize: 26,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.orange,
-                ),
-              ),
-            ),
+            _buildHeader(),
             SizedBox(height: 20),
-
-            // Section: Parties
-            _buildSectionTitle('Parties Involved'),
-            Text(
-              'Client:\n$clientName\nEmail: $clientEmail\n\n'
-                  'Freelancer:\n$freelancerName\nEmail: $freelancerEmail',
-              style: TextStyle(fontSize: 16),
-            ),
+            _buildSection('Parties Involved', Icons.people, [
+              'Client: $clientName',
+              'Email: $clientEmail',
+              'Freelancer: $freelancerName',
+              'Email: $freelancerEmail',
+            ]),
             SizedBox(height: 20),
-
-            // Section: Project Overview
-            _buildSectionTitle('Project Overview'),
-            Text(
-              'Job Title: $jobTitle\n\nAgreed Budget: Rs. $budget\n\n'
-                  'Payment Method: ${useEscrow ? 'Escrow (5% fee applies)' : 'Direct Transfer'}',
-              style: TextStyle(fontSize: 16),
-            ),
+            _buildSection('Project Overview', Icons.work, [
+              'Job Title: $jobTitle',
+              'Budget: Rs. ${budget.toStringAsFixed(2)}',
+              'Deadline: ',
+              'Payment Method: ${useEscrow ? 'Escrow (5% fee applies)' : 'Direct Transfer'}',
+            ]),
             SizedBox(height: 20),
-
-            // Section: Terms
-            _buildSectionTitle('Terms of Agreement'),
-            Text(
-              '- The freelancer agrees to complete the project as per the agreed scope and timeline.\n'
-                  '- Upon full payment, ownership of deliverables transfers to the client.\n'
-                  '- Revisions will be provided if within the initially agreed scope.\n'
-                  '- Both parties agree to maintain confidentiality.\n'
-                  '- Quality standards and delivery timelines must be met.\n'
-                  '- Client commission: 5% of the total budget.',
-              style: TextStyle(fontSize: 16),
-            ),
+            _buildSection('Terms & Conditions', Icons.description, [
+              'Freelancer agrees to complete the project within the deadline.',
+              'Ownership transfers to the client upon full payment.',
+              'Confidentiality must be maintained.',
+              'Client commission: 5% of the total budget.',
+            ]),
             SizedBox(height: 20),
-
-            // Section: Confidentiality and Dispute
-            _buildSectionTitle('Confidentiality and Dispute Resolution'),
-            Text(
-              '- Both parties agree to keep all project information confidential.\n'
-                  '- Any disputes will be resolved amicably or through mediation if needed.',
-              style: TextStyle(fontSize: 16),
-            ),
-            SizedBox(height: 30),
-
-            // Signature and Date
-            Divider(),
-            Text(
-              'Agreement Date: ${DateTime.now().toLocal()}',
-              style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic),
-            ),
-            SizedBox(height: 20),
-
-            // Agree Button
-            Center(
-              child: ElevatedButton(
-                onPressed: () {
-                  _confirmAgreement(context);
-                },
-                child: Text('I Agree', style: TextStyle(color: Colors.white),),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.orange,
-                  padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-                ),
-              ),
-            ),
+            _buildSection('Signatures', Icons.edit, [
+              'Agreement Date: $formattedDate',
+            ]),
+            SizedBox(height: Get.height * 0.02),
+            _buildConfirmationButton(context),
           ],
         ),
       ),
     );
   }
 
-  // Helper method for section titles
-  Widget _buildSectionTitle(String title) {
-    return Text(
-      title,
-      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black87),
+  Widget _buildHeader() {
+    return Column(
+      children: [
+        Row(
+          children: [
+            ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: Image.asset('assets/images/OneHive.png', height: 80)),
+            SizedBox(height: 10),
+            Flexible(
+              child: Text(
+                'OneHive Freelance Project Agreement',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.deepOrange),
+              ),
+            ),
+          ],
+        ),
+        Divider(thickness: 2, color: Colors.deepOrange),
+      ],
     );
   }
 
-  // Confirmation Dialog for Agreement
+  Widget _buildSection(String title, IconData icon, List<String> content) {
+    return Card(
+      elevation: 3,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      child: Padding(
+        padding: EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(icon, color: Colors.deepOrange),
+                SizedBox(width: 10),
+                Text(
+                  title,
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+            SizedBox(height: 10),
+            ...content
+                .map((text) => Text('• $text', style: TextStyle(fontSize: 16))),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildConfirmationButton(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+
+    return Center(
+      child: SizedBox(
+        width: screenWidth * 0.6, // 80% of screen width for responsiveness
+        child: ElevatedButton(
+          onPressed: () => _confirmAgreement(context),
+          style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all(Colors.deepOrange),
+            overlayColor: MaterialStateProperty.all(Colors.orange.withOpacity(0.2)), // Click effect
+            elevation: MaterialStateProperty.resolveWith((states) {
+              if (states.contains(MaterialState.pressed)) return 2; // Lower elevation on press
+              return 6; // Default elevation
+            }),
+            padding: MaterialStateProperty.all(EdgeInsets.symmetric(
+              vertical: screenWidth * 0.03, // Scales padding based on screen width
+            )),
+            shape: MaterialStateProperty.all(
+              RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30), // Rounded button
+              ),
+            ),
+          ),
+          child: Text(
+            'Agree & Continue',
+            style: TextStyle(
+              fontSize: screenWidth * 0.04, // Dynamic font size
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   void _confirmAgreement(BuildContext context) {
+    // Step 1: Ask for confirmation
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Confirm Agreement'),
+          content: Text('Are you sure you want to agree to the terms and conditions?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text('Cancel', style: TextStyle(color: Colors.grey)),
+            ),
+            TextButton(
+              onPressed: () async {
+                Navigator.of(context).pop(); // Close the confirmation dialog
+                // Call acceptProposal method and await result
+                bool isAccepted = await Get.find<TotalProposalsController>().acceptProposal(proposalId.toString());
+
+                // If proposal acceptance is successful, ask to download the agreement
+                if (isAccepted) {
+                  _askToDownloadAgreement(context); // Proceed to download prompt
+                }
+              },
+              child: Text('Confirm', style: TextStyle(color: Colors.deepOrange)),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _askToDownloadAgreement(BuildContext context) {
+    // Step 2: Ask to download the agreement
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text('Agreement Confirmed'),
-          content: Text(
-              'The agreement has been confirmed.\nWould you like to print a copy for your records?'),
-          actions: <Widget>[
+          content: Text('The agreement has been signed. Would you like to download a copy?'),
+          actions: [
             TextButton(
-              onPressed: () {
-                // Navigate back to the dashboard with a parameter indicating proposal acceptance
-                Navigator.of(context).pushNamedAndRemoveUntil(
-                  '/clientDashboard',
-                      (route) => false,
-                  arguments: {'proposalAccepted': true},
-                );
-              },
+              onPressed: () => Navigator.of(context).pop(),
               child: Text('No, Thanks', style: TextStyle(color: Colors.grey)),
             ),
             TextButton(
               onPressed: () {
-                // Navigate back to the dashboard with the proposal accepted parameter
-                Navigator.of(context).pushNamedAndRemoveUntil(
-                  '/clientDashboard',
-                      (route) => false,
-                  arguments: {'proposalAccepted': true},
-                );
-                print('Print agreement'); // Placeholder for printing functionality
+                print('Download agreement'); // Placeholder for PDF download functionality
+                Navigator.of(context).pop();
               },
-              child: Text('Print', style: TextStyle(color: Colors.blueAccent)),
+              child: Text('Download', style: TextStyle(color: Colors.deepOrange)),
             ),
           ],
         );

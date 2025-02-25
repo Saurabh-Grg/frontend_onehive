@@ -170,6 +170,8 @@ class _FreelancerDashboardState extends State<FreelancerDashboard> {
 
       // Optionally, update the state with new data
       setState(() {
+        _fetchAllJobs();
+
         // Update state or refresh data here
       });
     }

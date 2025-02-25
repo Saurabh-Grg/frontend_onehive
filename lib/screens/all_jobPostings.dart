@@ -96,7 +96,7 @@ class _AllJobPostingsPageState extends State<AllJobPostingsPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('All Job Postings'),
+        title: Text('All Job Postings', style: TextStyle(fontWeight: FontWeight.bold),),
       ),
       body: jobs.isEmpty
           ? Center(child: CircularProgressIndicator()) // Show loading indicator while fetching
