@@ -10,6 +10,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
+import '../controllers/AcceptedJobController.dart';
 import '../controllers/ThemeController.dart';
 import '../controllers/UserController.dart';
 import '../job_forms/API_development_integration.dart';
@@ -23,6 +24,8 @@ import '../job_forms/mobile_app_development.dart';
 import '../models/proposal_model.dart';
 import '../providers/user_provider.dart';
 import '../services/job_posting_service.dart';
+import 'NotificationsPage.dart';
+import 'OnGoingProjectDetailsPage.dart';
 import 'agreement_screen.dart';
 import 'all_jobPostings.dart';
 import 'client_profile_creation.dart';
@@ -140,6 +143,10 @@ class _ClientDashboardState extends State<ClientDashboard> {
       await Future.delayed(Duration(seconds: 1));
       fetchJobs();
 
+      // Get the AcceptedJobsController and refresh accepted jobs
+      final acceptedJobsController = Get.find<AcceptedJobsController>();
+      await acceptedJobsController.fetchAcceptedJobs(); // Ensure the latest jobs are fetched
+
       // Optionally, update the state with new data
       setState(() {
         fetchJobs();
@@ -160,7 +167,7 @@ class _ClientDashboardState extends State<ClientDashboard> {
           IconButton(
             icon: Icon(Icons.notifications),
             onPressed: () {
-              _showNotifications(context);
+              Get.to(NotificationsPage());
             },
           ),
           Padding(
@@ -268,8 +275,8 @@ class _ClientDashboardState extends State<ClientDashboard> {
           ListTile(
             leading: Icon(Icons.work_history_outlined),
             title: Text('My Job History'),
-            onTap: (){
-
+            onTap: () {
+              Get.toNamed('/clientJobsHistory');
             },
           ),
           ListTile(
@@ -288,14 +295,6 @@ class _ClientDashboardState extends State<ClientDashboard> {
               Get.toNamed('/chatListPage');
             },
           ),
-          // ListTile(
-          //   leading: Icon(Icons.person),
-          //   title: Text('Following'),
-          //   onTap: () {
-          //     // Implement navigation to payment information
-          //     // Navigator.push(context, MaterialPageRoute(builder: (context) => PaymentInformation()));
-          //   },
-          // ),
           Obx(() => SwitchListTile(
                 title: Text(
                   themeController.isDarkTheme.value
@@ -492,6 +491,7 @@ class _ClientDashboardState extends State<ClientDashboard> {
       Get.put(TotalProposalsController());
 
   Widget _buildSummaryCards(double screenWidth) {
+    int totalOngoingProjects = ongoingJobs.length;
     return Padding(
       padding: EdgeInsets.all(screenWidth * 0.02),
       child: Row(
@@ -518,7 +518,7 @@ class _ClientDashboardState extends State<ClientDashboard> {
           Expanded(
             child: _buildSummaryCard(
               'Ongoing Projects',
-              ongoingProjects.toString(),
+              totalOngoingProjects.toString(),
               screenWidth,
               'assets/images/bg3.png',
             ),
@@ -813,18 +813,9 @@ class _ClientDashboardState extends State<ClientDashboard> {
     );
   }
 
-  Widget _buildJobTypeListTile(
-      BuildContext context, String title, Widget page, Color color) {
-    return ListTile(
-      title: Text(title, style: TextStyle(color: color)),
-      onTap: () {
-        Navigator.push(context, MaterialPageRoute(builder: (context) => page));
-      },
-    );
-  }
-
   // Sample job data (replace this with actual data from your API or state)
   List<Map<String, String>> jobs = [];
+  List<Map<String, String>> ongoingJobs = []; // New list to store ongoing jobs
 
   // Function to fetch job postings from the backend
   Future<void> fetchJobs() async {
@@ -845,6 +836,17 @@ class _ClientDashboardState extends State<ClientDashboard> {
                 'status': job['status'].toString(),
                 'payment_status': job['payment_status'].toString()
               }));
+          // Filter ongoing jobs and store them in 'ongoingJobs' list
+          ongoingJobs =
+              jobs.where((job) => job['status'] == 'ongoing').toList();
+
+          // print('Total jobs fetched: ${jobs.length}'); // Debugging: Print total jobs fetched
+          // print('Ongoing jobs count: ${ongoingJobs.length}'); // Debugging: Print number of ongoing jobs
+          //
+          // // Print each ongoing job details
+          // for (var job in ongoingJobs) {
+          //   print('Ongoing Job -> ID: ${job['job_id']}, Title: ${job['title']}, Status: ${job['status']}');
+          // }
         });
       } else {
         print('Failed to load jobs');
@@ -1273,115 +1275,123 @@ class _ClientDashboardState extends State<ClientDashboard> {
                     borderRadius:
                         BorderRadius.circular(15), // Rounded corners for cards
                   ),
-                  child: Padding(
-                    padding: EdgeInsets.all(screenWidth * 0.04),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Proposal from Section (kept as it is)
-                        Row(
-                          children: [
-                            Icon(Icons.assignment_ind,
-                                color: Colors.deepOrange,
-                                size: screenWidth * 0.05),
-                            SizedBox(width: screenWidth * 0.02),
-                            Text(
-                              'Proposal from',
-                              style: TextStyle(
-                                fontSize: screenWidth * 0.038,
-                                color: Colors.deepOrange,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            // Using RichText and TextSpan to handle tap gesture
-                            RichText(
-                              text: TextSpan(
+                  child: InkWell(
+                    onTap: () {
+                      // Navigate to job details
+                      // Get.to(() => AcceptedJobDetailsScreen(jobDetails: job));
+                    },
+                    borderRadius: BorderRadius.circular(15),
+                    splashColor: Colors.yellow[100],
+                    child: Padding(
+                      padding: EdgeInsets.all(screenWidth * 0.04),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Proposal from Section (kept as it is)
+                          Row(
+                            children: [
+                              Icon(Icons.assignment_ind,
+                                  color: Colors.deepOrange,
+                                  size: screenWidth * 0.05),
+                              SizedBox(width: screenWidth * 0.02),
+                              Text(
+                                'Proposal from',
                                 style: TextStyle(
-                                  fontSize: screenWidth * 0.04,
-                                  color: Colors.black,
+                                  fontSize: screenWidth * 0.038,
+                                  color: Colors.deepOrange,
                                   fontWeight: FontWeight.bold,
                                 ),
-                                children: [
-                                  TextSpan(
-                                    text: ' ${proposal.name}',
-                                    recognizer: TapGestureRecognizer()
-                                      ..onTap = () {
-                                        if (proposal.freelancerId != null &&
-                                            proposal.jobId != null) {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  FreelancerProfilePage(
-                                                freelancerId:
-                                                    proposal.freelancerId,
-                                                jobId: proposal.jobId,
-                                              ),
-                                            ),
-                                          );
-                                        }
-                                      },
+                              ),
+                              // Using RichText and TextSpan to handle tap gesture
+                              RichText(
+                                text: TextSpan(
+                                  style: TextStyle(
+                                    fontSize: screenWidth * 0.04,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold,
                                   ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                        // ListTile for job title, proposed budget, and payment status
-                        ListTile(
-                          contentPadding: EdgeInsets.all(0),
-                          title: Text(
-                            'Job: "${proposal.title}"',
-                            style: TextStyle(
-                              color: Colors.black87,
-                            ),
-                          ),
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              SizedBox(height: screenWidth * 0.01),
-                              Text(
-                                'Proposed Budget: Rs. ${proposal.budget}',
-                                style: TextStyle(
-                                    // color: Colors.green,
+                                  children: [
+                                    TextSpan(
+                                      text: ' ${proposal.name}',
+                                      recognizer: TapGestureRecognizer()
+                                        ..onTap = () {
+                                          if (proposal.freelancerId != null &&
+                                              proposal.jobId != null) {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    FreelancerProfilePage(
+                                                  freelancerId:
+                                                      proposal.freelancerId,
+                                                  jobId: proposal.jobId,
+                                                ),
+                                              ),
+                                            );
+                                          }
+                                        },
                                     ),
-                              ),
-                              SizedBox(height: screenWidth * 0.01),
-                              Text(
-                                proposal.useEscrow
-                                    ? 'Payment will be held in Escrow'
-                                    : 'Payment after job completion',
-                                style: TextStyle(
-                                  color: proposal.useEscrow
-                                      ? Colors.deepOrange
-                                      : Colors.orange,
+                                  ],
                                 ),
                               ),
                             ],
                           ),
-                          trailing: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              IconButton(
-                                icon: Icon(Icons.check_circle_outline,
-                                    color: Colors.green),
-                                iconSize: screenWidth * 0.08,
-                                onPressed: () {
-                                  _handleAcceptProposal(context, proposal);
-                                },
+                          // ListTile for job title, proposed budget, and payment status
+                          ListTile(
+                            contentPadding: EdgeInsets.all(0),
+                            title: Text(
+                              'Job: "${proposal.title}"',
+                              style: TextStyle(
+                                color: Colors.black87,
                               ),
-                              IconButton(
-                                icon: Icon(Icons.cancel_outlined,
-                                    color: Colors.red),
-                                iconSize: screenWidth * 0.08,
-                                onPressed: () {
-                                  _handleDeclineProposal(proposal);
-                                },
-                              ),
-                            ],
+                            ),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(height: screenWidth * 0.01),
+                                Text(
+                                  'Proposed Budget: Rs. ${proposal.budget}',
+                                  style: TextStyle(
+                                      // color: Colors.green,
+                                      ),
+                                ),
+                                SizedBox(height: screenWidth * 0.01),
+                                Text(
+                                  proposal.useEscrow
+                                      ? 'Payment will be held in Escrow'
+                                      : 'Payment after job completion',
+                                  style: TextStyle(
+                                    color: proposal.useEscrow
+                                        ? Colors.deepOrange
+                                        : Colors.orange,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                IconButton(
+                                  icon: Icon(Icons.check_circle_outline,
+                                      color: Colors.green),
+                                  iconSize: screenWidth * 0.08,
+                                  onPressed: () {
+                                    _handleAcceptProposal(context, proposal);
+                                  },
+                                ),
+                                IconButton(
+                                  icon: Icon(Icons.cancel_outlined,
+                                      color: Colors.red),
+                                  iconSize: screenWidth * 0.08,
+                                  onPressed: () {
+                                    _handleDeclineProposal(proposal);
+                                  },
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 );
@@ -1413,68 +1423,75 @@ class _ClientDashboardState extends State<ClientDashboard> {
     );
   }
 
+  final AcceptedJobsController controller = Get.put(AcceptedJobsController());
+
   Widget _buildOngoingProjectsSection(double screenWidth) {
     return Padding(
-      padding: EdgeInsets.all(screenWidth * 0.05), // Responsive padding
+      padding: EdgeInsets.all(screenWidth * 0.05),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Section Title
           Text(
-            'Ongoing Projects',
+            'Accepted/Ongoing Jobs',
             style: TextStyle(
                 fontSize: screenWidth * 0.05,
                 fontWeight: FontWeight.bold,
-                color: Colors.deepOrange), // Responsive font size
+                color: Colors.deepOrange),
           ),
-          SizedBox(height: screenWidth * 0.04),
-          // Spacing between title and list
-          // Ongoing Projects List
-          AnimatedList(
-            initialItemCount: 2, // Replace with actual project count
-            shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
-            itemBuilder: (context, index, animation) {
-              return SlideTransition(
-                position: animation.drive(
-                  Tween<Offset>(
-                    begin: Offset(-1.0, 0.0),
-                    end: Offset(0.0, 0.0),
-                  ).chain(CurveTween(curve: Curves.easeOut)),
+          SizedBox(height: screenWidth * 0.02),
+
+          Obx(() {
+            if (controller.isLoading.value) {
+              return Center(child: CircularProgressIndicator());
+            }
+
+            if (controller.acceptedJobs.isEmpty) {
+              return Center(
+                child: Text(
+                  'No accepted jobs found',
+                  style: TextStyle(fontSize: screenWidth * 0.045, color: Colors.grey),
                 ),
-                child: Card(
-                  elevation: 4, // Add shadow effect
+              );
+            }
+
+            return ListView.builder(
+              itemCount: controller.acceptedJobs.length,
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              itemBuilder: (context, index) {
+                final job = controller.acceptedJobs[index];
+
+                return Card(
+                  elevation: 4,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15), // Rounded corners
+                    borderRadius: BorderRadius.circular(15),
                   ),
                   margin: EdgeInsets.symmetric(vertical: screenWidth * 0.03),
                   child: InkWell(
                     onTap: () {
-                      // Navigate to project details
+                      // Navigate to job details
+                      // Get.to(() => AcceptedJobDetailsScreen(jobDetails: job));
                     },
                     borderRadius: BorderRadius.circular(15),
-                    splashColor: Colors.green[100],
+                    splashColor: Colors.yellow[100],
                     child: Padding(
                       padding: EdgeInsets.all(screenWidth * 0.04),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // Project Title
+                          // Job Title
                           Row(
                             children: [
-                              Icon(
-                                Icons.work,
-                                size: screenWidth * 0.05,
-                                color: Colors.deepOrange,
-                              ),
+                              Icon(Icons.work, size: screenWidth * 0.05, color: Colors.deepOrange),
                               SizedBox(width: screenWidth * 0.03),
-                              Flexible(
+                              Expanded(
                                 child: Text(
-                                  'Project Title $index',
+                                  job.job.title,
                                   style: TextStyle(
-                                      fontSize: screenWidth * 0.038,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.deepOrange),
+                                    fontSize: screenWidth * 0.04,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.deepOrange
+                                  ),
                                 ),
                               ),
                             ],
@@ -1482,19 +1499,20 @@ class _ClientDashboardState extends State<ClientDashboard> {
 
                           ListTile(
                             contentPadding: EdgeInsets.all(0),
-                            title: Text('Status: In Progress'),
                             subtitle: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text('Deadline: 2025/10/11'),
-                                Text('Payment status: ')
+                                Text("Status: ${job.status}",
+                                    style: TextStyle(color: job.status == "ongoing" ? Colors.blue : Colors.green)),
+                                Text("Payment status: ${job.job.paymentStatus}")
                               ],
                             ),
                           ),
 
                           // Action Buttons
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            mainAxisAlignment:
+                            MainAxisAlignment.spaceBetween,
                             children: [
                               ElevatedButton.icon(
                                 icon: Icon(
@@ -1502,12 +1520,12 @@ class _ClientDashboardState extends State<ClientDashboard> {
                                   size: screenWidth * 0.045,
                                   color: Colors.white,
                                 ),
-                                label: Text(
-                                  'View Details',
-                                  style: TextStyle(color: Colors.white),
-                                ),
+                                label: Text('View Details',
+                                    style:
+                                    TextStyle(color: Colors.white)),
                                 onPressed: () {
                                   // Navigate to project details
+                                  Get.to(() => OngoingProjectDetailsPage(acceptedJob: job));
                                 },
                                 style: ElevatedButton.styleFrom(
                                   padding: EdgeInsets.symmetric(
@@ -1515,10 +1533,12 @@ class _ClientDashboardState extends State<ClientDashboard> {
                                       horizontal: screenWidth * 0.05),
                                   backgroundColor: Colors.deepOrange,
                                   shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10),
+                                    borderRadius:
+                                    BorderRadius.circular(10),
                                   ),
                                 ),
                               ),
+
                               IconButton(
                                 icon: Icon(Icons.message,
                                     size: screenWidth * 0.06),
@@ -1526,7 +1546,7 @@ class _ClientDashboardState extends State<ClientDashboard> {
                                   // Implement messaging functionality
                                 },
                                 tooltip: 'Message',
-                                color: Colors.deepOrange,
+                                color: Colors.blue,
                               ),
                             ],
                           ),
@@ -1534,10 +1554,10 @@ class _ClientDashboardState extends State<ClientDashboard> {
                       ),
                     ),
                   ),
-                ),
-              );
-            },
-          ),
+                );
+              },
+            );
+          }),
         ],
       ),
     );

@@ -70,7 +70,7 @@ class FollowListsScreen extends StatelessWidget {
 
               if (listToShow.isEmpty) {
                 return const Center(
-                  child: Text('No users to display.'),
+                  child: Text('You are not following anyone or you are not being followed by anyone.'),
                 );
               }
 
