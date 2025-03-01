@@ -32,7 +32,9 @@ class ApiEndpoints{
   static const submitProposal = "${baseUrl}proposals/submit";
   static const getTotalNumberOfProposalForAClient = "${baseUrl}proposals/total-proposals";
   static const getProposalForAClient = "${baseUrl}proposals/client";
-  static const acceptProposalByClient = "${baseUrl}proposals/accept"; // /proposal_id
+  static const acceptProposalByClient = "${baseUrl}proposals/accept";// /proposal_id
+  static const getAcceptedJobForClient = "${baseUrl}acceptedJobs/client/fetch";
+  static const getAcceptedJobForFreelancer = "${baseUrl}acceptedJobs/freelancer/fetch";
 
   static const getFollowList = "${baseUrl}follow/follow-lists";
   static const getFreelancerFollowStatus = "${baseUrl}follow/status";

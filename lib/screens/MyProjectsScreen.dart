@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:onehive_frontend/models/AcceptedJobModel.dart';
 import '../controllers/MyProjectController.dart';
 
 class MyProjectsScreen extends StatelessWidget {
@@ -12,7 +13,7 @@ class MyProjectsScreen extends StatelessWidget {
         title: const Text("My Projects", style: TextStyle(fontWeight: FontWeight.bold)),
         actions: [
           PopupMenuButton<String>(
-            icon: Icon(Icons.sort, color: Colors.white),
+            icon: Icon(Icons.sort),
             onSelected: (value) => controller.sortProjects(value),
             itemBuilder: (context) => [
               PopupMenuItem(value: "Deadline", child: Text("Sort by Deadline")),
@@ -40,15 +41,35 @@ class MyProjectsScreen extends StatelessWidget {
                 return Center(child: CircularProgressIndicator());
               }
 
-              var filteredProjects = controller.projects.where((p) =>
+              var filteredProjects = controller.acceptedJobs.where((p) =>
               (controller.selectedFilter.value == "All" ||
                   p.status == controller.selectedFilter.value) &&
-                  p.title.toLowerCase().contains(controller.searchQuery.value.toLowerCase())).toList();
+                  p.job.title.toLowerCase().contains(controller.searchQuery.value.toLowerCase())).toList();
 
               if (filteredProjects.isEmpty) {
-                return Center(child: Text("No projects found."));
+                return Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.work_off, size: 60, color: Colors.grey),
+                        SizedBox(height: 16),
+                        Text(
+                          "No projects found!",
+                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black87),
+                        ),
+                        SizedBox(height: 8),
+                        Text(
+                          "Keep going! Every great freelancer starts somewhere. Stay proactive, keep refining your skills, and new opportunities will come your way!",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
               }
-
               return ListView.builder(
                 padding: EdgeInsets.all(16),
                 itemCount: filteredProjects.length,
@@ -66,7 +87,7 @@ class MyProjectsScreen extends StatelessWidget {
 }
 
 class ProjectCard extends StatelessWidget {
-  final ProjectModel project;
+  final AcceptedJob project;
 
   ProjectCard(this.project);
 
@@ -81,7 +102,7 @@ class ProjectCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(project.title, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            Text(project.job.title, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             SizedBox(height: 8),
             _buildStatusRow(),
             SizedBox(height: 8),
@@ -104,21 +125,44 @@ class ProjectCard extends StatelessWidget {
       children: [
         _buildChip(project.status),
         Spacer(),
-        Text("Deadline: ${project.deadline}",
+        Text("Deadline: ${project.updatedAt}", // get from job details, this is only for showing
             style: TextStyle(color: Colors.grey, fontSize: 14)),
       ],
     );
   }
 
   Widget _buildBudgetAndPaymentInfo() {
+    Color getPaymentStatusColor(String status) {
+      switch (status.toLowerCase()) {
+        case "unpaid":
+          return Colors.red;
+        case "pending":
+          return Colors.orange;
+        case "escrowed":
+          return Colors.blue;
+        case "released":
+          return Colors.green;
+        case "disputed":
+          return Colors.purple;
+        default:
+          return Colors.grey;
+      }
+    }
+
     return Row(
       children: [
-        Icon(Icons.attach_money, color: Colors.green),
+        Icon(Icons.currency_rupee, color: Colors.green),
         SizedBox(width: 4),
-        Text("\$${project.budget}", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+        Text("Rs. ${project.budget}", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
         Spacer(),
-        Text("Payment Status: ${project.paymentStatus}",
-            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: project.paymentStatus == "Paid" ? Colors.green : Colors.red)),
+        Text(
+          "Payment Status: ${project.job.paymentStatus}",
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
+            color: getPaymentStatusColor(project.job.paymentStatus),
+          ),
+        ),
       ],
     );
   }
@@ -129,10 +173,10 @@ class ProjectCard extends StatelessWidget {
       children: [
         Text("Client Details:", style: TextStyle(fontWeight: FontWeight.bold)),
         SizedBox(height: 4),
-        Text("Client Name: ${project.clientName}",
+        Text("Client Name: ${project.client.username}",
             style: TextStyle(color: Colors.grey, fontSize: 14)),
         SizedBox(height: 4),
-        Text("Contact: ${project.clientContact}",
+        Text("Contact: ${project.client.email}",
             style: TextStyle(color: Colors.grey, fontSize: 14)),
       ],
     );
@@ -145,12 +189,13 @@ class ProjectCard extends StatelessWidget {
         Text("Project Progress", style: TextStyle(fontWeight: FontWeight.bold)),
         SizedBox(height: 4),
         LinearProgressIndicator(
-          value: project.progress / 100,
+          // value: project.progress / 100,
+          value: 50 / 100,
           backgroundColor: Colors.grey[300],
           color: Colors.blue,
         ),
         SizedBox(height: 8),
-        Text("${project.progress}% completed", style: TextStyle(color: Colors.blue)),
+        Text("50% completed", style: TextStyle(color: Colors.blue)),
       ],
     );
   }
@@ -204,14 +249,14 @@ class ProjectCard extends StatelessWidget {
   Widget _buildChip(String status) {
     Color color;
     switch (status) {
-      case "Active":
+      case "ongoing":
         color = Colors.blue;
         break;
-      case "Completed":
+      case "completed":
         color = Colors.green;
         break;
-      case "Pending":
-        color = Colors.orange;
+      case "disputed":
+        color = Colors.red;
         break;
       default:
         color = Colors.grey;

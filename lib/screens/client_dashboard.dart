@@ -1546,7 +1546,7 @@ class _ClientDashboardState extends State<ClientDashboard> {
                                   // Implement messaging functionality
                                 },
                                 tooltip: 'Message',
-                                color: Colors.blue,
+                                color: Colors.deepOrange,
                               ),
                             ],
                           ),

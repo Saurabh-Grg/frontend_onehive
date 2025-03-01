@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:onehive_frontend/constants/apis_endpoints.dart';
 import 'dart:convert';
 import '../models/AcceptedJobModel.dart';
 import 'UserController.dart';
@@ -22,7 +23,7 @@ class AcceptedJobsController extends GetxController {
       print("Fetching accepted jobs...");
 
       var response = await http.get(
-        Uri.parse("http://localhost:3000/api/acceptedJobs/fetch"),
+        Uri.parse("${ApiEndpoints.getAcceptedJobForClient}"),
         headers: {
           'Authorization': 'Bearer ${userController.token.value}',
           'Content-Type': 'application/json',

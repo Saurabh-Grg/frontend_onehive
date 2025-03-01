@@ -28,15 +28,6 @@ class OngoingProjectDetailsPage extends StatelessWidget {
             onPressed: () {
               Get.snackbar('Coming soon',
                   'Direct chatting with the freelancer feature will soon be available');
-              // Get.to(() => ChatScreen(
-              //   user: FollowUser(
-              //     userId: projectDetails['freelancer']?['id'] ?? 0,
-              //     username: projectDetails['freelancer']?['name'] ?? 'Freelancer Name',
-              //     profileImageUrl: projectDetails['freelancer']?['profile_image'] ?? '',
-              //   ),
-              //   userId: projectDetails['freelancer']?['id'] ?? 0,
-              //   profileImageUrl: projectDetails['freelancer']?['profile_image'] ?? '',
-              // ));
             },
           ),
           IconButton(
@@ -58,67 +49,59 @@ class OngoingProjectDetailsPage extends StatelessWidget {
               elevation: 4,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12)),
-              child: Padding(
-                padding: EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Project Ti
-                    // Project Title
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Flexible(
-                          child: Text(
-                            '${acceptedJob.job.title}',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.deepOrange,
+              child: InkWell(
+                onTap: (){
+                  // display job details
+                },
+                splashColor: Colors.yellow[100],
+                child: Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Project Title
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Flexible(
+                            child: Text(
+                              '${acceptedJob.job.title}',
+                              style: TextStyle(
+                                fontSize: screenWidth * 0.04,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.deepOrange,
+                              ),
                             ),
                           ),
-                        ),
-                        SizedBox(
-                          width: screenWidth * 0.01,
-                        ),
-                        Chip(
-                          label: Text(
-                            '${acceptedJob.job.paymentStatus}',
-                            style: TextStyle(color: Colors.white),
+                          SizedBox(
+                            width: screenWidth * 0.01,
                           ),
-                          backgroundColor:
-                          acceptedJob.job.paymentStatus == 'paid'
-                                  ? Colors.green
-                                  : Colors.deepOrange,
-                        ),
-                      ],
-                    ),
+                          Chip(
+                            label: Text(
+                              '${acceptedJob.job.paymentStatus}',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                            backgroundColor:
+                            acceptedJob.job.paymentStatus == 'paid'
+                                    ? Colors.green
+                                    : Colors.deepOrange,
+                          ),
+                        ],
+                      ),
 
-                    // Project Details
-                    Text(
-                      'Category: ${acceptedJob.job.category}',
-                      style: TextStyle(fontSize: 16),
-                    ),
-                    SizedBox(height: 4),
+                      // Project Details
+                      Text(
+                        'Category: ${acceptedJob.job.category}',
+                        style: TextStyle(fontSize: 16),
+                      ),
+                      SizedBox(height: 4),
 
-                    Text(
-                      'Description: ${acceptedJob.job.description}',
-                      style: TextStyle(fontSize: 16),
-                    ),
-                    SizedBox(height: 4),
-
-                    Text(
-                      'Start Date:  ',
-                      style: TextStyle(fontSize: 16),
-                    ),
-                    SizedBox(height: 4),
-
-                    Text(
-                      'Deadline: ',
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                    ),
-                  ],
+                      Text(
+                        'Description: ${acceptedJob.job.description}',
+                        style: TextStyle(fontSize: 16),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -142,7 +125,7 @@ class OngoingProjectDetailsPage extends StatelessWidget {
                     Text(
                       'Freelancer Assigned',
                       style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                          TextStyle(fontSize: screenWidth * 0.04, fontWeight: FontWeight.bold),
                     ),
                     SizedBox(height: 10),
                     Row(
@@ -204,7 +187,7 @@ class OngoingProjectDetailsPage extends StatelessWidget {
                       Text(
                         'Work Progress',
                         style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
+                            fontSize: screenWidth * 0.04, fontWeight: FontWeight.bold),
                       ),
                       SizedBox(height: 10),
 
@@ -250,7 +233,7 @@ class OngoingProjectDetailsPage extends StatelessWidget {
                     Text(
                       'Payment & Escrow Details',
                       style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                          TextStyle(fontSize: screenWidth * 0.04, fontWeight: FontWeight.bold),
                     ),
                     SizedBox(height: 10),
                     ListTile(
@@ -284,131 +267,131 @@ class OngoingProjectDetailsPage extends StatelessWidget {
 
 
             // Client Actions
-            // Text(
-            //   'Client Actions',
-            //   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            // ),
-            //
-            // SizedBox(height: 10),
+            Text(
+              'Client Actions',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
 
-            // Wrap(
-            //   spacing: 10, // Horizontal spacing between buttons
-            //   runSpacing: 10, // Vertical spacing between buttons
-            //   alignment: WrapAlignment.center,
-            //   children: [
-            //     // Approve Work Button
-            //     ElevatedButton.icon(
-            //       onPressed: () {
-            //         // Add functionality for approving work
-            //       },
-            //       icon: Icon(Icons.check, size: 20, color: Colors.white),
-            //       // Icon with consistent size
-            //       label: Text(
-            //         'Approve Work',
-            //         style: TextStyle(fontSize: 16), // Consistent text size
-            //       ),
-            //       style: ButtonStyle(
-            //         backgroundColor:
-            //             WidgetStateProperty.all<Color>(Colors.green),
-            //         // Background color
-            //         foregroundColor:
-            //             WidgetStateProperty.all<Color>(Colors.white),
-            //         // Text and icon color
-            //         padding: WidgetStateProperty.all<EdgeInsetsGeometry>(
-            //           EdgeInsets.symmetric(
-            //               horizontal: 20, vertical: 12), // Padding
-            //         ),
-            //         shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-            //           RoundedRectangleBorder(
-            //             borderRadius:
-            //                 BorderRadius.circular(10), // Rounded corners
-            //           ),
-            //         ),
-            //         overlayColor: WidgetStateProperty.resolveWith<Color>(
-            //           (Set<WidgetState> states) {
-            //             if (states.contains(WidgetState.pressed)) {
-            //               return Colors
-            //                   .green.shade700; // Darker green when pressed
-            //             }
-            //             return Colors.transparent; // No overlay by default
-            //           },
-            //         ),
-            //       ),
-            //     ),
-            //
-            //     // Request Revision Button
-            //     ElevatedButton.icon(
-            //       onPressed: () {
-            //         // Add functionality for requesting revision
-            //       },
-            //       icon: Icon(
-            //         Icons.refresh,
-            //         size: 20,
-            //         color: Colors.white,
-            //       ),
-            //       label: Text(
-            //         'Request Revision',
-            //         style: TextStyle(fontSize: 16),
-            //       ),
-            //       style: ButtonStyle(
-            //         backgroundColor:
-            //             WidgetStateProperty.all<Color>(Colors.blue),
-            //         foregroundColor:
-            //             WidgetStateProperty.all<Color>(Colors.white),
-            //         padding: WidgetStateProperty.all<EdgeInsetsGeometry>(
-            //           EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-            //         ),
-            //         shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-            //           RoundedRectangleBorder(
-            //             borderRadius: BorderRadius.circular(10),
-            //           ),
-            //         ),
-            //         overlayColor: WidgetStateProperty.resolveWith<Color>(
-            //           (Set<WidgetState> states) {
-            //             if (states.contains(WidgetState.pressed)) {
-            //               return Colors
-            //                   .blue.shade700; // Darker blue when pressed
-            //             }
-            //             return Colors.transparent;
-            //           },
-            //         ),
-            //       ),
-            //     ),
-            //
-            //     // Dispute Button
-            //     ElevatedButton.icon(
-            //       onPressed: () {
-            //         // Add functionality for disputing
-            //       },
-            //       icon: Icon(Icons.warning, size: 20, color: Colors.white),
-            //       label: Text(
-            //         'Dispute',
-            //         style: TextStyle(fontSize: 16),
-            //       ),
-            //       style: ButtonStyle(
-            //         backgroundColor: WidgetStateProperty.all<Color>(Colors.red),
-            //         foregroundColor:
-            //             WidgetStateProperty.all<Color>(Colors.white),
-            //         padding: WidgetStateProperty.all<EdgeInsetsGeometry>(
-            //           EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-            //         ),
-            //         shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-            //           RoundedRectangleBorder(
-            //             borderRadius: BorderRadius.circular(10),
-            //           ),
-            //         ),
-            //         overlayColor: WidgetStateProperty.resolveWith<Color>(
-            //           (Set<WidgetState> states) {
-            //             if (states.contains(WidgetState.pressed)) {
-            //               return Colors.red.shade700; // Darker red when pressed
-            //             }
-            //             return Colors.transparent;
-            //           },
-            //         ),
-            //       ),
-            //     ),
-            //   ],
-            // ),
+            SizedBox(height: 10),
+
+            Wrap(
+              spacing: 10, // Horizontal spacing between buttons
+              runSpacing: 10, // Vertical spacing between buttons
+              alignment: WrapAlignment.center,
+              children: [
+                // Approve Work Button
+                ElevatedButton.icon(
+                  onPressed: () {
+                    // Add functionality for approving work
+                  },
+                  icon: Icon(Icons.check, size: 20, color: Colors.white),
+                  // Icon with consistent size
+                  label: Text(
+                    'Approve Work',
+                    style: TextStyle(fontSize: 16), // Consistent text size
+                  ),
+                  style: ButtonStyle(
+                    backgroundColor:
+                        WidgetStateProperty.all<Color>(Colors.green),
+                    // Background color
+                    foregroundColor:
+                        WidgetStateProperty.all<Color>(Colors.white),
+                    // Text and icon color
+                    padding: WidgetStateProperty.all<EdgeInsetsGeometry>(
+                      EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 12), // Padding
+                    ),
+                    shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                        borderRadius:
+                            BorderRadius.circular(10), // Rounded corners
+                      ),
+                    ),
+                    overlayColor: WidgetStateProperty.resolveWith<Color>(
+                      (Set<WidgetState> states) {
+                        if (states.contains(WidgetState.pressed)) {
+                          return Colors
+                              .green.shade700; // Darker green when pressed
+                        }
+                        return Colors.transparent; // No overlay by default
+                      },
+                    ),
+                  ),
+                ),
+
+                // Request Revision Button
+                ElevatedButton.icon(
+                  onPressed: () {
+                    // Add functionality for requesting revision
+                  },
+                  icon: Icon(
+                    Icons.refresh,
+                    size: 20,
+                    color: Colors.white,
+                  ),
+                  label: Text(
+                    'Request Revision',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  style: ButtonStyle(
+                    backgroundColor:
+                        WidgetStateProperty.all<Color>(Colors.blue),
+                    foregroundColor:
+                        WidgetStateProperty.all<Color>(Colors.white),
+                    padding: WidgetStateProperty.all<EdgeInsetsGeometry>(
+                      EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                    ),
+                    shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    overlayColor: WidgetStateProperty.resolveWith<Color>(
+                      (Set<WidgetState> states) {
+                        if (states.contains(WidgetState.pressed)) {
+                          return Colors
+                              .blue.shade700; // Darker blue when pressed
+                        }
+                        return Colors.transparent;
+                      },
+                    ),
+                  ),
+                ),
+
+                // Dispute Button
+                ElevatedButton.icon(
+                  onPressed: () {
+                    // Add functionality for disputing
+                  },
+                  icon: Icon(Icons.warning, size: 20, color: Colors.white),
+                  label: Text(
+                    'Dispute',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  style: ButtonStyle(
+                    backgroundColor: WidgetStateProperty.all<Color>(Colors.red),
+                    foregroundColor:
+                        WidgetStateProperty.all<Color>(Colors.white),
+                    padding: WidgetStateProperty.all<EdgeInsetsGeometry>(
+                      EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                    ),
+                    shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    overlayColor: WidgetStateProperty.resolveWith<Color>(
+                      (Set<WidgetState> states) {
+                        if (states.contains(WidgetState.pressed)) {
+                          return Colors.red.shade700; // Darker red when pressed
+                        }
+                        return Colors.transparent;
+                      },
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ],
         ),
       ),

@@ -1,8 +1,16 @@
+import 'dart:convert';
+
 import 'package:get/get.dart';
+import 'package:onehive_frontend/constants/apis_endpoints.dart';
+
+import '../models/AcceptedJobModel.dart';
+import 'UserController.dart';
+import 'package:http/http.dart' as http;
 
 class MyProjectsController extends GetxController {
+  final UserController userController = Get.find();
   var isLoading = true.obs;
-  var projects = <ProjectModel>[].obs;
+  var acceptedJobs = <AcceptedJob>[].obs;
   var selectedFilter = 'All'.obs;
   var searchQuery = ''.obs; // Search field
   var sortBy = 'Deadline'.obs; // Sorting field
@@ -15,45 +23,33 @@ class MyProjectsController extends GetxController {
 
   void fetchProjects() async {
     await Future.delayed(Duration(seconds: 1)); // Simulating API delay
-    projects.value = [
-      ProjectModel(
-        title: "Flutter Mobile App Development",
-        status: "Active",
-        budget: 500,
-        deadline: "Feb 28, 2025",
-        bidAmount: 450,
-        paymentStatus: "Pending",
-        milestones: ["UI Design Completed", "Backend API Integrated"],
-        clientName: "John Doe", // Added
-        clientContact: "+1 234 567 890", // Added
-        progress: 50, // Added
-      ),
-      ProjectModel(
-        title: "E-commerce Website Design",
-        status: "Completed",
-        budget: 800,
-        deadline: "Jan 15, 2025",
-        bidAmount: 750,
-        paymentStatus: "Paid",
-        milestones: ["Prototype Approved", "Final Version Deployed"],
-        clientName: "Jane Smith", // Added
-        clientContact: "+1 987 654 321", // Added
-        progress: 100, // Added
-      ),
-      ProjectModel(
-        title: "Logo & Branding for Startup",
-        status: "Pending",
-        budget: 150,
-        deadline: "Mar 10, 2025",
-        bidAmount: 140,
-        paymentStatus: "Unpaid",
-        milestones: ["Initial Concepts Ready"],
-        clientName: "Acme Corp", // Added
-        clientContact: "+1 555 123 456", // Added
-        progress: 10, // Added
-      ),
-    ];
-    isLoading.value = false;
+    try {
+      isLoading(true);
+      String token = "${userController.token.value}"; // Replace with actual token handling
+      final response = await http.get(
+        Uri.parse("${ApiEndpoints.getAcceptedJobForFreelancer}"),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json'
+        },
+      );
+
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        var jobsList = (data['acceptedJobs'] as List)
+            .map((job) => AcceptedJob.fromJson(job))
+            .toList();
+
+        acceptedJobs.assignAll(jobsList);
+      } else {
+        Get.snackbar("Error", "Failed to fetch accepted jobs");
+      }
+    } catch (e) {
+      Get.snackbar("Error", "Something went wrong: $e");
+      print(e);
+    } finally {
+      isLoading(false);
+    }
   }
 
   void filterProjects(String status) {
@@ -67,36 +63,11 @@ class MyProjectsController extends GetxController {
   void sortProjects(String criteria) {
     sortBy.value = criteria;
     if (criteria == 'Deadline') {
-      projects.sort((a, b) => a.deadline.compareTo(b.deadline));
+      acceptedJobs.sort((a, b) => a.updatedAt.compareTo(b.updatedAt)); // here updated data should be replaced by end data from job details
     } else if (criteria == 'Budget') {
-      projects.sort((a, b) => b.budget.compareTo(a.budget));
+      acceptedJobs.sort((a, b) => b.budget.compareTo(a.budget));
     }
   }
 }
 
-class ProjectModel {
-  String title;
-  String status;
-  int budget;
-  String deadline;
-  int bidAmount;
-  String paymentStatus;
-  List<String> milestones;
-  String clientName; // Added
-  String clientContact; // Added
-  double progress; // Added (percentage of progress)
-
-  ProjectModel({
-    required this.title,
-    required this.status,
-    required this.budget,
-    required this.deadline,
-    required this.bidAmount,
-    required this.paymentStatus,
-    required this.milestones,
-    required this.clientName, // Added
-    required this.clientContact, // Added
-    required this.progress, // Added
-  });
-}
 
