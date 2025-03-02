@@ -125,7 +125,7 @@ class ProjectCard extends StatelessWidget {
       children: [
         _buildChip(project.status),
         Spacer(),
-        Text("Deadline: ${project.updatedAt}", // get from job details, this is only for showing
+        Text("Deadline: coming soon!", // get from job details, this is only for showing
             style: TextStyle(color: Colors.grey, fontSize: 14)),
       ],
     );

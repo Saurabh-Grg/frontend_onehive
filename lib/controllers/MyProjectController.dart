@@ -63,7 +63,7 @@ class MyProjectsController extends GetxController {
   void sortProjects(String criteria) {
     sortBy.value = criteria;
     if (criteria == 'Deadline') {
-      acceptedJobs.sort((a, b) => a.updatedAt.compareTo(b.updatedAt)); // here updated data should be replaced by end data from job details
+      // acceptedJobs.sort((a, b) => a.updatedAt.compareTo(b.updatedAt)); // here get the deadline from job details
     } else if (criteria == 'Budget') {
       acceptedJobs.sort((a, b) => b.budget.compareTo(a.budget));
     }
