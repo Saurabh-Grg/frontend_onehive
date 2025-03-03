@@ -1,8 +1,10 @@
 class AcceptedJob {
+  final int id;
   final double budget;
   final bool useEscrow;
   final double escrowCharge;
   final String status;
+  final int progress;
   final String createdAt;
   final String updatedAt;
   final Job job;
@@ -10,10 +12,12 @@ class AcceptedJob {
   final User freelancer;
 
   AcceptedJob({
+    required this.id,
     required this.budget,
     required this.useEscrow,
     required this.escrowCharge,
     required this.status,
+    required this.progress,
     required this.createdAt,
     required this.updatedAt,
     required this.job,
@@ -23,9 +27,11 @@ class AcceptedJob {
 
   factory AcceptedJob.fromJson(Map<String, dynamic> json) {
     return AcceptedJob(
+      id: json['accepted_job_id'] ?? 0,
       budget: double.tryParse(json['budget'].toString()) ?? 0.0,
       useEscrow: json['use_escrow'] ?? false,
       escrowCharge: double.tryParse(json['escrow_charge'].toString()) ?? 0.0,
+      progress: json['progress'] ?? 0,
       status: json['status'] ?? "Unknown",
       createdAt: json['createdAt'] ?? "",
       updatedAt: json['updatedAt'] ?? "",

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:onehive_frontend/models/AcceptedJobModel.dart';
+import '../controllers/MilestoneController.dart';
 import '../controllers/MyProjectController.dart';
 
 class MyProjectsScreen extends StatelessWidget {
@@ -189,13 +190,12 @@ class ProjectCard extends StatelessWidget {
         Text("Project Progress", style: TextStyle(fontWeight: FontWeight.bold)),
         SizedBox(height: 4),
         LinearProgressIndicator(
-          // value: project.progress / 100,
-          value: 50 / 100,
+          value: project.progress / 100,
           backgroundColor: Colors.grey[300],
           color: Colors.blue,
         ),
         SizedBox(height: 8),
-        Text("50% completed", style: TextStyle(color: Colors.blue)),
+        Text("${project.progress}% completed", style: TextStyle(color: Colors.blue)),
       ],
     );
   }
@@ -214,6 +214,12 @@ class ProjectCard extends StatelessWidget {
           icon: Icon(Icons.upload_file, color: Colors.orange),
           onPressed: () {
             Get.snackbar("File Upload", "Upload feature coming soon!");
+          },
+        ),
+        IconButton(
+          icon: Icon(Icons.check_circle, color: Colors.purple), // New icon for milestone submission
+          onPressed: () {
+            _showMilestoneDialog(context, project.id);  // Pass the project id here
           },
         ),
         IconButton(
@@ -245,6 +251,90 @@ class ProjectCard extends StatelessWidget {
       ],
     );
   }
+
+  void _showMilestoneDialog(BuildContext context, int acceptedJobId) {
+    final _formKey = GlobalKey<FormState>();
+    String title = '';
+    String description = '';
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Submit Milestone"),
+          content: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TextFormField(
+                  decoration: InputDecoration(labelText: 'Milestone Title'),
+                  onSaved: (value) {
+                    title = value ?? '';
+                  },
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter a milestone title';
+                    }
+                    return null;
+                  },
+                ),
+                TextFormField(
+                  decoration: InputDecoration(labelText: 'Milestone Description'),
+                  maxLines: 3,
+                  onSaved: (value) {
+                    description = value ?? '';
+                  },
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter a milestone description';
+                    }
+                    return null;
+                  },
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Get.back();  // Close the dialog
+              },
+              child: Text("Cancel"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                if (_formKey.currentState!.validate()) {
+                  _formKey.currentState!.save();
+                  _submitMilestone(acceptedJobId, title, description);  // Submit milestone
+                  Get.back();  // Close the dialog
+                }
+              },
+              child: Text("Submit"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _submitMilestone(int acceptedJobId, String title, String description) async {
+    final milestoneController = Get.put(MilestoneController());
+
+    // Call the API to submit the milestone
+    try {
+      await milestoneController.submitMilestone(acceptedJobId, title, description);
+
+      // Show success message in the UI
+      Get.snackbar("Milestone Submitted", "Your milestone has been submitted successfully!");
+      Get.back();  // Close the dialog after successful submission
+    } catch (e) {
+      // Handle failure (e.g., show an error message)
+      print("Error, Failed to submit milestone. Please try again.");
+    }
+  }
+
 
   Widget _buildChip(String status) {
     Color color;

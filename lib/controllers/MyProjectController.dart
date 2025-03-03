@@ -68,6 +68,10 @@ class MyProjectsController extends GetxController {
       acceptedJobs.sort((a, b) => b.budget.compareTo(a.budget));
     }
   }
+
+  void loadProjects () async {
+    fetchProjects();
+  }
 }
 
 
