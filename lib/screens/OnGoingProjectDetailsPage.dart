@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:onehive_frontend/controllers/MilestoneController.dart';
-
-import '../controllers/AcceptedJobController.dart';
 import '../models/AcceptedJobModel.dart';
-import '../models/FollowUser.dart';
-import 'ChatPage.dart';
 
 class OngoingProjectDetailsPage extends StatelessWidget {
   final AcceptedJob acceptedJob; // Declare the acceptedJob parameter
@@ -13,11 +9,13 @@ class OngoingProjectDetailsPage extends StatelessWidget {
   // Accepting the job details through constructor
   OngoingProjectDetailsPage({required this.acceptedJob});
 
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
 
-    final MilestoneController milestoneController = Get.put(MilestoneController());
+    final MilestoneController milestoneController =
+        Get.put(MilestoneController());
 
     // Fetch milestones when this page loads
     milestoneController.fetchMilestones(acceptedJob.id);
@@ -56,7 +54,7 @@ class OngoingProjectDetailsPage extends StatelessWidget {
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12)),
               child: InkWell(
-                onTap: (){
+                onTap: () {
                   // display job details
                 },
                 splashColor: Colors.yellow[100],
@@ -87,10 +85,8 @@ class OngoingProjectDetailsPage extends StatelessWidget {
                               '${acceptedJob.job.paymentStatus}',
                               style: TextStyle(color: Colors.white),
                             ),
-                            backgroundColor:
-                            acceptedJob.job.paymentStatus == 'paid'
-                                    ? Colors.green
-                                    : Colors.deepOrange,
+                            backgroundColor: _getPaymentStatusColor(
+                                acceptedJob.job.paymentStatus),
                           ),
                         ],
                       ),
@@ -114,7 +110,6 @@ class OngoingProjectDetailsPage extends StatelessWidget {
             SizedBox(
               height: screenWidth * 0.02,
             ),
-
             SizedBox(
               height: screenWidth * 0.02,
             ),
@@ -130,33 +125,30 @@ class OngoingProjectDetailsPage extends StatelessWidget {
                     // Freelancer Details
                     Text(
                       'Freelancer Assigned',
-                      style:
-                          TextStyle(fontSize: screenWidth * 0.04, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          fontSize: screenWidth * 0.04,
+                          fontWeight: FontWeight.bold),
                     ),
                     SizedBox(height: 10),
                     Row(
                       children: [
                         CircleAvatar(
                           radius: 30,
-                          // backgroundImage: projectDetails['freelancer']
-                          //                 ?['profile_image'] !=
-                          //             null &&
-                          //         projectDetails['freelancer']['profile_image']
-                          //             .isNotEmpty
-                          //     ? NetworkImage(
-                          //         projectDetails['freelancer']['profile_image'])
-                          //     : AssetImage('assets/images/default_profile.png')
-                          //         as ImageProvider,
+                          backgroundImage: acceptedJob
+                                  .freelancer.profileImageUrl.isNotEmpty
+                              ? NetworkImage(
+                                  acceptedJob.freelancer.profileImageUrl)
+                              : AssetImage('assets/images/default_profile.png'),
                         ),
                         SizedBox(width: 12),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              acceptedJob.freelancer.username ??
-                                  'Freelancer Name',
+                              acceptedJob.freelancer.name.toUpperCase(),
                               style: TextStyle(
-                                  fontSize: screenWidth * 0.036, fontWeight: FontWeight.bold),
+                                  fontSize: screenWidth * 0.036,
+                                  ),
                             ),
                             Text(
                               '⭐ freelancer rating',
@@ -177,7 +169,6 @@ class OngoingProjectDetailsPage extends StatelessWidget {
               ),
             ),
             SizedBox(height: screenWidth * 0.02),
-
             SizedBox(
               width: double.infinity,
               child: Card(
@@ -193,7 +184,8 @@ class OngoingProjectDetailsPage extends StatelessWidget {
                       Text(
                         'Work Progress',
                         style: TextStyle(
-                            fontSize: screenWidth * 0.04, fontWeight: FontWeight.bold),
+                            fontSize: screenWidth * 0.04,
+                            fontWeight: FontWeight.bold),
                       ),
                       SizedBox(height: 10),
 
@@ -204,7 +196,8 @@ class OngoingProjectDetailsPage extends StatelessWidget {
                         }
 
                         // Check conditions to show the reminder
-                        if (acceptedJob.job.paymentStatus == 'unpaid' && milestoneController.milestones.length == 4) {
+                        if (acceptedJob.job.paymentStatus == 'unpaid' &&
+                            milestoneController.milestones.length == 4) {
                           return Column(
                             children: [
                               Container(
@@ -212,18 +205,24 @@ class OngoingProjectDetailsPage extends StatelessWidget {
                                 padding: EdgeInsets.all(12),
                                 margin: EdgeInsets.only(bottom: 10),
                                 decoration: BoxDecoration(
-                                  color: Colors.amber[100], // Light yellow background
+                                  color: Colors.amber[100],
+                                  // Light yellow background
                                   borderRadius: BorderRadius.circular(8),
-                                  border: Border.all(color: Colors.amber, width: 1),
+                                  border:
+                                      Border.all(color: Colors.amber, width: 1),
                                 ),
                                 child: Row(
                                   children: [
-                                    Icon(Icons.info_outline, color: Colors.amber[800]),
+                                    Icon(Icons.info_outline,
+                                        color: Colors.amber[800]),
                                     SizedBox(width: 10),
                                     Expanded(
                                       child: Text(
                                         "Your project is nearing completion. Please ensure the payment is processed soon.",
-                                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black87),
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.black87),
                                       ),
                                     ),
                                   ],
@@ -232,10 +231,13 @@ class OngoingProjectDetailsPage extends StatelessWidget {
                               // Continue with milestone list
                               ListView.builder(
                                 shrinkWrap: true,
-                                itemCount: milestoneController.milestones.length,
+                                itemCount:
+                                    milestoneController.milestones.length,
                                 itemBuilder: (context, index) {
-                                  var milestone = milestoneController.milestones[index];
-                                  double progress = milestone['progress'].toDouble();
+                                  var milestone =
+                                      milestoneController.milestones[index];
+                                  double progress =
+                                      milestone['progress'].toDouble();
 
                                   // Determine the color based on the progress value
                                   Color progressColor;
@@ -256,19 +258,25 @@ class OngoingProjectDetailsPage extends StatelessWidget {
                                       return SizedBox(
                                         width: Get.width * 0.02,
                                         child: Checkbox(
-                                          value: milestoneController.seenMilestones[index],
+                                          value: milestoneController
+                                              .seenMilestones[index],
                                           onChanged: (bool? value) {
-                                            milestoneController.toggleSeen(index, value!);
+                                            milestoneController.toggleSeen(
+                                                index, value!);
                                           },
                                         ),
                                       );
                                     }),
-                                    title: Text(milestone['title'] ?? 'No Title'),
-                                    subtitle: Text(milestone['description'] ?? 'No Description'),
+                                    title:
+                                        Text(milestone['title'] ?? 'No Title'),
+                                    subtitle: Text(milestone['description'] ??
+                                        'No Description'),
                                     trailing: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.end,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.end,
                                       children: [
-                                        Text("Progress: ${milestone['progress']}%"),
+                                        Text(
+                                            "Progress: ${milestone['progress']}%"),
                                         SizedBox(height: 8),
                                         // The colored progress bar
                                         Container(
@@ -276,7 +284,9 @@ class OngoingProjectDetailsPage extends StatelessWidget {
                                           child: LinearProgressIndicator(
                                             value: progress / 100,
                                             backgroundColor: Colors.grey[300],
-                                            valueColor: AlwaysStoppedAnimation<Color>(progressColor),
+                                            valueColor:
+                                                AlwaysStoppedAnimation<Color>(
+                                                    progressColor),
                                           ),
                                         ),
                                       ],
@@ -292,7 +302,8 @@ class OngoingProjectDetailsPage extends StatelessWidget {
                           return Center(
                             child: Text(
                               'No milestones available for this job.',
-                              style: TextStyle(fontSize: 16, color: Colors.grey),
+                              style:
+                                  TextStyle(fontSize: 16, color: Colors.grey),
                             ),
                           );
                         }
@@ -301,7 +312,8 @@ class OngoingProjectDetailsPage extends StatelessWidget {
                           shrinkWrap: true,
                           itemCount: milestoneController.milestones.length,
                           itemBuilder: (context, index) {
-                            var milestone = milestoneController.milestones[index];
+                            var milestone =
+                                milestoneController.milestones[index];
                             double progress = milestone['progress'].toDouble();
 
                             // Determine the color based on the progress value
@@ -324,15 +336,18 @@ class OngoingProjectDetailsPage extends StatelessWidget {
                                   // height: 100,
                                   width: Get.width * 0.02,
                                   child: Checkbox(
-                                    value: milestoneController.seenMilestones[index],
+                                    value: milestoneController
+                                        .seenMilestones[index],
                                     onChanged: (bool? value) {
-                                      milestoneController.toggleSeen(index, value!);
+                                      milestoneController.toggleSeen(
+                                          index, value!);
                                     },
                                   ),
                                 );
                               }),
                               title: Text(milestone['title'] ?? 'No Title'),
-                              subtitle: Text(milestone['description'] ?? 'No Description'),
+                              subtitle: Text(
+                                  milestone['description'] ?? 'No Description'),
                               trailing: Column(
                                 crossAxisAlignment: CrossAxisAlignment.end,
                                 children: [
@@ -344,7 +359,8 @@ class OngoingProjectDetailsPage extends StatelessWidget {
                                     child: LinearProgressIndicator(
                                       value: progress / 100,
                                       backgroundColor: Colors.grey[300],
-                                      valueColor: AlwaysStoppedAnimation<Color>(progressColor),
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                          progressColor),
                                     ),
                                   ),
                                 ],
@@ -358,9 +374,7 @@ class OngoingProjectDetailsPage extends StatelessWidget {
                 ),
               ),
             ),
-
             SizedBox(height: screenWidth * 0.02),
-
             Card(
               elevation: 4,
               shape: RoundedRectangleBorder(
@@ -373,169 +387,79 @@ class OngoingProjectDetailsPage extends StatelessWidget {
                     // Payment Details
                     Text(
                       'Payment & Escrow Details',
-                      style:
-                          TextStyle(fontSize: screenWidth * 0.04, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          fontSize: screenWidth * 0.04,
+                          fontWeight: FontWeight.bold),
                     ),
                     SizedBox(height: 10),
                     ListTile(
                       title: Text('Total Budget'),
                       trailing: Text(
                         'Rs. ${acceptedJob.budget}',
-                        style: TextStyle(fontSize: 15),  // Set the font size here
+                        style:
+                            TextStyle(fontSize: 15), // Set the font size here
                       ),
                     ),
                     ListTile(
                       title: Text('Escrow'),
                       trailing: Text(
                         '${acceptedJob.useEscrow}',
-                        style: TextStyle(fontSize: 15),  // Set the font size here
+                        style:
+                            TextStyle(fontSize: 15), // Set the font size here
                       ),
                     ),
                     ListTile(
                       title: Text('Escrow amount'),
                       trailing: Text(
                         'Rs. ${acceptedJob.escrowCharge}',
-                        style: TextStyle(fontSize: 15),  // Set the font size here
+                        style:
+                            TextStyle(fontSize: 15), // Set the font size here
                       ),
                     ),
                   ],
                 ),
               ),
             ),
-            SizedBox(height: 20),
-
+            SizedBox(height: screenWidth * 0.02),
             Divider(),
-
-
-            // Client Actions
-            Text(
-              'Client Actions',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-
-            SizedBox(height: 10),
-
-            Wrap(
-              spacing: 10, // Horizontal spacing between buttons
-              runSpacing: 10, // Vertical spacing between buttons
-              alignment: WrapAlignment.center,
-              children: [
-                // Approve Work Button
-                ElevatedButton.icon(
-                  onPressed: () {
-                    // Add functionality for approving work
-                  },
-                  icon: Icon(Icons.check, size: 20, color: Colors.white),
-                  // Icon with consistent size
-                  label: Text(
-                    'Approve Work',
-                    style: TextStyle(fontSize: 16), // Consistent text size
-                  ),
-                  style: ButtonStyle(
-                    backgroundColor:
-                        WidgetStateProperty.all<Color>(Colors.green),
-                    // Background color
-                    foregroundColor:
-                        WidgetStateProperty.all<Color>(Colors.white),
-                    // Text and icon color
-                    padding: WidgetStateProperty.all<EdgeInsetsGeometry>(
-                      EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 12), // Padding
-                    ),
-                    shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                        borderRadius:
-                            BorderRadius.circular(10), // Rounded corners
-                      ),
-                    ),
-                    overlayColor: WidgetStateProperty.resolveWith<Color>(
-                      (Set<WidgetState> states) {
-                        if (states.contains(WidgetState.pressed)) {
-                          return Colors
-                              .green.shade700; // Darker green when pressed
-                        }
-                        return Colors.transparent; // No overlay by default
-                      },
-                    ),
-                  ),
+            if (acceptedJob.job.paymentStatus == 'unpaid')
+              Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: Colors.deepOrange,
+                  borderRadius: BorderRadius.circular(13),
                 ),
-
-                // Request Revision Button
-                ElevatedButton.icon(
-                  onPressed: () {
-                    // Add functionality for requesting revision
-                  },
-                  icon: Icon(
-                    Icons.refresh,
-                    size: 20,
-                    color: Colors.white,
-                  ),
-                  label: Text(
-                    'Request Revision',
-                    style: TextStyle(fontSize: 16),
-                  ),
-                  style: ButtonStyle(
-                    backgroundColor:
-                        WidgetStateProperty.all<Color>(Colors.blue),
-                    foregroundColor:
-                        WidgetStateProperty.all<Color>(Colors.white),
-                    padding: WidgetStateProperty.all<EdgeInsetsGeometry>(
-                      EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                    ),
-                    shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                    overlayColor: WidgetStateProperty.resolveWith<Color>(
-                      (Set<WidgetState> states) {
-                        if (states.contains(WidgetState.pressed)) {
-                          return Colors
-                              .blue.shade700; // Darker blue when pressed
-                        }
-                        return Colors.transparent;
-                      },
-                    ),
-                  ),
-                ),
-
-                // Dispute Button
-                ElevatedButton.icon(
-                  onPressed: () {
-                    // Add functionality for disputing
-                  },
-                  icon: Icon(Icons.warning, size: 20, color: Colors.white),
-                  label: Text(
-                    'Dispute',
-                    style: TextStyle(fontSize: 16),
-                  ),
-                  style: ButtonStyle(
-                    backgroundColor: WidgetStateProperty.all<Color>(Colors.red),
-                    foregroundColor:
-                        WidgetStateProperty.all<Color>(Colors.white),
-                    padding: WidgetStateProperty.all<EdgeInsetsGeometry>(
-                      EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                    ),
-                    shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                    overlayColor: WidgetStateProperty.resolveWith<Color>(
-                      (Set<WidgetState> states) {
-                        if (states.contains(WidgetState.pressed)) {
-                          return Colors.red.shade700; // Darker red when pressed
-                        }
-                        return Colors.transparent;
-                      },
-                    ),
-                  ),
-                ),
-              ],
-            ),
+                child: TextButton(
+                    onPressed: () {},
+                    child: Text(
+                      'Pay now!',
+                      style: TextStyle(
+                          color: Colors.white, fontWeight: FontWeight.bold),
+                    )),
+              ),
           ],
         ),
       ),
     );
+  }
+
+  // Function to get color based on payment status
+  Color _getPaymentStatusColor(String status) {
+    switch (status.toLowerCase()) {
+      case 'paid':
+        return Colors.green;
+      case 'unpaid':
+        return Colors.red;
+      case 'escrowed':
+        return Colors.blue;
+      case 'released':
+        return Colors.purple;
+      case 'pending':
+        return Colors.orange;
+      case 'disputed':
+        return Colors.grey;
+      default:
+        return Colors.black; // Default color if status is unknown
+    }
   }
 }

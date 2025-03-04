@@ -3,7 +3,6 @@ import 'package:http/http.dart' as http;
 import 'package:onehive_frontend/constants/apis_endpoints.dart';
 import 'dart:convert';
 import '../models/AcceptedJobModel.dart';
-import 'MilestoneController.dart';
 import 'UserController.dart';
 
 class AcceptedJobsController extends GetxController {
@@ -14,8 +13,8 @@ class AcceptedJobsController extends GetxController {
 
   @override
   void onInit() {
-    fetchAcceptedJobs();
     super.onInit();
+    fetchAcceptedJobs();
   }
 
   Future<void> fetchAcceptedJobs() async {
@@ -37,7 +36,6 @@ class AcceptedJobsController extends GetxController {
           acceptedJobs.value = (jsonData['acceptedJobs'] as List)
               .map((job) => AcceptedJob.fromJson(job))
               .toList();
-          // print("Accepted Jobs List Updated: ${acceptedJobs.length} items");
         } else {
           Get.snackbar("Error", "Invalid response format");
         }
@@ -48,7 +46,11 @@ class AcceptedJobsController extends GetxController {
       Get.snackbar("Error", "Something went wrong: $e");
     } finally {
       isLoading(false);
-      print("Fetching completed. isLoading: ${isLoading.value}");
     }
+  }
+
+  // To force a reload of projects, useful if you want to call it explicitly
+  void loadProjects() async {
+    fetchAcceptedJobs();
   }
 }

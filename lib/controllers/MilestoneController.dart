@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:onehive_frontend/constants/apis_endpoints.dart';
+import 'package:onehive_frontend/controllers/AcceptedJobController.dart';
 import 'package:onehive_frontend/controllers/MyProjectController.dart';
 import 'package:onehive_frontend/controllers/UserController.dart';
 
@@ -10,7 +11,7 @@ class MilestoneController extends GetxController {
 
   final UserController userController = Get.find();
   // Check if MyProjectsController is available before accessing it
-  MyProjectsController? myProjectsController;
+  AcceptedJobsController? acceptedJobsController;
 
   // List to hold fetched milestones
   var milestones = <Map<String, dynamic>>[].obs;
@@ -18,16 +19,18 @@ class MilestoneController extends GetxController {
 
   var isLoading = false.obs;
 
+  // final MyProjectsController myProjectsController = Get.put(MyProjectsController());
+
   @override
   void onInit() {
     super.onInit();
 
     // Ensure MyProjectsController is registered before trying to access it
-    if (!Get.isRegistered<MyProjectsController>()) {
-      Get.put(MyProjectsController());
+    if (!Get.isRegistered<AcceptedJobsController>()) {
+      Get.put(AcceptedJobsController());
     }
 
-    myProjectsController = Get.find<MyProjectsController>();
+    acceptedJobsController = Get.find<AcceptedJobsController>();
   }
 
   // Function to submit milestone
@@ -53,7 +56,8 @@ class MilestoneController extends GetxController {
         final newProgress = data['job_progress'];
         Get.snackbar("Success",
             "Milestone submitted successfully! Progress: $newProgress%");
-        myProjectsController?.loadProjects();
+        // myProjectsController.fetchProjects();
+        acceptedJobsController?.loadProjects();
       } else if (response.statusCode == 400) {
         // Handle if too many milestones are submitted
         final data = json.decode(response.body);
@@ -91,7 +95,7 @@ class MilestoneController extends GetxController {
         seenMilestones.value = List.generate(milestones.length, (index) => false);
 
         // Print the fetched milestones for debugging
-        print("Fetched milestones: ${milestones.value}");
+        // print("Fetched milestones: ${milestones.value}");
       } else {
         throw Exception('Failed to load milestones.');
       }

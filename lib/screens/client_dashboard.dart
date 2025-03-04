@@ -145,7 +145,8 @@ class _ClientDashboardState extends State<ClientDashboard> {
 
       // Get the AcceptedJobsController and refresh accepted jobs
       final acceptedJobsController = Get.find<AcceptedJobsController>();
-      await acceptedJobsController.fetchAcceptedJobs(); // Ensure the latest jobs are fetched
+      await acceptedJobsController
+          .fetchAcceptedJobs(); // Ensure the latest jobs are fetched
 
       // Optionally, update the state with new data
       setState(() {
@@ -1095,18 +1096,20 @@ class _ClientDashboardState extends State<ClientDashboard> {
   // Helper function to get color based on job status
   Color _getPaymentStatusColor(String? status) {
     switch (status?.toLowerCase()) {
+      case 'paid':
+        return Colors.green;
       case 'unpaid':
         return Colors.red;
-      case 'pending':
-        return Colors.amber;
       case 'escrowed':
         return Colors.blue;
       case 'released':
-        return Colors.green;
+        return Colors.purple;
+      case 'pending':
+        return Colors.orange;
       case 'disputed':
-        return Colors.deepOrange;
-      default:
         return Colors.grey;
+      default:
+        return Colors.black;
     }
   }
 
@@ -1423,7 +1426,7 @@ class _ClientDashboardState extends State<ClientDashboard> {
     );
   }
 
-  final AcceptedJobsController controller = Get.put(AcceptedJobsController());
+  final AcceptedJobsController acceptedJobsController = Get.put(AcceptedJobsController());
 
   Widget _buildOngoingProjectsSection(double screenWidth) {
     return Padding(
@@ -1439,27 +1442,27 @@ class _ClientDashboardState extends State<ClientDashboard> {
                 color: Colors.deepOrange),
           ),
           SizedBox(height: screenWidth * 0.02),
-
           Obx(() {
-            if (controller.isLoading.value) {
+            if (acceptedJobsController.isLoading.value) {
               return Center(child: CircularProgressIndicator());
             }
 
-            if (controller.acceptedJobs.isEmpty) {
+            if (acceptedJobsController.acceptedJobs.isEmpty) {
               return Center(
                 child: Text(
                   'No accepted jobs found',
-                  style: TextStyle(fontSize: screenWidth * 0.045, color: Colors.grey),
+                  style: TextStyle(
+                      fontSize: screenWidth * 0.045, color: Colors.grey),
                 ),
               );
             }
 
             return ListView.builder(
-              itemCount: controller.acceptedJobs.length,
+              itemCount: acceptedJobsController.acceptedJobs.length,
               shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),
               itemBuilder: (context, index) {
-                final job = controller.acceptedJobs[index];
+                final job = acceptedJobsController.acceptedJobs[index];
 
                 return Card(
                   elevation: 4,
@@ -1482,16 +1485,17 @@ class _ClientDashboardState extends State<ClientDashboard> {
                           // Job Title
                           Row(
                             children: [
-                              Icon(Icons.work, size: screenWidth * 0.05, color: Colors.deepOrange),
+                              Icon(Icons.work,
+                                  size: screenWidth * 0.05,
+                                  color: Colors.deepOrange),
                               SizedBox(width: screenWidth * 0.03),
                               Expanded(
                                 child: Text(
                                   job.job.title,
                                   style: TextStyle(
-                                    fontSize: screenWidth * 0.04,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.deepOrange
-                                  ),
+                                      fontSize: screenWidth * 0.04,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.deepOrange),
                                 ),
                               ),
                             ],
@@ -1503,16 +1507,23 @@ class _ClientDashboardState extends State<ClientDashboard> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text("Status: ${job.status}",
-                                    style: TextStyle(color: job.status == "ongoing" ? Colors.blue : Colors.green)),
-                                Text("Payment status: ${job.job.paymentStatus}")
+                                    style: TextStyle(
+                                        color: job.status == "ongoing"
+                                            ? Colors.blue
+                                            : Colors.green)),
+                                Text(
+                                  "Payment status: ${job.job.paymentStatus}",
+                                  style: TextStyle(
+                                    color: _getPaymentStatusColor(job.job.paymentStatus),
+                                  ),
+                                )
                               ],
                             ),
                           ),
 
                           // Action Buttons
                           Row(
-                            mainAxisAlignment:
-                            MainAxisAlignment.spaceBetween,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               ElevatedButton.icon(
                                 icon: Icon(
@@ -1521,12 +1532,11 @@ class _ClientDashboardState extends State<ClientDashboard> {
                                   color: Colors.white,
                                 ),
                                 label: Text('View Details',
-                                    style:
-                                    TextStyle(color: Colors.white)),
+                                    style: TextStyle(color: Colors.white)),
                                 onPressed: () {
                                   // Navigate to project details
-                                  Get.to(() => OngoingProjectDetailsPage(acceptedJob: job));
-
+                                  Get.to(() => OngoingProjectDetailsPage(
+                                      acceptedJob: job));
                                 },
                                 style: ElevatedButton.styleFrom(
                                   padding: EdgeInsets.symmetric(
@@ -1534,12 +1544,10 @@ class _ClientDashboardState extends State<ClientDashboard> {
                                       horizontal: screenWidth * 0.05),
                                   backgroundColor: Colors.deepOrange,
                                   shape: RoundedRectangleBorder(
-                                    borderRadius:
-                                    BorderRadius.circular(10),
+                                    borderRadius: BorderRadius.circular(10),
                                   ),
                                 ),
                               ),
-
                               IconButton(
                                 icon: Icon(Icons.message,
                                     size: screenWidth * 0.06),

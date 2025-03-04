@@ -9,7 +9,7 @@ class AcceptedJob {
   final String updatedAt;
   final Job job;
   final User client;
-  final User freelancer;
+  final Freelancer freelancer;
 
   AcceptedJob({
     required this.id,
@@ -37,18 +37,20 @@ class AcceptedJob {
       updatedAt: json['updatedAt'] ?? "",
       job: Job.fromJson(json['job'] ?? {}),
       client: User.fromJson(json['client'] ?? {}),
-      freelancer: User.fromJson(json['freelancer'] ?? {}),
+      freelancer: Freelancer.fromJson(json['freelancer'] ?? {}),
     );
   }
 }
 
 class Job {
+  final int jobId;
   final String title;
   final String category;
   final String description;
   final String paymentStatus;
 
   Job({
+    required this.jobId,
     required this.title,
     required this.category,
     required this.description,
@@ -57,6 +59,7 @@ class Job {
 
   factory Job.fromJson(Map<String, dynamic> json) {
     return Job(
+      jobId: json['job_id'] ?? 0,
       title: json['title'] ?? "No Title",
       category: json['category'] ?? "Unknown Category",
       description: json['description'] ?? "No Description",
@@ -81,7 +84,31 @@ class User {
       userId: json['user_id'] ?? 0,
       username: json['username'] ?? "Unknown",
       email:  json['email'] ?? "No email",
-
     );
   }
 }
+
+class Freelancer {
+  final int id;
+  final String profileImageUrl;
+  final String name;
+
+  Freelancer({
+    required this.id,
+    required this.profileImageUrl,
+    required this.name,
+  });
+
+  factory Freelancer.fromJson(Map<String, dynamic> json) {
+    return Freelancer(
+        id: json['freelancerProfile']['id'] ?? 0,
+        profileImageUrl: json['freelancerProfile']['profileImageUrl'] ?? '',
+        name: json['freelancerProfile']['name'] ?? 'Freelancer'
+    );
+  }
+}
+
+
+
+
+

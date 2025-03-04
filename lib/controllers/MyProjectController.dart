@@ -36,13 +36,15 @@ class MyProjectsController extends GetxController {
 
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
-        var jobsList = (data['acceptedJobs'] as List)
+        var jobsList = data['acceptedJobs'] != null
+            ? (data['acceptedJobs'] as List)
             .map((job) => AcceptedJob.fromJson(job))
-            .toList();
+            .toList()
+            : <AcceptedJob>[]; // Ensure jobsList is a List<AcceptedJob>
 
         acceptedJobs.assignAll(jobsList);
       } else {
-        Get.snackbar("Error", "Failed to fetch accepted jobs");
+        Get.snackbar("Error", "yo hora");
       }
     } catch (e) {
       Get.snackbar("Error", "Something went wrong: $e");
@@ -68,10 +70,11 @@ class MyProjectsController extends GetxController {
       acceptedJobs.sort((a, b) => b.budget.compareTo(a.budget));
     }
   }
-
-  void loadProjects () async {
-    fetchProjects();
-  }
 }
+
+
+// void loadProjects () async {
+//   fetchProjects();
+// }
 
 
