@@ -46,6 +46,8 @@ class ApiEndpoints{
 
   static const fetchNotifications = "${baseUrl}notifications";
   static const markAllNotificationAsRead = "${baseUrl}notifications/user";
+
+  static const submitMilestones = "${baseUrl}milestones";
 }
 
 

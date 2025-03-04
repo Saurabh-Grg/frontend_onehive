@@ -1526,6 +1526,7 @@ class _ClientDashboardState extends State<ClientDashboard> {
                                 onPressed: () {
                                   // Navigate to project details
                                   Get.to(() => OngoingProjectDetailsPage(acceptedJob: job));
+
                                 },
                                 style: ElevatedButton.styleFrom(
                                   padding: EdgeInsets.symmetric(

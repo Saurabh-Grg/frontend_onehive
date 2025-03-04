@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:onehive_frontend/controllers/MilestoneController.dart';
 
 import '../controllers/AcceptedJobController.dart';
 import '../models/AcceptedJobModel.dart';
@@ -15,6 +16,11 @@ class OngoingProjectDetailsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
+
+    final MilestoneController milestoneController = Get.put(MilestoneController());
+
+    // Fetch milestones when this page loads
+    milestoneController.fetchMilestones(acceptedJob.id);
 
     return Scaffold(
       appBar: AppBar(
@@ -150,7 +156,7 @@ class OngoingProjectDetailsPage extends StatelessWidget {
                               acceptedJob.freelancer.username ??
                                   'Freelancer Name',
                               style: TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.bold),
+                                  fontSize: screenWidth * 0.036, fontWeight: FontWeight.bold),
                             ),
                             Text(
                               '⭐ freelancer rating',
@@ -191,34 +197,169 @@ class OngoingProjectDetailsPage extends StatelessWidget {
                       ),
                       SizedBox(height: 10),
 
-                      // if (projectDetails['milestones'] != null &&
-                      //     projectDetails['milestones'] is List)
-                      //   Column(
-                      //     children: projectDetails['milestones']
-                      //         .map<Widget>((milestone) => ListTile(
-                      //               title:
-                      //                   Text(milestone['title'] ?? 'No Title'),
-                      //               subtitle: Text(
-                      //                   milestone['status'] ?? 'No Status'),
-                      //               trailing: Icon(
-                      //                 milestone['status'] == 'Completed'
-                      //                     ? Icons.check_circle
-                      //                     : Icons.timelapse,
-                      //                 color: milestone['status'] == 'Completed'
-                      //                     ? Colors.green
-                      //                     : Colors.orange,
-                      //               ),
-                      //             ))
-                      //         .toList(),
-                      //   )
-                      // else
-                      //   Text('No milestones available',
-                      //       style: TextStyle(fontSize: 16, color: Colors.grey)),
+                      // Display milestones
+                      Obx(() {
+                        if (milestoneController.isLoading.value) {
+                          return Center(child: CircularProgressIndicator());
+                        }
+
+                        // Check conditions to show the reminder
+                        if (acceptedJob.job.paymentStatus == 'unpaid' && milestoneController.milestones.length == 4) {
+                          return Column(
+                            children: [
+                              Container(
+                                width: double.infinity,
+                                padding: EdgeInsets.all(12),
+                                margin: EdgeInsets.only(bottom: 10),
+                                decoration: BoxDecoration(
+                                  color: Colors.amber[100], // Light yellow background
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(color: Colors.amber, width: 1),
+                                ),
+                                child: Row(
+                                  children: [
+                                    Icon(Icons.info_outline, color: Colors.amber[800]),
+                                    SizedBox(width: 10),
+                                    Expanded(
+                                      child: Text(
+                                        "Your project is nearing completion. Please ensure the payment is processed soon.",
+                                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black87),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              // Continue with milestone list
+                              ListView.builder(
+                                shrinkWrap: true,
+                                itemCount: milestoneController.milestones.length,
+                                itemBuilder: (context, index) {
+                                  var milestone = milestoneController.milestones[index];
+                                  double progress = milestone['progress'].toDouble();
+
+                                  // Determine the color based on the progress value
+                                  Color progressColor;
+                                  if (progress <= 20) {
+                                    progressColor = Colors.red;
+                                  } else if (progress <= 40) {
+                                    progressColor = Colors.orange;
+                                  } else if (progress <= 60) {
+                                    progressColor = Colors.yellow;
+                                  } else if (progress <= 80) {
+                                    progressColor = Colors.blue;
+                                  } else {
+                                    progressColor = Colors.green;
+                                  }
+
+                                  return ListTile(
+                                    leading: Obx(() {
+                                      return SizedBox(
+                                        width: Get.width * 0.02,
+                                        child: Checkbox(
+                                          value: milestoneController.seenMilestones[index],
+                                          onChanged: (bool? value) {
+                                            milestoneController.toggleSeen(index, value!);
+                                          },
+                                        ),
+                                      );
+                                    }),
+                                    title: Text(milestone['title'] ?? 'No Title'),
+                                    subtitle: Text(milestone['description'] ?? 'No Description'),
+                                    trailing: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.end,
+                                      children: [
+                                        Text("Progress: ${milestone['progress']}%"),
+                                        SizedBox(height: 8),
+                                        // The colored progress bar
+                                        Container(
+                                          width: Get.width * 0.2,
+                                          child: LinearProgressIndicator(
+                                            value: progress / 100,
+                                            backgroundColor: Colors.grey[300],
+                                            valueColor: AlwaysStoppedAnimation<Color>(progressColor),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                              ),
+                            ],
+                          );
+                        }
+
+                        if (milestoneController.milestones.isEmpty) {
+                          return Center(
+                            child: Text(
+                              'No milestones available for this job.',
+                              style: TextStyle(fontSize: 16, color: Colors.grey),
+                            ),
+                          );
+                        }
+
+                        return ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: milestoneController.milestones.length,
+                          itemBuilder: (context, index) {
+                            var milestone = milestoneController.milestones[index];
+                            double progress = milestone['progress'].toDouble();
+
+                            // Determine the color based on the progress value
+                            Color progressColor;
+                            if (progress <= 20) {
+                              progressColor = Colors.red;
+                            } else if (progress <= 40) {
+                              progressColor = Colors.orange;
+                            } else if (progress <= 60) {
+                              progressColor = Colors.yellow;
+                            } else if (progress <= 80) {
+                              progressColor = Colors.blue;
+                            } else {
+                              progressColor = Colors.green;
+                            }
+
+                            return ListTile(
+                              leading: Obx(() {
+                                return SizedBox(
+                                  // height: 100,
+                                  width: Get.width * 0.02,
+                                  child: Checkbox(
+                                    value: milestoneController.seenMilestones[index],
+                                    onChanged: (bool? value) {
+                                      milestoneController.toggleSeen(index, value!);
+                                    },
+                                  ),
+                                );
+                              }),
+                              title: Text(milestone['title'] ?? 'No Title'),
+                              subtitle: Text(milestone['description'] ?? 'No Description'),
+                              trailing: Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Text("Progress: ${milestone['progress']}%"),
+                                  SizedBox(height: 8),
+                                  // The colored progress bar
+                                  Container(
+                                    width: Get.width * 0.2,
+                                    child: LinearProgressIndicator(
+                                      value: progress / 100,
+                                      backgroundColor: Colors.grey[300],
+                                      valueColor: AlwaysStoppedAnimation<Color>(progressColor),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        );
+                      }),
                     ],
                   ),
                 ),
               ),
             ),
+
+            SizedBox(height: screenWidth * 0.02),
 
             Card(
               elevation: 4,

@@ -252,6 +252,73 @@ class ProjectCard extends StatelessWidget {
     );
   }
 
+  // void _showMilestoneDialog(BuildContext context, int acceptedJobId) {
+  //   final _formKey = GlobalKey<FormState>();
+  //   String title = '';
+  //   String description = '';
+  //
+  //   showDialog(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return AlertDialog(
+  //         title: Text("Submit Milestone"),
+  //         content: Form(
+  //           key: _formKey,
+  //           child: Column(
+  //             mainAxisSize: MainAxisSize.min,
+  //             crossAxisAlignment: CrossAxisAlignment.start,
+  //             children: [
+  //               TextFormField(
+  //                 decoration: InputDecoration(labelText: 'Milestone Title'),
+  //                 onSaved: (value) {
+  //                   title = value ?? '';
+  //                 },
+  //                 validator: (value) {
+  //                   if (value == null || value.isEmpty) {
+  //                     return 'Please enter a milestone title';
+  //                   }
+  //                   return null;
+  //                 },
+  //               ),
+  //               TextFormField(
+  //                 decoration: InputDecoration(labelText: 'Milestone Description'),
+  //                 maxLines: 3,
+  //                 onSaved: (value) {
+  //                   description = value ?? '';
+  //                 },
+  //                 validator: (value) {
+  //                   if (value == null || value.isEmpty) {
+  //                     return 'Please enter a milestone description';
+  //                   }
+  //                   return null;
+  //                 },
+  //               ),
+  //             ],
+  //           ),
+  //         ),
+  //         actions: [
+  //           TextButton(
+  //             onPressed: () {
+  //               Get.back();  // Close the dialog
+  //             },
+  //             child: Text("Cancel"),
+  //           ),
+  //           ElevatedButton(
+  //             onPressed: () {
+  //               if (_formKey.currentState!.validate()) {
+  //                 _formKey.currentState!.save();
+  //                 _submitMilestone(acceptedJobId, title, description);  // Submit milestone
+  //                 Get.back();  // Close the dialog
+  //               }
+  //             },
+  //             child: Text("Submit"),
+  //           ),
+  //         ],
+  //       );
+  //     },
+  //   );
+  // }
+
   void _showMilestoneDialog(BuildContext context, int acceptedJobId) {
     final _formKey = GlobalKey<FormState>();
     String title = '';
@@ -260,64 +327,131 @@ class ProjectCard extends StatelessWidget {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text("Submit Milestone"),
-          content: Form(
-            key: _formKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                TextFormField(
-                  decoration: InputDecoration(labelText: 'Milestone Title'),
-                  onSaved: (value) {
-                    title = value ?? '';
-                  },
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter a milestone title';
-                    }
-                    return null;
-                  },
-                ),
-                TextFormField(
-                  decoration: InputDecoration(labelText: 'Milestone Description'),
-                  maxLines: 3,
-                  onSaved: (value) {
-                    description = value ?? '';
-                  },
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter a milestone description';
-                    }
-                    return null;
-                  },
-                ),
-              ],
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15), // Rounded corners
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Title
+                  Center(
+                    child: Text(
+                      "Submit Milestone",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 16),
+
+                  // Form
+                  Form(
+                    key: _formKey,
+                    child: Column(
+                      children: [
+                        // Milestone Title Input
+                        TextFormField(
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: Colors.white,
+                            labelText: 'Milestone Title',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            prefixIcon: Icon(Icons.title),
+                          ),
+                          onSaved: (value) {
+                            title = value ?? '';
+                          },
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter a milestone title';
+                            }
+                            return null;
+                          },
+                        ),
+                        SizedBox(height: 12),
+
+                        // Milestone Description Input
+                        TextFormField(
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: Colors.white,
+                            labelText: 'Milestone Description',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            prefixIcon: Icon(Icons.description),
+                          ),
+                          maxLines: 3,
+                          onSaved: (value) {
+                            description = value ?? '';
+                          },
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter a milestone description';
+                            }
+                            return null;
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 20),
+
+                  // Buttons
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      // Cancel Button
+                      TextButton(
+                        onPressed: () {
+                          Get.back(); // Close the dialog
+                        },
+                        style: TextButton.styleFrom(
+                          foregroundColor: Colors.deepOrange,
+                        ),
+                        child: Text("Cancel"),
+                      ),
+
+                      // Submit Button
+                      ElevatedButton(
+                        onPressed: () {
+                          if (_formKey.currentState!.validate()) {
+                            _formKey.currentState!.save();
+                            _submitMilestone(acceptedJobId, title, description);
+                            Get.back(); // Close the dialog
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.deepOrange, // Button color
+                          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: Text(
+                          "Submit",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Get.back();  // Close the dialog
-              },
-              child: Text("Cancel"),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                if (_formKey.currentState!.validate()) {
-                  _formKey.currentState!.save();
-                  _submitMilestone(acceptedJobId, title, description);  // Submit milestone
-                  Get.back();  // Close the dialog
-                }
-              },
-              child: Text("Submit"),
-            ),
-          ],
         );
       },
     );
   }
+
 
   void _submitMilestone(int acceptedJobId, String title, String description) async {
     final milestoneController = Get.put(MilestoneController());
