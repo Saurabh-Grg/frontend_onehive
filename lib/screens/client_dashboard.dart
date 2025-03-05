@@ -838,12 +838,14 @@ class _ClientDashboardState extends State<ClientDashboard> {
                 'payment_status': job['payment_status'].toString()
               }));
           // Filter ongoing jobs and store them in 'ongoingJobs' list
-          ongoingJobs =
-              jobs.where((job) => job['status'] == 'ongoing').toList();
+          // ongoingJobs = jobs.where((job) => job['status'] == 'ongoing').toList();
+          ongoingJobs = jobs.where(
+                  (job) => (job['status'] == 'ongoing' || job['status'] == 'completed') && job['payment_status'] == 'unpaid'
+          ).toList();
 
           // print('Total jobs fetched: ${jobs.length}'); // Debugging: Print total jobs fetched
           // print('Ongoing jobs count: ${ongoingJobs.length}'); // Debugging: Print number of ongoing jobs
-          //
+
           // // Print each ongoing job details
           // for (var job in ongoingJobs) {
           //   print('Ongoing Job -> ID: ${job['job_id']}, Title: ${job['title']}, Status: ${job['status']}');
@@ -1318,21 +1320,18 @@ class _ClientDashboardState extends State<ClientDashboard> {
                                       text: ' ${proposal.name}',
                                       recognizer: TapGestureRecognizer()
                                         ..onTap = () {
-                                          if (proposal.freelancerId != null &&
-                                              proposal.jobId != null) {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    FreelancerProfilePage(
-                                                  freelancerId:
-                                                      proposal.freelancerId,
-                                                  jobId: proposal.jobId,
-                                                ),
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  FreelancerProfilePage(
+                                                freelancerId:
+                                                    proposal.freelancerId,
+                                                jobId: proposal.jobId,
                                               ),
-                                            );
-                                          }
-                                        },
+                                            ),
+                                          );
+                                                                                },
                                     ),
                                   ],
                                 ),

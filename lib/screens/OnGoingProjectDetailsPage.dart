@@ -1,6 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:onehive_frontend/controllers/FinalSubmissionController.dart';
 import 'package:onehive_frontend/controllers/MilestoneController.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../models/AcceptedJobModel.dart';
 
 class OngoingProjectDetailsPage extends StatelessWidget {
@@ -9,6 +12,14 @@ class OngoingProjectDetailsPage extends StatelessWidget {
   // Accepting the job details through constructor
   OngoingProjectDetailsPage({required this.acceptedJob});
 
+  void launchURL(String url) async {
+    final Uri uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } else {
+      print("Could not launch $url");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,6 +30,10 @@ class OngoingProjectDetailsPage extends StatelessWidget {
 
     // Fetch milestones when this page loads
     milestoneController.fetchMilestones(acceptedJob.id);
+
+    final FinalSubmissionController finalSubmissionController =
+        Get.put(FinalSubmissionController());
+    finalSubmissionController.fetchFinalSubmissions(acceptedJob.id);
 
     return Scaffold(
       appBar: AppBar(
@@ -49,6 +64,37 @@ class OngoingProjectDetailsPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Obx(() {
+              if (finalSubmissionController.finalSubmissions.isEmpty) {
+                return SizedBox();
+              }
+              return Container(
+                width: double.infinity,
+                padding: EdgeInsets.all(12),
+                margin: EdgeInsets.only(bottom: 10),
+                decoration: BoxDecoration(
+                  color: Colors.amber[100], // Light yellow background
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.amber, width: 1),
+                ),
+                child: Row(
+                  children: [
+                    Icon(Icons.info_outline, color: Colors.amber[800]),
+                    SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
+                        "You have received the final submission for your project. Please review the submission and complete the payment to finalize the process.",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }),
             Card(
               elevation: 4,
               shape: RoundedRectangleBorder(
@@ -63,7 +109,6 @@ class OngoingProjectDetailsPage extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Project Title
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -110,9 +155,6 @@ class OngoingProjectDetailsPage extends StatelessWidget {
             SizedBox(
               height: screenWidth * 0.02,
             ),
-            SizedBox(
-              height: screenWidth * 0.02,
-            ),
             Card(
               elevation: 4,
               shape: RoundedRectangleBorder(
@@ -147,8 +189,8 @@ class OngoingProjectDetailsPage extends StatelessWidget {
                             Text(
                               acceptedJob.freelancer.name.toUpperCase(),
                               style: TextStyle(
-                                  fontSize: screenWidth * 0.036,
-                                  ),
+                                fontSize: screenWidth * 0.036,
+                              ),
                             ),
                             Text(
                               '⭐ freelancer rating',
@@ -375,6 +417,134 @@ class OngoingProjectDetailsPage extends StatelessWidget {
               ),
             ),
             SizedBox(height: screenWidth * 0.02),
+            // Display Final Submissions only if there are any
+            Obx(() {
+              if (finalSubmissionController.finalSubmissions.isEmpty) {
+                return SizedBox(); // Don't show anything if no submissions
+              }
+              return Card(
+                elevation: 4,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12)),
+                child: Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Section Title
+                      Text(
+                        'Final Submission',
+                        style: TextStyle(
+                            fontSize: screenWidth * 0.04,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(height: 10),
+
+                      // List of submissions
+                      Column(
+                        children: finalSubmissionController.finalSubmissions
+                            .map((submission) {
+                          return ListTile(
+                            title: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  submission.submissionType == "drive_link"
+                                      ? "Google Drive Submission"
+                                      : "Other Submission",
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            ),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text("Link: ${submission.submissionValue}"),
+                                Text(
+                                  "Remarks: ${submission.remark}",
+                                  style: TextStyle(fontSize: 14),
+                                ),
+                              ],
+                            ),
+                            trailing: submission.submissionType == "drive_link"
+                                ? IconButton(
+                                    icon: Icon(Icons.open_in_new,
+                                        color: Colors.blue),
+                                    onPressed: () {
+                                      // Open the submission link
+                                      launchURL(submission.submissionValue);
+                                    },
+                                  )
+                                : null,
+                          );
+                        }).toList(),
+                      ),
+                      if (finalSubmissionController.finalSubmissions
+                          .any((submission) => submission.status == "pending"))
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            TextButton(
+                              onPressed: () {
+                                // Approve action
+                                // finalSubmissionController.approveSubmission();
+                              },
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    CupertinoIcons.hand_thumbsup_fill,
+                                    color: Colors.green,
+                                  ),
+                                  SizedBox(
+                                    width: Get.width * 0.02,
+                                  ),
+                                  Text(
+                                    'Approve',
+                                    style: TextStyle(color: Colors.green),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                // finalSubmissionController.rejectSubmission();
+                              },
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    CupertinoIcons.hand_thumbsdown_fill,
+                                    color: Colors.red,
+                                  ),
+                                  SizedBox(
+                                    width: Get.width * 0.02,
+                                  ),
+                                  Text(
+                                    'Reject',
+                                    style: TextStyle(color: Colors.red),
+                                  ),
+                                ],
+                              ),
+                            )
+                          ],
+                        )
+                      else
+                        Center(
+                          child: Text(
+                            "${finalSubmissionController.finalSubmissions.first.status.toUpperCase()}!!!",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: _getSubmissionStatusColor(
+                                  finalSubmissionController
+                                      .finalSubmissions.first.status),
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              );
+            }),
+
             Card(
               elevation: 4,
               shape: RoundedRectangleBorder(
@@ -392,55 +562,91 @@ class OngoingProjectDetailsPage extends StatelessWidget {
                           fontWeight: FontWeight.bold),
                     ),
                     SizedBox(height: 10),
-                    ListTile(
-                      title: Text('Total Budget'),
-                      trailing: Text(
-                        'Rs. ${acceptedJob.budget}',
-                        style:
-                            TextStyle(fontSize: 15), // Set the font size here
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text('Total Budget'),
+                              Text('Rs. ${acceptedJob.budget}')
+                            ],
+                          ),
+                          SizedBox(height: Get.height * 0.01,),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text('Escrow'),
+                              Text('${acceptedJob.useEscrow}')
+                            ],
+                          ),
+                          SizedBox(height: Get.height * 0.01,),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text('Escrow amount'),
+                              Text('Rs. ${acceptedJob.escrowCharge}')
+                            ],
+                          ),
+                        ],
                       ),
                     ),
-                    ListTile(
-                      title: Text('Escrow'),
-                      trailing: Text(
-                        '${acceptedJob.useEscrow}',
-                        style:
-                            TextStyle(fontSize: 15), // Set the font size here
-                      ),
-                    ),
-                    ListTile(
-                      title: Text('Escrow amount'),
-                      trailing: Text(
-                        'Rs. ${acceptedJob.escrowCharge}',
-                        style:
-                            TextStyle(fontSize: 15), // Set the font size here
-                      ),
-                    ),
+                    acceptedJob.job.paymentStatus == 'unpaid'
+                        ? Center(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Image.asset(
+                                  'assets/images/esewa_logo.png',
+                                  width: 30, // Adjust size as needed
+                                  height: 30,
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    // Handle payment action here
+                                  },
+                                  child: Text(
+                                    'Pay now!',
+                                    style: TextStyle(
+                                      // color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                        : Center(
+                            child: Text(
+                              '${acceptedJob.job.paymentStatus.toUpperCase()}!!!',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.green,
+                              ),
+                            ),
+                          ),
                   ],
                 ),
               ),
             ),
             SizedBox(height: screenWidth * 0.02),
-            Divider(),
-            if (acceptedJob.job.paymentStatus == 'unpaid')
-              Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Colors.deepOrange,
-                  borderRadius: BorderRadius.circular(13),
-                ),
-                child: TextButton(
-                    onPressed: () {},
-                    child: Text(
-                      'Pay now!',
-                      style: TextStyle(
-                          color: Colors.white, fontWeight: FontWeight.bold),
-                    )),
-              ),
           ],
         ),
       ),
     );
+  }
+
+  Color _getSubmissionStatusColor(String status) {
+    switch (status.toLowerCase()) {
+      case 'approved':
+        return Colors.green;
+      case 'rejected':
+        return Colors.red;
+      default:
+        return Colors.black;
+    }
   }
 
   // Function to get color based on payment status

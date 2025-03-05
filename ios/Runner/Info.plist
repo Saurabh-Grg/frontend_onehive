@@ -49,5 +49,10 @@
 	</array>
 	<key>NSFaceIDUsageDescription</key>
     <string>We need your Face ID to authenticate you securely</string>
+    <key>LSApplicationQueriesSchemes</key>
+    <array>
+        <string>http</string>
+        <string>https</string>
+    </array>
 </dict>
 </plist>

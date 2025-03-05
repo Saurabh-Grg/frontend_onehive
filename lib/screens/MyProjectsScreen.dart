@@ -1,5 +1,7 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:onehive_frontend/controllers/FinalSubmissionController.dart';
 import 'package:onehive_frontend/models/AcceptedJobModel.dart';
 import '../controllers/MilestoneController.dart';
 import '../controllers/MyProjectController.dart';
@@ -212,9 +214,9 @@ class ProjectCard extends StatelessWidget {
         ),
         IconButton(
           icon: Icon(Icons.upload_file, color: Colors.orange),
-          onPressed: () {
-            Get.snackbar("File Upload", "Upload feature coming soon!");
-          },
+          onPressed: (){
+
+          }
         ),
         IconButton(
           icon: Icon(Icons.check_circle, color: Colors.purple), // New icon for milestone submission
@@ -225,7 +227,8 @@ class ProjectCard extends StatelessWidget {
         IconButton(
           icon: Icon(Icons.assignment_turned_in, color: Colors.green),
           onPressed: () {
-            Get.snackbar("Project Submission", "Submit your work here!");
+            showFinalSubmissionDialog(context, project.id);
+
           },
         ),
         IconButton(
@@ -337,7 +340,6 @@ class ProjectCard extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: 20),
-
                   // Buttons
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -385,7 +387,6 @@ class ProjectCard extends StatelessWidget {
     );
   }
 
-
   void _submitMilestone(int acceptedJobId, String title, String description) async {
     final milestoneController = Get.put(MilestoneController());
 
@@ -402,6 +403,216 @@ class ProjectCard extends StatelessWidget {
     }
   }
 
+  void showFinalSubmissionDialog(BuildContext context, int acceptedJobId) {
+    final _formKey = GlobalKey<FormState>();
+    String submissionType = 'zip(max 50MB)'; // Default selection
+    String submissionValue = '';
+    String remarks = '';
+
+    Future<void> pickZipFile() async {
+      FilePickerResult? result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['zip'], // Only allow ZIP files
+      );
+
+      if (result != null && result.files.isNotEmpty) {
+        submissionValue = result.files.single.path ?? '';
+      }
+    }
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder( // ✅ Wrap in StatefulBuilder to update UI
+          builder: (context, setState) {
+            return Dialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Center(
+                        child: Text(
+                          "Final Project Submission",
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 16),
+                      Form(
+                        key: _formKey,
+                        child: Column(
+                          children: [
+                            Text(
+                              "You're ready to submit your project—great job! Review your work, add any final remarks or attachments, and take pride in reaching this milestone. You're one step closer to your goal—keep it up!",
+                            ),
+                            SizedBox(height:  Get.height * 0.02),
+
+                            // ✅ Dropdown to select submission type
+                            DropdownButtonFormField<String>(
+                              value: submissionType,
+                              decoration: InputDecoration(
+                                hintText: "Submission Type",
+                                filled: true,
+                                fillColor: Colors.white,
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                              items: ["zip(max 50MB)", "drive_link", "other_link"]
+                                  .map((type) => DropdownMenuItem(
+                                value: type,
+                                child: Text(type),
+                              ))
+                                  .toList(),
+                              onChanged: (value) {
+                                if (value != null) {
+                                  setState(() {
+                                    submissionType = value; // ✅ Update UI
+                                  });
+                                }
+                              },
+                            ),
+                            SizedBox(height:  Get.height * 0.01),
+
+                            // ✅ ZIP File Picker
+                            if (submissionType == "zip(max 50MB)")
+                              Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  border: Border.all(
+                                    color: Colors.black, // Border color
+                                    width: 0.9, // Border width
+                                  ),
+                                  borderRadius: BorderRadius.circular(10), // Rounded corners
+                                ),
+                                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 3), // Padding inside the container
+                                child: Row(
+                                  children: [
+                                    IconButton(
+                                      icon: Icon(Icons.attach_file),
+                                      onPressed: pickZipFile,
+                                    ),
+                                    Expanded(
+                                      child: Text(
+                                        submissionValue.isNotEmpty
+                                            ? submissionValue.split('/').last
+                                            : 'No file selected',
+                                        style: TextStyle(fontSize: 14),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            else
+                            // ✅ Show TextFormField when submission type is a link
+                              TextFormField(
+                                decoration: InputDecoration(
+                                  labelText: 'Submission Link',
+                                  filled: true,
+                                  fillColor: Colors.white,
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  prefixIcon: Icon(Icons.link),
+                                ),
+                                onSaved: (value) {
+                                  submissionValue = value ?? '';
+                                },
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please provide a valid submission';
+                                  }
+                                  return null;
+                                },
+                              ),
+
+                            SizedBox(height:  Get.height * 0.01),
+                            TextFormField(
+                              decoration: InputDecoration(
+                                filled: true,
+                                fillColor: Colors.white,
+                                labelText: 'Remarks (Optional)',
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                prefixIcon: Icon(Icons.comment),
+                              ),
+                              maxLines: 3,
+                              onSaved: (value) {
+                                remarks = value ?? '';
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height:  Get.height * 0.02),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          TextButton(
+                            onPressed: () => Get.back(),
+                            style: TextButton.styleFrom(
+                              foregroundColor: Colors.deepOrange,
+                            ),
+                            child: Text("Cancel"),
+                          ),
+                          ElevatedButton(
+                            onPressed: () {
+                              if (_formKey.currentState!.validate()) {
+                                _formKey.currentState!.save();
+                                _submitFinalSubmission(acceptedJobId, submissionType, submissionValue, remarks);
+                                Get.back();
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.deepOrange,
+                              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                            child: Text(
+                              "Submit",
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Future<void> _submitFinalSubmission(int acceptedJobId, String type, String value, String remarks) async {
+    final finalSubmissionController = Get.put(FinalSubmissionController());
+    // Call the API to submit the final project
+    try {
+      await finalSubmissionController.submitFinalProject(acceptedJobId, type, value, remarks);
+      // Show success message in the UI
+      Get.snackbar("Project Submitted", "Your project has been submitted successfully!");
+      Get.back();
+
+    } catch (e) {
+      // Handle failure (e.g., show an error message)
+      print("Error, Failed to submit the project. Please try again.");
+      print("Error Details: $e"); // Debugging line
+    }
+  }
 
   Widget _buildChip(String status) {
     Color color;
