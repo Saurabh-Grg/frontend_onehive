@@ -445,6 +445,7 @@ class OngoingProjectDetailsPage extends StatelessWidget {
                         children: finalSubmissionController.finalSubmissions
                             .map((submission) {
                           return ListTile(
+                            contentPadding: EdgeInsets.zero, // Removes extra padding
                             title: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -464,6 +465,7 @@ class OngoingProjectDetailsPage extends StatelessWidget {
                                   "Remarks: ${submission.remark}",
                                   style: TextStyle(fontSize: 14),
                                 ),
+                                Text("Received At: ${submission.createdAt}")
                               ],
                             ),
                             trailing: submission.submissionType == "drive_link"
@@ -487,7 +489,7 @@ class OngoingProjectDetailsPage extends StatelessWidget {
                             TextButton(
                               onPressed: () {
                                 // Approve action
-                                // finalSubmissionController.approveSubmission();
+                                finalSubmissionController.updateFinalSubmissionStatus(finalSubmissionController.finalSubmissions.first.submissionId, 'approved');
                               },
                               child: Row(
                                 children: [
@@ -507,7 +509,7 @@ class OngoingProjectDetailsPage extends StatelessWidget {
                             ),
                             TextButton(
                               onPressed: () {
-                                // finalSubmissionController.rejectSubmission();
+                                finalSubmissionController.updateFinalSubmissionStatus(finalSubmissionController.finalSubmissions.first.submissionId, 'rejected');
                               },
                               child: Row(
                                 children: [
@@ -562,35 +564,32 @@ class OngoingProjectDetailsPage extends StatelessWidget {
                           fontWeight: FontWeight.bold),
                     ),
                     SizedBox(height: 10),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text('Total Budget'),
-                              Text('Rs. ${acceptedJob.budget}')
-                            ],
-                          ),
-                          SizedBox(height: Get.height * 0.01,),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text('Escrow'),
-                              Text('${acceptedJob.useEscrow}')
-                            ],
-                          ),
-                          SizedBox(height: Get.height * 0.01,),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text('Escrow amount'),
-                              Text('Rs. ${acceptedJob.escrowCharge}')
-                            ],
-                          ),
-                        ],
-                      ),
+                    Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text('Total Budget'),
+                            Text('Rs. ${acceptedJob.budget}')
+                          ],
+                        ),
+                        SizedBox(height: Get.height * 0.01,),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text('Escrow'),
+                            Text('${acceptedJob.useEscrow}')
+                          ],
+                        ),
+                        SizedBox(height: Get.height * 0.01,),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text('Escrow amount'),
+                            Text('Rs. ${acceptedJob.escrowCharge}')
+                          ],
+                        ),
+                      ],
                     ),
                     acceptedJob.job.paymentStatus == 'unpaid'
                         ? Center(

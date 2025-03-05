@@ -103,4 +103,38 @@ class FinalSubmissionController extends GetxController {
     }
   }
 
+  Future<void> updateFinalSubmissionStatus(int submissionId, String status) async {
+    try {
+      isLoading.value = true;
+      errorMessage.value = '';
+
+      // Make PUT request to update submission status
+      final response = await http.put(
+        Uri.parse("http://localhost:3000/api/final-submissions/$submissionId/status"),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${userController.token.value}'
+        },
+        body: json.encode({
+          'status': status,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        var responseBody = json.decode(response.body);
+        successMessage.value = 'Final submission ${status}.';
+        Get.snackbar("Submission Status Updated", successMessage.value);
+        // Optionally, fetch the final submissions again to refresh the data
+        fetchFinalSubmissions(submissionId);
+      } else {
+        var responseBody = json.decode(response.body);
+        errorMessage.value = responseBody['message'] ?? 'Failed to update submission status';
+      }
+    } catch (error) {
+      errorMessage.value = 'Server error: ${error.toString()}';
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
 }
