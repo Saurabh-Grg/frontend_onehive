@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:onehive_frontend/controllers/FinalSubmissionController.dart';
 import 'package:onehive_frontend/controllers/MilestoneController.dart';
+import 'package:onehive_frontend/screens/PaymentScreen.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../models/AcceptedJobModel.dart';
 
@@ -411,6 +412,18 @@ class OngoingProjectDetailsPage extends StatelessWidget {
                           },
                         );
                       }),
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(50),
+                        ),
+                        width: double.infinity,
+                        height: screenWidth * 0.02,
+                        child: LinearProgressIndicator(
+                          value: acceptedJob.progress / 100,
+                          backgroundColor: Colors.grey[300],
+                          valueColor: AlwaysStoppedAnimation<Color>(Colors.green),
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -593,27 +606,17 @@ class OngoingProjectDetailsPage extends StatelessWidget {
                     ),
                     acceptedJob.job.paymentStatus == 'unpaid'
                         ? Center(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Image.asset(
-                                  'assets/images/esewa_logo.png',
-                                  width: 30, // Adjust size as needed
-                                  height: 30,
+                            child: TextButton(
+                              onPressed: () {
+                                Get.to(PaymentScreen(acceptedJob: acceptedJob));
+                              },
+                              child: Text(
+                                'Click here for Payment!!',
+                                style: TextStyle(
+                                  color: Colors.deepOrange,
+                                  fontWeight: FontWeight.bold,
                                 ),
-                                TextButton(
-                                  onPressed: () {
-                                    // Handle payment action here
-                                  },
-                                  child: Text(
-                                    'Pay now!',
-                                    style: TextStyle(
-                                      // color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                              ],
+                              ),
                             ),
                           )
                         : Center(

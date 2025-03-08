@@ -36,6 +36,13 @@ class ApiEndpoints{
   static const getAcceptedJobForClient = "${baseUrl}acceptedJobs/client/fetch";
   static const getAcceptedJobForFreelancer = "${baseUrl}acceptedJobs/freelancer/fetch";
 
+  static const submitMilestones = "${baseUrl}milestones";
+  static const fetchMilestones = "${baseUrl}milestones";
+
+  static const doFinalSubmissionOfProject = "${baseUrl}final-submissions/submit";
+  static const fetchFinalSubmission = "${baseUrl}final-submissions/job";
+  static const approveOrRejectFinalSubmission = "${baseUrl}final-submissions";
+
   static const getFollowList = "${baseUrl}follow/follow-lists";
   static const getFreelancerFollowStatus = "${baseUrl}follow/status";
   static const followFreelancer = "${baseUrl}follow/follow";
@@ -47,7 +54,7 @@ class ApiEndpoints{
   static const fetchNotifications = "${baseUrl}notifications";
   static const markAllNotificationAsRead = "${baseUrl}notifications/user";
 
-  static const submitMilestones = "${baseUrl}milestones";
+
 }
 
 

@@ -74,7 +74,7 @@ class MilestoneController extends GetxController {
   // Function to fetch milestones for a specific accepted job
   Future<void> fetchMilestones(int acceptedJobId) async {
     try {
-      final String url = '${ApiEndpoints.submitMilestones}/$acceptedJobId';
+      final String url = '${ApiEndpoints.fetchMilestones}/$acceptedJobId';
       print("Fetching milestones from API: $url");
 
       final response = await http.get(

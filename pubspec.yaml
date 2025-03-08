@@ -87,7 +87,9 @@ flutter:
     - assets/images/bg2.png
     - assets/images/bg3.png
     - assets/images/default_profile.png
-    - assets/images/esewa_logo.png
+    - assets/images/img.png
+    - assets/images/img1.png
+    - assets/images/img2.png
 
   # To add assets to your application, add an assets section, like this:
   # assets:
